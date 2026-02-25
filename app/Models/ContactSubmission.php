@@ -2,11 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ContactSubmission extends Model
 {
+    /** @use HasFactory<\Database\Factories\ContactSubmissionFactory> */
+    use HasFactory;
+
     /**
      * @var list<string>
      */

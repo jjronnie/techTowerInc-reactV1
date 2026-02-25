@@ -7,10 +7,10 @@ use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\ServiceController as AdminServiceController;
 use App\Http\Controllers\Admin\SiteSettingController as AdminSiteSettingController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Middleware\EnsureAdmin;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 $marketingView = function () {
     $path = public_path('marketing/index.html');
@@ -47,9 +47,9 @@ Route::middleware(['auth', 'verified', EnsureAdmin::class])
         Route::put('site-settings', [AdminSiteSettingController::class, 'update'])->name('site-settings.update');
     });
 
-Route::get('dashboard', function () {
-    return Inertia::render('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('dashboard', DashboardController::class)
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 require __DIR__.'/settings.php';
 

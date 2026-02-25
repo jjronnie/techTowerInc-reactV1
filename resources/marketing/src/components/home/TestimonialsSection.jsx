@@ -82,7 +82,7 @@ const TestimonialsSection = () => {
     observer.observe(container, { childList: true, subtree: true });
 
     return () => observer.disconnect();
-  }, [useCache]);
+  }, [cacheChecked, useCache]);
 
   return (
     <section className="next-section-padding bg-background">

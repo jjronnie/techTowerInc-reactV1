@@ -56,15 +56,6 @@ const HeroSection = () => {
       </div>
 
       <div className="next-container relative z-10 text-center">
-        <motion.div
-          className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.2em] text-muted-foreground mx-auto"
-          initial={{ opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          {hero.badge_text || 'Product studio for ambitious teams'}
-        </motion.div>
-
         <motion.h1
           className="mt-6 text-4xl sm:text-5xl md:text-6xl font-semibold leading-tight text-shadow-soft"
           initial={{ opacity: 0, y: 24 }}
