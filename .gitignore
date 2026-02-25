@@ -29,4 +29,5 @@ yarn-error.log
 /.codex
 boost.json
 compose.yaml
+/public/.htaccess
 
