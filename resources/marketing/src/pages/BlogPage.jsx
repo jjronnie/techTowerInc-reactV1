@@ -1,0 +1,111 @@
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { ArrowRight, CalendarDays, UserCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { useApi } from '@/hooks/useApi';
+import { useSiteSettings } from '@/context/SiteSettingsContext';
+import Seo from '@/components/Seo';
+
+const BlogPage = () => {
+  const { settings } = useSiteSettings();
+  const { data, loading, error } = useApi('/posts');
+  const blogPosts = data?.data || [];
+  const pageCopy = settings?.blog_page || {};
+
+  const fadeInProps = (delay = 0) => ({
+    initial: { opacity: 0, y: 20 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, amount: 0.2 },
+    transition: { duration: 0.6, delay }
+  });
+
+  return (
+    <div className="bg-background text-foreground pt-24 md:pt-32 pb-16">
+      <Seo
+        title={pageCopy.header_title || 'Blog'}
+        description={pageCopy.header_subtitle}
+      />
+      <header className="next-container next-section-padding text-center">
+        <motion.div {...fadeInProps()} className="max-w-3xl mx-auto">
+          <span className="inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground border border-border/60 rounded-full mb-4">
+            {pageCopy.header_label || 'Tech Insights'}
+          </span>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-semibold tracking-tight mb-6 text-balance">
+           {pageCopy.header_title || 'Stories, insights, and engineering breakthroughs.'}
+          </h1>
+          <p className="text-lg md:text-xl text-muted-foreground text-balance">
+            {pageCopy.header_subtitle ||
+              'Fresh perspectives from the TechTower team on building, scaling, and operating modern products.'}
+          </p>
+        </motion.div>
+      </header>
+
+      <section className="next-section-padding pt-0">
+        <div className="next-container">
+          {loading && (
+            <div className="text-sm text-muted-foreground">Loading posts...</div>
+          )}
+          {error && (
+            <div className="text-sm text-red-400">Unable to load posts right now.</div>
+          )}
+          {!loading && !error && (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {blogPosts.map((post, index) => {
+                const category = post.category || post.categories?.[0] || 'Insight';
+
+                return (
+                <motion.article
+                  key={post.slug}
+                  className="next-card flex flex-col overflow-hidden group"
+                  {...fadeInProps(index * 0.1)}
+                >
+                  <Link to={`/blog/${post.slug}`} className="block aspect-video overflow-hidden">
+                    <img
+                      src={post.featured_image_url || 'https://images.unsplash.com/photo-1504983875-d3b163aba9e6'}
+                      alt={post.image_alt || post.title}
+                      className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </Link>
+                  <div className="p-6 flex flex-col flex-grow">
+                    <div className="mb-4 flex items-center justify-between text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                      <span>{category}</span>
+                      <span>Insight</span>
+                    </div>
+                    <h2 className="text-xl font-semibold mb-3 text-foreground">
+                      <Link to={`/blog/${post.slug}`} className="hover:text-primary transition-colors">
+                        {post.title}
+                      </Link>
+                    </h2>
+                    <p className="text-muted-foreground text-sm mb-5 flex-grow">{post.excerpt}</p>
+                    <div className="text-xs text-muted-foreground mt-auto flex items-center justify-between">
+                      <div className="flex items-center">
+                        <UserCircle className="w-3.5 h-3.5 mr-1.5" />
+                        <span>{post.author_name || 'TechTower'}</span>
+                      </div>
+                      {post.published_at && (
+                        <div className="flex items-center">
+                          <CalendarDays className="w-3.5 h-3.5 mr-1.5" />
+                          <time dateTime={post.published_at}>
+                            {new Date(post.published_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                          </time>
+                        </div>
+                      )}
+                    </div>
+                    <Button asChild variant="link" className="p-0 h-auto text-sm mt-5 self-start text-primary">
+                      <Link to={`/blog/${post.slug}`}>
+                        Read More <ArrowRight className="ml-1 w-4 h-4" />
+                      </Link>
+                    </Button>
+                  </div>
+                </motion.article>
+              )})}
+            </div>
+          )}
+        </div>
+      </section>
+    </div>
+  );
+};
+
+export default BlogPage;
