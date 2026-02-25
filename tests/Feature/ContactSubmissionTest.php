@@ -18,7 +18,7 @@ test('contact submission stores data and emails admin', function () {
         'phone' => '+256703283529',
         'service_id' => $service->id,
         'message' => 'We need a new website.',
-        'website' => '',
+        'company_website' => '',
     ];
 
     $response = $this->postJson('/api/contact-submissions', $payload);
@@ -48,7 +48,7 @@ test('honeypot blocks contact submission', function () {
         'phone' => '+256703283529',
         'service_id' => $service->id,
         'message' => 'Spam message',
-        'website' => 'filled',
+        'company_website' => 'filled',
     ];
 
     $response = $this->postJson('/api/contact-submissions', $payload);
@@ -69,7 +69,7 @@ test('contact submission rejects links', function () {
         'phone' => '+256703283529',
         'service_id' => $service->id,
         'message' => 'Check https://example.com',
-        'website' => '',
+        'company_website' => '',
     ];
 
     $response = $this->postJson('/api/contact-submissions', $payload);
@@ -87,7 +87,7 @@ test('contact submission requires country code phone', function () {
         'phone' => '0703283529',
         'service_id' => $service->id,
         'message' => 'Need a quote.',
-        'website' => '',
+        'company_website' => '',
     ];
 
     $response = $this->postJson('/api/contact-submissions', $payload);

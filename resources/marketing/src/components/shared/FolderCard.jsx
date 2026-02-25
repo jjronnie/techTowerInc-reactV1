@@ -1,5 +1,6 @@
 import React from 'react';
-import { ChevronDown, Plus } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { ArrowUpRight, ChevronDown } from 'lucide-react';
 
 const FolderCard = ({ project }) => {
   const label = project.label || 'Project';
@@ -33,13 +34,13 @@ const FolderCard = ({ project }) => {
           <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">{resultLabel}</p>
           <p className="text-xl font-semibold text-foreground mt-2">{resultValue}</p>
         </div>
-        <button
-          type="button"
-          className="absolute bottom-4 right-4 h-9 w-9 rounded-full border border-white/20 text-muted-foreground hover:text-foreground hover:border-white/40 transition"
+        <Link
+          to={`/portfolio/${project.slug}`}
+          className="absolute bottom-4 right-4 flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-muted-foreground transition hover:text-foreground hover:border-white/40"
           aria-label="Open project details"
         >
-          <Plus className="w-4 h-4 mx-auto" />
-        </button>
+          <ArrowUpRight className="w-4 h-4" />
+        </Link>
       </div>
     </div>
   );

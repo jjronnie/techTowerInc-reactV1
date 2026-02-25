@@ -9,6 +9,7 @@ import ServicesPage from '@/pages/ServicesPage';
 import AboutPage from '@/pages/AboutPage';
 import ContactPage from '@/pages/ContactPage';
 import PortfolioPage from '@/pages/PortfolioPage';
+import PortfolioShowPage from '@/pages/PortfolioShowPage';
 import BlogPage from '@/pages/BlogPage';
 import ProductsPage from '@/pages/ProductsPage';
 import ServiceShowPage from '@/pages/ServiceShowPage';
@@ -134,6 +135,17 @@ const App = () => {
                   transition={pageTransition}
                 >
                   <PortfolioPage />
+                </motion.div>
+              } />
+              <Route path="/portfolio/:slug" element={
+                <motion.div
+                  initial="initial"
+                  animate="in"
+                  exit="out"
+                  variants={pageVariants}
+                  transition={pageTransition}
+                >
+                  <PortfolioShowPage />
                 </motion.div>
               } />
               <Route path="/products" element={

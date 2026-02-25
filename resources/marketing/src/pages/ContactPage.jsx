@@ -19,7 +19,7 @@ const initialFormState = {
   service_id: '',
   other_service_details: '',
   message: '',
-  website: '',
+  company_website: '',
 };
 
 const ContactPage = () => {
@@ -140,7 +140,7 @@ const ContactPage = () => {
       service_id: isOther ? null : Number(formData.service_id),
       other_service_details: isOther ? formData.other_service_details.trim() : null,
       message: formData.message.trim(),
-      website: formData.website,
+      company_website: formData.company_website,
     };
 
     setIsSubmitting(true);
@@ -319,10 +319,10 @@ const ContactPage = () => {
                 <h2 className="text-2xl font-semibold text-foreground mb-6">Send Us a Message or Request a Quote</h2>
                 <input
                   type="text"
-                  name="website"
-                  value={formData.website}
-                  onChange={handleChange('website')}
-                  autoComplete="off"
+                  name="company_website"
+                  value={formData.company_website}
+                  onChange={handleChange('company_website')}
+                  autoComplete="new-password"
                   tabIndex={-1}
                   aria-hidden="true"
                   className="sr-only"
