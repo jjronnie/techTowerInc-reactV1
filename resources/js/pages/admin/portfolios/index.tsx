@@ -3,7 +3,7 @@ import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
-import { dashboard } from '@/routes/admin';
+import { dashboard } from '@/routes';
 import { create, destroy, edit, index } from '@/routes/admin/portfolios';
 
 type Portfolio = {
@@ -19,7 +19,7 @@ type PortfoliosIndexProps = {
 };
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Admin', href: dashboard().url },
+    { title: 'Dashboard', href: dashboard().url },
     { title: 'Portfolios', href: index().url },
 ];
 

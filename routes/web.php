@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\PortfolioController as AdminPortfolioController;
 use App\Http\Controllers\Admin\PostController as AdminPostController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
@@ -31,7 +30,9 @@ Route::middleware(['auth', 'verified', EnsureAdmin::class])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
-        Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/', function () {
+            return redirect()->route('dashboard');
+        })->name('home');
 
         Route::resource('services', AdminServiceController::class);
         Route::resource('portfolios', AdminPortfolioController::class);

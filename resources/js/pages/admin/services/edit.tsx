@@ -2,7 +2,7 @@ import { Head, useForm } from '@inertiajs/react';
 import Heading from '@/components/heading';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
-import { dashboard } from '@/routes/admin';
+import { dashboard } from '@/routes';
 import { index, update } from '@/routes/admin/services';
 import ServiceForm, { type ServiceFormData } from './service-form';
 
@@ -54,7 +54,7 @@ export default function EditService({ service }: EditServiceProps) {
     };
 
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Admin', href: dashboard().url },
+        { title: 'Dashboard', href: dashboard().url },
         { title: 'Services', href: index().url },
         { title: service.title, href: update(service.id).url },
     ];

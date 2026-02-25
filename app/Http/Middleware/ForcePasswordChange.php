@@ -24,11 +24,7 @@ class ForcePasswordChange
         $routeName = $request->route()?->getName();
 
         if ($routeName !== null) {
-            if (in_array($routeName, ['user-password.edit', 'user-password.update', 'logout', 'filament.admin.auth.logout'], true)) {
-                return $next($request);
-            }
-
-            if (str_starts_with($routeName, 'filament.') && ! str_contains($routeName, 'pages.')) {
+            if (in_array($routeName, ['user-password.edit', 'user-password.update', 'logout'], true)) {
                 return $next($request);
             }
         }

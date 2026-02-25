@@ -24,7 +24,6 @@ import {
 import type { NavItem } from '@/types';
 import AppLogo from './app-logo';
 import { dashboard as userDashboard } from '@/routes';
-import { dashboard as adminDashboard } from '@/routes/admin';
 import { index as servicesIndex } from '@/routes/admin/services';
 import { index as portfoliosIndex } from '@/routes/admin/portfolios';
 import { index as productsIndex } from '@/routes/admin/products';
@@ -56,11 +55,6 @@ const footerNavItems: NavItem[] = [
 export function AppSidebar() {
     const { auth } = usePage().props as { auth: { user: { is_admin?: boolean } } };
     const adminNavItems: NavItem[] = [
-        {
-            title: 'Admin Dashboard',
-            href: adminDashboard(),
-            icon: LayoutGrid,
-        },
         {
             title: 'Services',
             href: servicesIndex(),

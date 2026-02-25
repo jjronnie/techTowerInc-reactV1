@@ -2,23 +2,23 @@
 
 use App\Models\User;
 
-test('non-admin users cannot access filament', function () {
+test('non-admin users cannot access admin routes', function () {
     $user = User::factory()->create([
         'is_admin' => false,
     ]);
 
     $this->actingAs($user)
-        ->get('/admin')
+        ->get('/admin/services')
         ->assertForbidden();
 });
 
-test('admins can access filament', function () {
+test('admins can access admin routes', function () {
     $admin = User::factory()->create([
         'is_admin' => true,
     ]);
 
     $this->actingAs($admin)
-        ->get('/admin')
+        ->get('/admin/services')
         ->assertSuccessful();
 });
 

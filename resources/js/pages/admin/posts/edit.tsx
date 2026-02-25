@@ -2,7 +2,7 @@ import { Head, useForm } from '@inertiajs/react';
 import Heading from '@/components/heading';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
-import { dashboard } from '@/routes/admin';
+import { dashboard } from '@/routes';
 import { index, update } from '@/routes/admin/posts';
 import PostForm, { type PostFormData } from './post-form';
 
@@ -75,7 +75,7 @@ export default function EditPost({ post }: EditPostProps) {
     };
 
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Admin', href: dashboard().url },
+        { title: 'Dashboard', href: dashboard().url },
         { title: 'Posts', href: index().url },
         { title: post.title, href: update(post.id).url },
     ];

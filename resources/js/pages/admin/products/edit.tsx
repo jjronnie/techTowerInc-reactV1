@@ -2,7 +2,7 @@ import { Head, useForm } from '@inertiajs/react';
 import Heading from '@/components/heading';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
-import { dashboard } from '@/routes/admin';
+import { dashboard } from '@/routes';
 import { index, update } from '@/routes/admin/products';
 import ProductForm, { type ProductFormData } from './product-form';
 
@@ -52,7 +52,7 @@ export default function EditProduct({ product }: EditProductProps) {
     };
 
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Admin', href: dashboard().url },
+        { title: 'Dashboard', href: dashboard().url },
         { title: 'Products', href: index().url },
         { title: product.name, href: update(product.id).url },
     ];

@@ -18,7 +18,7 @@
 
 ## Content Management
 
-Use Filament (`/admin`) to manage:
+Use the Inertia admin panel (`/admin`) to manage:
 - Services
 - Portfolio items (including image uploads)
 - Products
@@ -31,17 +31,16 @@ Use Filament (`/admin`) to manage:
 New users created by an admin are assigned the default password `password` and `force_password_change = true`.
 On first login, they are redirected to `/settings/password` and cannot access other pages until they update their password.
 
-## Frontend Build (Marketing Site)
+## Frontend Build (Single Command)
 
-The marketing React app lives in `resources/marketing` and builds into `public/marketing`.
+The marketing React app lives in `resources/marketing` and builds into `public/marketing`. It is wired into the root `npm` scripts so you only run commands from the project root.
 
-1. Install dependencies:
-   - `cd resources/marketing`
+1. Install dependencies once at the project root:
    - `npm install`
-2. Build the production bundle:
+2. Development (builds marketing on watch and runs the admin Vite dev server):
+   - `npm run dev`
+3. Production build for both admin + marketing:
    - `npm run build`
-
-If you are not seeing frontend changes, run `npm run dev` or rebuild.
 
 ## Demo Content (Optional)
 

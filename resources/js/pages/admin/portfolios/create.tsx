@@ -2,12 +2,12 @@ import { Head, useForm } from '@inertiajs/react';
 import Heading from '@/components/heading';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
-import { dashboard } from '@/routes/admin';
+import { dashboard } from '@/routes';
 import { index, store } from '@/routes/admin/portfolios';
 import PortfolioForm, { type PortfolioFormData } from './portfolio-form';
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Admin', href: dashboard().url },
+    { title: 'Dashboard', href: dashboard().url },
     { title: 'Portfolios', href: index().url },
     { title: 'Create', href: index().url },
 ];

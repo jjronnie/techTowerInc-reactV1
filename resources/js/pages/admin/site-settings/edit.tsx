@@ -2,7 +2,7 @@ import { Head, useForm } from '@inertiajs/react';
 import Heading from '@/components/heading';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
-import { dashboard } from '@/routes/admin';
+import { dashboard } from '@/routes';
 import { edit as editSettings, update } from '@/routes/admin/site-settings';
 import SiteSettingsForm, {
     type SiteSettingsFormData,
@@ -521,7 +521,7 @@ export default function EditSiteSettings({ settings }: EditSiteSettingsProps) {
     };
 
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Admin', href: dashboard().url },
+        { title: 'Dashboard', href: dashboard().url },
         { title: 'Site Settings', href: editSettings().url },
     ];
 

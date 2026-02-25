@@ -2,7 +2,7 @@ import { Head, useForm } from '@inertiajs/react';
 import Heading from '@/components/heading';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
-import { dashboard } from '@/routes/admin';
+import { dashboard } from '@/routes';
 import { index, update } from '@/routes/admin/users';
 import UserForm, { type UserFormData } from './user-form';
 
@@ -33,7 +33,7 @@ export default function EditUser({ user }: EditUserProps) {
     };
 
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Admin', href: dashboard().url },
+        { title: 'Dashboard', href: dashboard().url },
         { title: 'Users', href: index().url },
         { title: user.name, href: update(user.id).url },
     ];
