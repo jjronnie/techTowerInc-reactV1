@@ -67,7 +67,22 @@ const ServicesPreviewSection = () => {
         </motion.div>
 
         {loading && (
-          <div className="text-sm text-muted-foreground">Loading services...</div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {Array.from({ length: 3 }).map((_, index) => (
+              <div key={`service-preview-skeleton-${index}`} className="next-card flex flex-col">
+                <div className="shimmer h-12 w-12 rounded-xl mb-5" />
+                <div className="shimmer h-5 w-3/4 rounded mb-3" />
+                <div className="shimmer h-4 w-full rounded mb-2" />
+                <div className="shimmer h-4 w-5/6 rounded mb-5" />
+                <div className="space-y-2 mb-6">
+                  {Array.from({ length: 3 }).map((__, featureIndex) => (
+                    <div key={`preview-feature-${featureIndex}`} className="shimmer h-3 rounded" />
+                  ))}
+                </div>
+                <div className="shimmer h-4 w-24 rounded mt-auto" />
+              </div>
+            ))}
+          </div>
         )}
         {error && (
           <div className="text-sm text-red-400">Unable to load services right now.</div>

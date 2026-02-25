@@ -22,8 +22,21 @@ const SinglePostPage = () => {
 
   if (loading) {
     return (
-      <div className="next-container next-section-padding text-center">
-        <p className="text-muted-foreground">Loading post...</p>
+      <div className="bg-background text-foreground pt-24 md:pt-32 pb-16">
+        <div className="next-container space-y-6">
+          <div className="shimmer h-4 w-32 rounded" />
+          <div className="shimmer h-10 w-3/4 rounded" />
+          <div className="flex flex-wrap gap-4 justify-center">
+            <div className="shimmer h-4 w-28 rounded" />
+            <div className="shimmer h-4 w-40 rounded" />
+          </div>
+          <div className="shimmer h-64 w-full rounded-lg" />
+          <div className="space-y-3">
+            <div className="shimmer h-4 w-full rounded" />
+            <div className="shimmer h-4 w-5/6 rounded" />
+            <div className="shimmer h-4 w-4/5 rounded" />
+          </div>
+        </div>
       </div>
     );
   }
@@ -115,7 +128,7 @@ const SinglePostPage = () => {
 
           <motion.div 
             {...fadeInProps(0.3)} 
-            className="prose dark:prose-invert prose-lg max-w-none mx-auto text-foreground prose-headings:text-foreground prose-a:text-primary hover:prose-a:text-primary/80 prose-strong:text-foreground"
+            className="prose dark:prose-invert prose-lg max-w-none mx-auto text-foreground prose-headings:text-foreground prose-headings:font-semibold prose-a:text-primary hover:prose-a:text-primary/80 prose-strong:text-foreground prose-p:leading-relaxed prose-li:marker:text-muted-foreground prose-blockquote:border-l-primary/40 prose-blockquote:text-muted-foreground"
             dangerouslySetInnerHTML={{ __html: post.content }} 
           />
 

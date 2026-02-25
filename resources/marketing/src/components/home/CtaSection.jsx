@@ -38,7 +38,7 @@ const CtaSection = () => {
               </Button>
               <Button size="lg" variant="outline" asChild className="next-button-outline rounded-full px-10">
                 <Link to={cta.secondary_cta_href || '/portfolio'}>
-                  {cta.secondary_cta_label || 'View Case Files'} <ArrowRight className="ml-2 w-5 h-5" />
+                  {cta.secondary_cta_label || 'View Projects'} <ArrowRight className="ml-2 w-5 h-5" />
                 </Link>
               </Button>
             </div>

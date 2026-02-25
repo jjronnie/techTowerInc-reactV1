@@ -1,12 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Code, Github, Linkedin, Twitter, Instagram, Facebook, Youtube, Rss } from 'lucide-react';
-import { ThemeToggle } from '@/components/theme/ThemeToggle';
+import { Github, Linkedin, Twitter, Instagram, Facebook, Youtube, Rss } from 'lucide-react';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
+import logoLight from '@/assets/logo-light.png';
+import logoDark from '@/assets/logo-dark.png';
 
 const Footer = () => {
   const { settings } = useSiteSettings();
   const currentYear = new Date().getFullYear();
+  const logoUrl = settings?.logo_url || logoLight;
+  const logoDarkUrl = settings?.logo_url || logoDark;
+  const siteName = settings?.site_name || 'TechTower Innovations';
   const iconMap = {
     github: Github,
     linkedin: Linkedin,
@@ -53,7 +57,7 @@ const Footer = () => {
       links: [
         { text: settings?.company_email || "info@techtowerinc.com", href: `mailto:${settings?.company_email || "info@techtowerinc.com"}`, isExternal: true },
         { text: settings?.company_phone || "+256 703 283 529", href: `tel:${(settings?.company_phone || "+256 703 283 529").replace(/\\s+/g, '')}`, isExternal: true },
-        { text: settings?.company_address || "Kampala, Uganda", href: "#", isExternal: false },
+        { text: settings?.company_address || "Kireka Namugongo Road, Kampala, Uganda · P.O BOX 118290", href: "#", isExternal: false },
       ]
     }
   ];
@@ -65,13 +69,19 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           <div className="col-span-1 md:col-span-2 lg:col-span-1">
             <Link to="/" className="flex items-center space-x-2 mb-4 group" aria-label="TechTower Innovations Homepage">
-              <div className="w-8 h-8 bg-primary rounded-md flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
-                <Code className="w-5 h-5 text-primary-foreground" />
-              </div>
-              <span className="text-xl font-bold text-foreground">{settings?.site_name || "TechTower Inc"}</span>
+              <img
+                src={logoUrl}
+                alt={`${siteName} Logo`}
+                className="h-10 w-auto object-contain block dark:hidden transition-transform duration-300 group-hover:scale-105"
+              />
+              <img
+                src={logoDarkUrl}
+                alt={`${siteName} Logo`}
+                className="h-10 w-auto object-contain hidden dark:block transition-transform duration-300 group-hover:scale-105"
+              />
             </Link>
             <p className="text-sm text-muted-foreground">
-              {settings?.footer_text || "Crafting innovative software solutions for a digital-first world. Based in Kampala, Uganda."}
+              {settings?.footer_text || "Crafting innovative software solutions for a digital-first world. Based in Kireka Namugongo Road, Kampala, Uganda. P.O BOX 118290."}
             </p>
           </div>
 
@@ -112,7 +122,6 @@ const Footer = () => {
                   <Rss className="w-5 h-5" />
                 </Link>
             </div>
-            <ThemeToggle />
           </div>
         </div>
       </div>

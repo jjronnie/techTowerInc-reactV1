@@ -35,9 +35,13 @@ const FaqSection = () => {
                     <Plus className="h-4 w-4" />
                   </span>
                 </summary>
-                <p className="text-sm text-muted-foreground mt-3 leading-relaxed">
-                  {faq.answer || faq.text}
-                </p>
+                <div className="faq-content">
+                  <div className="faq-content-inner">
+                    <p className="text-sm text-muted-foreground mt-3 leading-relaxed">
+                      {faq.answer || faq.text}
+                    </p>
+                  </div>
+                </div>
               </details>
             ))}
           </div>

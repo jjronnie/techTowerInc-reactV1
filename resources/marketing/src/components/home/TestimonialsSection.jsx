@@ -1,48 +1,88 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Star } from 'lucide-react';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
+
+const ELFSIGHT_CACHE_KEY = 'techtower-elfsight-reviews';
+const ELFSIGHT_CACHE_TTL = 1000 * 60 * 60 * 5;
+const ELFSIGHT_LOADED_SELECTOR = 'iframe';
+
+const isWidgetLoaded = (html) => html && html.includes('<iframe');
 
 const TestimonialsSection = () => {
   const { settings } = useSiteSettings();
   const testimonialConfig = settings?.home_testimonials || {};
-  const testimonials = testimonialConfig.items?.length ? testimonialConfig.items : [
-    {
-      name: "Sarah M.",
-      company: "CEO, Innovate Uganda",
-      text: "TechTower's team transformed our vision into a stunning, functional platform. Their dedication and expertise are unmatched. We've seen a 200% increase in user engagement!",
-      rating: 5,
-      avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-    },
-    {
-      name: "John B.",
-      company: "CTO, Fintech Solutions Ltd.",
-      text: "The mobile app TechTower developed for us is a masterpiece of engineering and design. It's robust, secure, and incredibly user-friendly. Our customer satisfaction is through the roof.",
-      rating: 5,
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-    },
-    {
-      name: "Aisha K.",
-      company: "Founder, E-commerce Hub Africa",
-      text: "Working with TechTower was a breeze. They understood our complex e-commerce needs and delivered a scalable solution that has significantly boosted our sales and operational efficiency.",
-      rating: 5,
-      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-    }
-  ];
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-      },
-    },
-  };
+  const [cachedMarkup, setCachedMarkup] = useState('');
+  const [useCache, setUseCache] = useState(false);
+  const [cacheChecked, setCacheChecked] = useState(false);
+  const widgetRef = useRef(null);
 
-  const itemVariants = {
-    hidden: { opacity: 0, scale: 0.9 },
-    visible: { opacity: 1, scale: 1, transition: { duration: 0.5 } },
-  };
+  useEffect(() => {
+    try {
+      const cached = JSON.parse(localStorage.getItem(ELFSIGHT_CACHE_KEY) || 'null');
+      const isFresh =
+        cached?.html &&
+        cached?.timestamp &&
+        Date.now() - cached.timestamp < ELFSIGHT_CACHE_TTL &&
+        isWidgetLoaded(cached.html);
+
+      if (isFresh) {
+        setCachedMarkup(cached.html);
+        setUseCache(true);
+      } else if (cached?.html) {
+        localStorage.removeItem(ELFSIGHT_CACHE_KEY);
+      }
+    } catch (error) {
+      console.warn('Unable to read cached reviews widget', error);
+    }
+    setCacheChecked(true);
+  }, []);
+
+  useEffect(() => {
+    if (!cacheChecked || useCache) {
+      return;
+    }
+
+    const container = widgetRef.current;
+    if (!container) {
+      return;
+    }
+
+    const existingScript = document.querySelector('script[data-elfsight]');
+    if (!existingScript) {
+      const script = document.createElement('script');
+      script.src = 'https://elfsightcdn.com/platform.js';
+      script.async = true;
+      script.dataset.elfsight = 'true';
+      document.body.appendChild(script);
+    }
+
+    const observer = new MutationObserver(() => {
+      const html = container.innerHTML || '';
+      if (!html.trim().length) {
+        return;
+      }
+
+      if (!container.querySelector(ELFSIGHT_LOADED_SELECTOR)) {
+        return;
+      }
+
+      try {
+        localStorage.setItem(
+          ELFSIGHT_CACHE_KEY,
+          JSON.stringify({ html, timestamp: Date.now() }),
+        );
+        setCachedMarkup(html);
+      } catch (error) {
+        console.warn('Unable to cache reviews widget', error);
+      }
+
+      observer.disconnect();
+    });
+
+    observer.observe(container, { childList: true, subtree: true });
+
+    return () => observer.disconnect();
+  }, [useCache]);
 
   return (
     <section className="next-section-padding bg-background">
@@ -65,35 +105,17 @@ const TestimonialsSection = () => {
           </p>
         </motion.div>
 
-        <motion.div 
-          className="grid md:grid-cols-3 gap-8"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-        >
-          {testimonials.map((testimonial, index) => (
-            <motion.div
-              key={index}
-              className="next-card flex flex-col"
-              variants={itemVariants}
-            >
-              <div className="flex mb-4">
-                {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star key={i} className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-                ))}
-              </div>
-              <p className="text-muted-foreground mb-6 italic text-base flex-grow">"{testimonial.text}"</p>
-              <div className="flex items-center mt-auto">
-                <img alt={`${testimonial.name} avatar`} className="w-10 h-10 rounded-full mr-3 object-cover" src={testimonial.avatar_url || testimonial.avatar} />
-                <div>
-                  <div className="font-semibold text-foreground text-sm">{testimonial.name}</div>
-                  <div className="text-xs text-muted-foreground">{testimonial.company}</div>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
+        <div className="rounded-xl border border-sidebar-border/70 bg-card p-4 md:p-6 elfsight-white animate-fade-up">
+          {useCache ? (
+            <div ref={widgetRef} dangerouslySetInnerHTML={{ __html: cachedMarkup }} />
+          ) : (
+            <div
+              ref={widgetRef}
+              className="elfsight-app-7a915025-6dc3-47d8-983f-4b0ffd89a2b4"
+              data-elfsight-app-lazy
+            />
+          )}
+        </div>
       </div>
     </section>
   );

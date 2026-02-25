@@ -2,7 +2,7 @@ import React from 'react';
 import { ChevronDown, Plus } from 'lucide-react';
 
 const FolderCard = ({ project }) => {
-  const label = project.label || 'Case File';
+  const label = project.label || 'Project';
   const summary = project.summary || project.excerpt || '';
   const resultLabel = project.result_label || project.resultLabel;
   const resultValue = project.result_value || project.resultValue;
@@ -36,7 +36,7 @@ const FolderCard = ({ project }) => {
         <button
           type="button"
           className="absolute bottom-4 right-4 h-9 w-9 rounded-full border border-white/20 text-muted-foreground hover:text-foreground hover:border-white/40 transition"
-          aria-label="Open case file"
+          aria-label="Open project details"
         >
           <Plus className="w-4 h-4 mx-auto" />
         </button>

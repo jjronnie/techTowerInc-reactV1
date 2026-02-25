@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Support\HtmlSanitizer;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -61,5 +62,25 @@ class UpdatePostRequest extends FormRequest
             'featured_image.image' => 'The featured image must be a valid image file.',
             'og_image.image' => 'The SEO image must be a valid image file.',
         ];
+    }
+
+    /**
+     * @param  string|null  $key
+     * @param  mixed  $default
+     * @return array<string, mixed>|mixed
+     */
+    public function validated($key = null, $default = null): mixed
+    {
+        $validated = parent::validated($key, $default);
+
+        if ($key !== null || ! is_array($validated)) {
+            return $validated;
+        }
+
+        if (array_key_exists('content', $validated)) {
+            $validated['content'] = HtmlSanitizer::clean($validated['content']) ?? '';
+        }
+
+        return $validated;
     }
 }

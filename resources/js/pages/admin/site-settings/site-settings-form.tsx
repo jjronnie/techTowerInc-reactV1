@@ -257,6 +257,19 @@ type SiteSettingsFormProps = {
     submitLabel: string;
 };
 
+const ICONS_URL = 'https://lucide.dev/icons/';
+
+const IconHelperLink = () => (
+    <a
+        href={ICONS_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-xs text-muted-foreground underline underline-offset-4 transition-colors hover:text-foreground"
+    >
+        Get icons here
+    </a>
+);
+
 export default function SiteSettingsForm({
     data,
     errors,
@@ -638,10 +651,10 @@ export default function SiteSettingsForm({
     };
 
     return (
-        <form onSubmit={onSubmit} className="space-y-8">
-            <section className="space-y-4 rounded-xl border border-sidebar-border/70 bg-card p-4">
+        <form onSubmit={onSubmit} className="space-y-12">
+            <section className="space-y-6 rounded-xl border border-sidebar-border/70 bg-card p-6 md:p-8">
                 <div>
-                    <h3 className="text-base font-semibold">Branding</h3>
+                    <h3 className="text-lg font-semibold">Branding</h3>
                     <p className="text-sm text-muted-foreground">
                         Basic company information and logos.
                     </p>
@@ -773,9 +786,9 @@ export default function SiteSettingsForm({
                 </div>
             </section>
 
-            <section className="space-y-4 rounded-xl border border-sidebar-border/70 bg-card p-4">
+            <section className="space-y-6 rounded-xl border border-sidebar-border/70 bg-card p-6 md:p-8">
                 <div>
-                    <h3 className="text-base font-semibold">Social links</h3>
+                    <h3 className="text-lg font-semibold">Social links</h3>
                     <p className="text-sm text-muted-foreground">
                         Social profiles used in the footer and contact page.
                     </p>
@@ -827,6 +840,7 @@ export default function SiteSettingsForm({
                                     )
                                 }
                             />
+                            <IconHelperLink />
                         </div>
                         <div className="grid gap-2">
                             <Label>Label</Label>
@@ -855,9 +869,9 @@ export default function SiteSettingsForm({
                 <InputError message={errors.social_links} />
             </section>
 
-            <section className="space-y-4 rounded-xl border border-sidebar-border/70 bg-card p-4">
+            <section className="space-y-6 rounded-xl border border-sidebar-border/70 bg-card p-6 md:p-8">
                 <div>
-                    <h3 className="text-base font-semibold">SEO defaults</h3>
+                    <h3 className="text-lg font-semibold">SEO defaults</h3>
                     <p className="text-sm text-muted-foreground">
                         Defaults used when content does not provide SEO data.
                     </p>
@@ -920,9 +934,9 @@ export default function SiteSettingsForm({
                 </div>
             </section>
 
-            <section className="space-y-4 rounded-xl border border-sidebar-border/70 bg-card p-4">
+            <section className="space-y-6 rounded-xl border border-sidebar-border/70 bg-card p-6 md:p-8">
                 <div>
-                    <h3 className="text-base font-semibold">Verification meta</h3>
+                    <h3 className="text-lg font-semibold">Verification meta</h3>
                     <p className="text-sm text-muted-foreground">
                         Optional verification tags (Google, Bing, etc.).
                     </p>
@@ -980,16 +994,16 @@ export default function SiteSettingsForm({
                 <InputError message={errors.verification_meta} />
             </section>
 
-            <section className="space-y-6 rounded-xl border border-sidebar-border/70 bg-card p-4">
+            <section className="space-y-8 rounded-xl border border-sidebar-border/70 bg-card p-6 md:p-8">
                 <div>
-                    <h3 className="text-base font-semibold">Home page</h3>
+                    <h3 className="text-lg font-semibold">Home page</h3>
                     <p className="text-sm text-muted-foreground">
                         Hero, stats, technologies, and homepage sections.
                     </p>
                 </div>
 
                 <div className="space-y-4">
-                    <h4 className="text-sm font-semibold">Hero</h4>
+                    <h4 className="text-base font-semibold">Hero</h4>
                     <div className="grid gap-3 md:grid-cols-2">
                         <div className="grid gap-2">
                             <Label>Badge text</Label>
@@ -1094,7 +1108,7 @@ export default function SiteSettingsForm({
 
                 <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                        <h4 className="text-sm font-semibold">Stats</h4>
+                        <h4 className="text-base font-semibold">Stats</h4>
                         <Button type="button" variant="outline" onClick={addHomeStat}>
                             Add stat
                         </Button>
@@ -1172,7 +1186,7 @@ export default function SiteSettingsForm({
 
                 <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                        <h4 className="text-sm font-semibold">Technologies</h4>
+                        <h4 className="text-base font-semibold">Technologies</h4>
                         <Button
                             type="button"
                             variant="outline"
@@ -1211,6 +1225,7 @@ export default function SiteSettingsForm({
                                         )
                                     }
                                 />
+                                <IconHelperLink />
                             </div>
                             <div className="flex justify-end md:col-span-2">
                                 <Button
@@ -1227,7 +1242,7 @@ export default function SiteSettingsForm({
                 </div>
 
                 <div className="space-y-4">
-                    <h4 className="text-sm font-semibold">Portfolio intro</h4>
+                    <h4 className="text-base font-semibold">Portfolio intro</h4>
                     <div className="grid gap-3 md:grid-cols-2">
                         <div className="grid gap-2">
                             <Label>Label</Label>
@@ -1270,7 +1285,7 @@ export default function SiteSettingsForm({
                 </div>
 
                 <div className="space-y-4">
-                    <h4 className="text-sm font-semibold">Services intro</h4>
+                    <h4 className="text-base font-semibold">Services intro</h4>
                     <div className="grid gap-3 md:grid-cols-2">
                         <div className="grid gap-2">
                             <Label>Label</Label>
@@ -1314,7 +1329,7 @@ export default function SiteSettingsForm({
 
                 <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                        <h4 className="text-sm font-semibold">Features</h4>
+                        <h4 className="text-base font-semibold">Features</h4>
                         <Button
                             type="button"
                             variant="outline"
@@ -1380,6 +1395,7 @@ export default function SiteSettingsForm({
                                         )
                                     }
                                 />
+                                <IconHelperLink />
                             </div>
                             <div className="grid gap-2">
                                 <Label>Title</Label>
@@ -1422,7 +1438,7 @@ export default function SiteSettingsForm({
 
                 <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                        <h4 className="text-sm font-semibold">Testimonials</h4>
+                        <h4 className="text-base font-semibold">Testimonials</h4>
                         <Button
                             type="button"
                             variant="outline"
@@ -1557,7 +1573,7 @@ export default function SiteSettingsForm({
 
                 <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                        <h4 className="text-sm font-semibold">FAQs</h4>
+                        <h4 className="text-base font-semibold">FAQs</h4>
                         <Button
                             type="button"
                             variant="outline"
@@ -1638,7 +1654,7 @@ export default function SiteSettingsForm({
                 </div>
 
                 <div className="space-y-4">
-                    <h4 className="text-sm font-semibold">Call to action</h4>
+                    <h4 className="text-base font-semibold">Call to action</h4>
                     <div className="grid gap-3 md:grid-cols-2">
                         <div className="grid gap-2">
                             <Label>Icon key</Label>
@@ -1651,6 +1667,7 @@ export default function SiteSettingsForm({
                                     })
                                 }
                             />
+                            <IconHelperLink />
                         </div>
                         <div className="grid gap-2">
                             <Label>Heading</Label>
@@ -1729,16 +1746,16 @@ export default function SiteSettingsForm({
                 </div>
             </section>
 
-            <section className="space-y-6 rounded-xl border border-sidebar-border/70 bg-card p-4">
+            <section className="space-y-8 rounded-xl border border-sidebar-border/70 bg-card p-6 md:p-8">
                 <div>
-                    <h3 className="text-base font-semibold">About page</h3>
+                    <h3 className="text-lg font-semibold">About page</h3>
                     <p className="text-sm text-muted-foreground">
                         About page header, story, principles, cards, and team.
                     </p>
                 </div>
 
                 <div className="space-y-4">
-                    <h4 className="text-sm font-semibold">Header</h4>
+                    <h4 className="text-base font-semibold">Header</h4>
                     <div className="grid gap-3 md:grid-cols-2">
                         <div className="grid gap-2">
                             <Label>Badge text</Label>
@@ -1782,7 +1799,7 @@ export default function SiteSettingsForm({
 
                 <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                        <h4 className="text-sm font-semibold">Story</h4>
+                        <h4 className="text-base font-semibold">Story</h4>
                         <Button
                             type="button"
                             variant="outline"
@@ -1882,7 +1899,7 @@ export default function SiteSettingsForm({
 
                 <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                        <h4 className="text-sm font-semibold">Principles</h4>
+                        <h4 className="text-base font-semibold">Principles</h4>
                         <Button
                             type="button"
                             variant="outline"
@@ -1935,6 +1952,7 @@ export default function SiteSettingsForm({
                                         )
                                     }
                                 />
+                                <IconHelperLink />
                             </div>
                             <div className="grid gap-2">
                                 <Label>Title</Label>
@@ -1977,7 +1995,7 @@ export default function SiteSettingsForm({
 
                 <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                        <h4 className="text-sm font-semibold">About cards</h4>
+                        <h4 className="text-base font-semibold">About cards</h4>
                         <Button
                             type="button"
                             variant="outline"
@@ -2003,6 +2021,7 @@ export default function SiteSettingsForm({
                                         )
                                     }
                                 />
+                                <IconHelperLink />
                             </div>
                             <div className="grid gap-2">
                                 <Label>Title</Label>
@@ -2045,7 +2064,7 @@ export default function SiteSettingsForm({
 
                 <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                        <h4 className="text-sm font-semibold">Team</h4>
+                        <h4 className="text-base font-semibold">Team</h4>
                         <Button
                             type="button"
                             variant="outline"
@@ -2166,20 +2185,21 @@ export default function SiteSettingsForm({
                 </div>
 
                 <div className="space-y-4">
-                    <h4 className="text-sm font-semibold">About CTA</h4>
+                    <h4 className="text-base font-semibold">About CTA</h4>
                     <div className="grid gap-3 md:grid-cols-2">
-                        <div className="grid gap-2">
-                            <Label>Icon key</Label>
-                            <Input
-                                value={data.about_cta.icon_key}
-                                onChange={(event) =>
-                                    onChange('about_cta', {
-                                        ...data.about_cta,
-                                        icon_key: event.target.value,
-                                    })
-                                }
-                            />
-                        </div>
+                    <div className="grid gap-2">
+                        <Label>Icon key</Label>
+                        <Input
+                            value={data.about_cta.icon_key}
+                            onChange={(event) =>
+                                onChange('about_cta', {
+                                    ...data.about_cta,
+                                    icon_key: event.target.value,
+                                })
+                            }
+                        />
+                        <IconHelperLink />
+                    </div>
                         <div className="grid gap-2">
                             <Label>Heading</Label>
                             <Input
@@ -2233,9 +2253,9 @@ export default function SiteSettingsForm({
                 </div>
             </section>
 
-            <section className="space-y-6 rounded-xl border border-sidebar-border/70 bg-card p-4">
+            <section className="space-y-6 rounded-xl border border-sidebar-border/70 bg-card p-6 md:p-8">
                 <div>
-                    <h3 className="text-base font-semibold">Services page</h3>
+                    <h3 className="text-lg font-semibold">Services page</h3>
                 </div>
                 <div className="grid gap-3 md:grid-cols-2">
                     <div className="grid gap-2">
@@ -2327,9 +2347,9 @@ export default function SiteSettingsForm({
                 </div>
             </section>
 
-            <section className="space-y-6 rounded-xl border border-sidebar-border/70 bg-card p-4">
+            <section className="space-y-6 rounded-xl border border-sidebar-border/70 bg-card p-6 md:p-8">
                 <div>
-                    <h3 className="text-base font-semibold">Portfolio page</h3>
+                    <h3 className="text-lg font-semibold">Portfolio page</h3>
                 </div>
                 <div className="grid gap-3 md:grid-cols-2">
                     <div className="grid gap-2">
@@ -2421,9 +2441,9 @@ export default function SiteSettingsForm({
                 </div>
             </section>
 
-            <section className="space-y-6 rounded-xl border border-sidebar-border/70 bg-card p-4">
+            <section className="space-y-6 rounded-xl border border-sidebar-border/70 bg-card p-6 md:p-8">
                 <div>
-                    <h3 className="text-base font-semibold">Products page</h3>
+                    <h3 className="text-lg font-semibold">Products page</h3>
                 </div>
                 <div className="grid gap-3 md:grid-cols-2">
                     <div className="grid gap-2">
@@ -2466,9 +2486,9 @@ export default function SiteSettingsForm({
                 </div>
             </section>
 
-            <section className="space-y-6 rounded-xl border border-sidebar-border/70 bg-card p-4">
+            <section className="space-y-6 rounded-xl border border-sidebar-border/70 bg-card p-6 md:p-8">
                 <div>
-                    <h3 className="text-base font-semibold">Blog page</h3>
+                    <h3 className="text-lg font-semibold">Blog page</h3>
                 </div>
                 <div className="grid gap-3 md:grid-cols-2">
                     <div className="grid gap-2">
@@ -2511,13 +2531,13 @@ export default function SiteSettingsForm({
                 </div>
             </section>
 
-            <section className="space-y-6 rounded-xl border border-sidebar-border/70 bg-card p-4">
+            <section className="space-y-6 rounded-xl border border-sidebar-border/70 bg-card p-6 md:p-8">
                 <div>
-                    <h3 className="text-base font-semibold">Contact page</h3>
+                    <h3 className="text-lg font-semibold">Contact page</h3>
                 </div>
 
                 <div className="space-y-4">
-                    <h4 className="text-sm font-semibold">Header</h4>
+                    <h4 className="text-base font-semibold">Header</h4>
                     <div className="grid gap-3 md:grid-cols-2">
                         <div className="grid gap-2">
                             <Label>Badge text</Label>
@@ -2561,7 +2581,7 @@ export default function SiteSettingsForm({
 
                 <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                        <h4 className="text-sm font-semibold">Contact details</h4>
+                        <h4 className="text-base font-semibold">Contact details</h4>
                         <Button
                             type="button"
                             variant="outline"
@@ -2588,6 +2608,7 @@ export default function SiteSettingsForm({
                                         )
                                     }
                                 />
+                                <IconHelperLink />
                             </div>
                             <div className="grid gap-2">
                                 <Label>Title</Label>
@@ -2656,7 +2677,7 @@ export default function SiteSettingsForm({
 
                 <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                        <h4 className="text-sm font-semibold">Social links</h4>
+                        <h4 className="text-base font-semibold">Social links</h4>
                         <Button
                             type="button"
                             variant="outline"
@@ -2736,6 +2757,7 @@ export default function SiteSettingsForm({
                                         )
                                     }
                                 />
+                                <IconHelperLink />
                             </div>
                             <div className="grid gap-2">
                                 <Label>Label</Label>
@@ -2764,9 +2786,11 @@ export default function SiteSettingsForm({
                 </div>
             </section>
 
-            <Button type="submit" disabled={processing}>
-                {submitLabel}
-            </Button>
+            <div className="fixed bottom-6 right-6 z-40 flex items-center gap-3">
+                <Button type="submit" size="lg" disabled={processing} className="shadow-lg">
+                    {processing ? 'Saving...' : submitLabel}
+                </Button>
+            </div>
         </form>
     );
 }

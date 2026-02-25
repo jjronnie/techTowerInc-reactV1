@@ -51,7 +51,7 @@ const AboutPage = () => {
             {header.headline || 'Pioneering digital solutions in Africa.'}
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground text-balance">
-            {header.subheadline || 'TechTower Innovations is a Kampala-based software development company dedicated to crafting exceptional digital experiences that drive progress and empower businesses across the continent and beyond.'}
+            {header.subheadline || 'TechTower Innovations is a Kireka Namugongo Road, Kampala-based software development company dedicated to crafting exceptional digital experiences that drive progress and empower businesses across the continent and beyond.'}
           </p>
         </motion.div>
       </header>
@@ -83,7 +83,7 @@ const AboutPage = () => {
             </div>
             <div className="order-1 lg:order-2 aspect-video lg:aspect-square rounded-xl overflow-hidden shadow-2xl">
               <img
-                alt={story.image_alt || 'Modern office space in Kampala, Uganda with a diverse team of TechTower software developers collaborating'}
+                alt={story.image_alt || 'Modern office space in Kireka Namugongo Road, Kampala, Uganda with a diverse team of TechTower software developers collaborating'}
                 className="w-full h-full object-cover"
                 src={story.image_url || 'https://images.unsplash.com/photo-1637622124152-33adfabcc923'}
               />

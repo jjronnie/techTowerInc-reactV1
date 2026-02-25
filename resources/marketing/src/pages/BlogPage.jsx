@@ -44,7 +44,27 @@ const BlogPage = () => {
       <section className="next-section-padding pt-0">
         <div className="next-container">
           {loading && (
-            <div className="text-sm text-muted-foreground">Loading posts...</div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {Array.from({ length: 3 }).map((_, index) => (
+                <div key={`post-skeleton-${index}`} className="next-card flex flex-col overflow-hidden">
+                  <div className="shimmer h-40 w-full" />
+                  <div className="p-6 flex flex-col flex-grow space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="shimmer h-3 w-16 rounded" />
+                      <div className="shimmer h-3 w-10 rounded" />
+                    </div>
+                    <div className="shimmer h-5 w-4/5 rounded" />
+                    <div className="shimmer h-4 w-full rounded" />
+                    <div className="shimmer h-4 w-5/6 rounded" />
+                    <div className="flex items-center justify-between mt-auto">
+                      <div className="shimmer h-3 w-24 rounded" />
+                      <div className="shimmer h-3 w-20 rounded" />
+                    </div>
+                    <div className="shimmer h-4 w-24 rounded" />
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
           {error && (
             <div className="text-sm text-red-400">Unable to load posts right now.</div>

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\ContactSubmissionController;
 use App\Http\Controllers\Api\PortfolioController;
 use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\ProductController;
@@ -20,3 +21,5 @@ Route::get('products/{product:slug}', [ProductController::class, 'show'])->name(
 
 Route::get('posts', [PostController::class, 'index'])->name('api.posts.index');
 Route::get('posts/{post:slug}', [PostController::class, 'show'])->name('api.posts.show');
+
+Route::post('contact-submissions', [ContactSubmissionController::class, 'store'])->name('api.contact-submissions.store');

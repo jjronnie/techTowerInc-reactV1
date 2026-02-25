@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ContactSubmissionController as AdminContactSubmissionController;
 use App\Http\Controllers\Admin\PortfolioController as AdminPortfolioController;
 use App\Http\Controllers\Admin\PostController as AdminPostController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
@@ -38,6 +39,8 @@ Route::middleware(['auth', 'verified', EnsureAdmin::class])
         Route::resource('portfolios', AdminPortfolioController::class);
         Route::resource('products', AdminProductController::class);
         Route::resource('posts', AdminPostController::class);
+        Route::resource('contact-submissions', AdminContactSubmissionController::class)
+            ->only(['index', 'show', 'destroy']);
         Route::resource('users', AdminUserController::class);
 
         Route::get('site-settings', [AdminSiteSettingController::class, 'edit'])->name('site-settings.edit');

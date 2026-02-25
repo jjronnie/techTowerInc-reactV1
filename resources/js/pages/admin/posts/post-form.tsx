@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { RichTextEditor } from '@/components/ui/rich-text-editor';
 import { Textarea } from '@/components/ui/textarea';
 
 export type PostFormData = {
@@ -104,11 +105,11 @@ export default function PostForm({
 
             <div className="grid gap-2">
                 <Label htmlFor="content">Content</Label>
-                <Textarea
+                <RichTextEditor
                     id="content"
                     value={data.content}
-                    onChange={(event) => onChange('content', event.target.value)}
-                    rows={10}
+                    onChange={(value) => onChange('content', value)}
+                    invalid={Boolean(errors.content)}
                 />
                 <InputError message={errors.content} />
             </div>

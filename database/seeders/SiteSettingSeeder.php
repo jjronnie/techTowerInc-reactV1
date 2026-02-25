@@ -21,7 +21,7 @@ class SiteSettingSeeder extends Seeder
                 'favicon_path' => null,
                 'company_email' => 'info@techtowerinc.com',
                 'company_phone' => '+256 703 283 529',
-                'company_address' => 'Innovation Hub, Kampala, Uganda',
+                'company_address' => 'Kireka Namugongo Road, Kampala, Uganda. P.O BOX 118290',
                 'social_links' => [
                     [
                         'name' => 'GitHub',
@@ -60,7 +60,7 @@ class SiteSettingSeeder extends Seeder
                         'label' => 'TechTower on YouTube',
                     ],
                 ],
-                'footer_text' => 'Crafting innovative software solutions for a digital-first world. Based in Kampala, Uganda.',
+                'footer_text' => 'Crafting innovative software solutions for a digital-first world. Based in Kireka Namugongo Road, Kampala, Uganda. P.O BOX 118290.',
                 'default_seo_title' => 'TechTower Innovations Inc',
                 'default_seo_description' => 'TechTower Inc delivers premium software, product strategy, and automation to help teams launch faster, engage users, and stay ahead of change.',
                 'default_og_image_path' => null,
@@ -96,8 +96,8 @@ class SiteSettingSeeder extends Seeder
                 ],
                 'home_portfolio_intro' => [
                     'label' => 'Portfolio',
-                    'heading' => 'Latest case files from our delivery vault.',
-                    'subheading' => 'Two of our most recent builds, designed like the case file folders you saw in the inspiration screenshots.',
+                    'heading' => 'Latest projects we have delivered.',
+                    'subheading' => 'Two of our most recent projects, built with performance, clarity, and long-term scale in mind.',
                 ],
                 'home_services_intro' => [
                     'label' => 'Services',
@@ -205,13 +205,13 @@ class SiteSettingSeeder extends Seeder
                     'body' => 'Book a discovery call and get a tailored roadmap, timeline, and delivery plan from our product team.',
                     'primary_cta_label' => 'Get a Quote',
                     'primary_cta_href' => '/contact#get-quote',
-                    'secondary_cta_label' => 'View Case Files',
+                    'secondary_cta_label' => 'View Projects',
                     'secondary_cta_href' => '/portfolio',
                 ],
                 'about_header' => [
                     'badge_text' => 'Our Story',
                     'headline' => 'Pioneering digital solutions in Africa.',
-                    'subheadline' => 'TechTower Innovations is a Kampala-based software development company dedicated to crafting exceptional digital experiences that drive progress and empower businesses across the continent and beyond.',
+                    'subheadline' => 'TechTower Innovations is a Kireka Namugongo Road, Kampala-based software development company dedicated to crafting exceptional digital experiences that drive progress and empower businesses across the continent and beyond.',
                 ],
                 'about_story' => [
                     'heading' => 'From Vision to Reality',
@@ -222,7 +222,7 @@ class SiteSettingSeeder extends Seeder
                     'cta_label' => 'Partner With Us',
                     'cta_href' => '/contact',
                     'image_url' => 'https://images.unsplash.com/photo-1637622124152-33adfabcc923',
-                    'image_alt' => 'Modern office space in Kampala, Uganda with a diverse team of TechTower software developers collaborating',
+                    'image_alt' => 'Modern office space in Kireka Namugongo Road, Kampala, Uganda with a diverse team of TechTower software developers collaborating',
                 ],
                 'about_principles' => [
                     'section_heading' => 'Our Guiding Principles',
@@ -316,7 +316,7 @@ class SiteSettingSeeder extends Seeder
                 ],
                 'portfolio_page' => [
                     'header_label' => 'Portfolio vault',
-                    'header_title' => 'Case files that show how we deliver outcomes.',
+                    'header_title' => 'Projects that show how we deliver outcomes.',
                     'header_subtitle' => 'A selection of projects crafted with performance, clarity, and long-term scale in mind.',
                     'cta_heading' => 'Have a project in mind?',
                     'cta_body' => "Let's map the right delivery plan and build something extraordinary together.",
@@ -363,8 +363,8 @@ class SiteSettingSeeder extends Seeder
                     [
                         'icon_key' => 'building',
                         'title' => 'Our Office',
-                        'content' => 'Innovation Hub, Kampala, Uganda',
-                        'href' => 'https://maps.google.com/?q=Innovation+Hub,+Kampala,+Uganda',
+                        'content' => 'Kireka Namugongo Road, Kampala, Uganda (P.O BOX 118290)',
+                        'href' => 'https://maps.google.com/?q=Kireka+Namugongo+Road,+Kampala,+Uganda',
                         'aria_label' => 'View TechTower office location',
                     ],
                     [

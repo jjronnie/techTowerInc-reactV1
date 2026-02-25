@@ -1,64 +1,20 @@
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import React, { createContext, useContext, useEffect } from 'react';
 
 const ThemeProviderContext = createContext(undefined);
 
 export function ThemeProvider({
   children,
-  defaultTheme = 'system',
-  storageKey = 'techtower-theme',
   ...props
 }) {
-  const [theme, setTheme] = useState(() => {
-    try {
-      const storedTheme = localStorage.getItem(storageKey);
-      return storedTheme || defaultTheme;
-    } catch (e) {
-      console.error("Failed to read theme from localStorage", e);
-      return defaultTheme;
-    }
-  });
-
-  const applyTheme = useCallback((currentTheme) => {
+  useEffect(() => {
     const root = window.document.documentElement;
-    root.classList.remove('light', 'dark');
-
-    let effectiveTheme = currentTheme;
-    if (currentTheme === 'system') {
-      effectiveTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
-        ? 'dark'
-        : 'light';
-    }
-    root.classList.add(effectiveTheme);
+    root.classList.remove('light');
+    root.classList.add('dark');
   }, []);
 
-  useEffect(() => {
-    applyTheme(theme);
-  }, [theme, applyTheme]);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    
-    const handleChange = () => {
-      if (theme === 'system') {
-        applyTheme('system');
-      }
-    };
-
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, [theme, applyTheme]);
-
-
   const value = {
-    theme,
-    setTheme: (newTheme) => {
-      try {
-        localStorage.setItem(storageKey, newTheme);
-      } catch (e) {
-        console.error("Failed to save theme to localStorage", e);
-      }
-      setTheme(newTheme);
-    },
+    theme: 'dark',
+    setTheme: () => {},
   };
 
   return (

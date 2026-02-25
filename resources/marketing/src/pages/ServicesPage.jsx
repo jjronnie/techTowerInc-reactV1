@@ -66,7 +66,27 @@ const ServicesPage = () => {
       <section className="next-section-padding pt-0">
         <div className="next-container">
           {loading && (
-            <div className="text-sm text-muted-foreground">Loading services...</div>
+            <div className="grid md:grid-cols-1 gap-8 md:gap-10">
+              {Array.from({ length: 3 }).map((_, index) => (
+                <div key={`service-skeleton-${index}`} className="next-card p-6 md:p-8">
+                  <div className="flex flex-col md:flex-row md:items-start">
+                    <div className="shimmer w-12 h-12 rounded-xl mb-4 md:mb-0 md:mr-6" />
+                    <div className="flex-grow space-y-3">
+                      <div className="shimmer h-6 w-1/3 rounded" />
+                      <div className="shimmer h-4 w-full rounded" />
+                      <div className="shimmer h-4 w-5/6 rounded" />
+                      <div className="shimmer h-3 w-1/4 rounded mt-4" />
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {Array.from({ length: 4 }).map((__, featureIndex) => (
+                          <div key={`feature-skeleton-${featureIndex}`} className="shimmer h-3 rounded" />
+                        ))}
+                      </div>
+                      <div className="shimmer h-8 w-40 rounded mt-4" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
           {error && (
             <div className="text-sm text-red-400">Unable to load services right now.</div>

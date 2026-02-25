@@ -103,7 +103,7 @@ const PrivacyPolicyPage = () => {
             <ul className="list-none space-y-1">
               <li>By email: <a href="mailto:info@techtowerinc.com">info@techtowerinc.com</a></li>
               <li>By phone: +256 703 283 529</li>
-              <li>By mail: TechTower Innovations Inc., Innovation Hub, Kampala, Uganda.</li>
+              <li>By mail: TechTower Innovations Inc., Kireka Namugongo Road, Kampala, Uganda. P.O BOX 118290.</li>
             </ul>
           </motion.div>
         </div>

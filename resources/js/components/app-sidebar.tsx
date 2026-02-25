@@ -2,6 +2,7 @@ import { Link, usePage } from '@inertiajs/react';
 import {
     BookOpen,
     Folder,
+    Inbox,
     LayoutGrid,
     ListChecks,
     Package,
@@ -28,6 +29,7 @@ import { index as servicesIndex } from '@/routes/admin/services';
 import { index as portfoliosIndex } from '@/routes/admin/portfolios';
 import { index as productsIndex } from '@/routes/admin/products';
 import { index as postsIndex } from '@/routes/admin/posts';
+import { index as contactSubmissionsIndex } from '@/routes/admin/contact-submissions';
 import { index as usersIndex } from '@/routes/admin/users';
 import { edit as siteSettingsEdit } from '@/routes/admin/site-settings';
 
@@ -74,6 +76,11 @@ export function AppSidebar() {
             title: 'Posts',
             href: postsIndex(),
             icon: PenSquare,
+        },
+        {
+            title: 'Contact Submissions',
+            href: contactSubmissionsIndex(),
+            icon: Inbox,
         },
         {
             title: 'Users',

@@ -14,8 +14,32 @@ const ServiceShowPage = () => {
   if (loading) {
     return (
       <div className="bg-background text-foreground pt-28 pb-16">
-        <div className="next-container">
-          <p className="text-muted-foreground">Loading service...</p>
+        <div className="next-container space-y-6">
+          <div className="shimmer h-4 w-32 rounded mx-auto" />
+          <div className="shimmer h-10 w-2/3 rounded mx-auto" />
+          <div className="shimmer h-5 w-3/4 rounded mx-auto" />
+          <div className="flex flex-wrap gap-4 justify-center">
+            <div className="shimmer h-10 w-40 rounded-full" />
+            <div className="shimmer h-10 w-32 rounded-full" />
+          </div>
+          <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
+            <div className="next-card space-y-4">
+              <div className="shimmer h-5 w-1/2 rounded" />
+              <div className="shimmer h-4 w-full rounded" />
+              <div className="shimmer h-4 w-5/6 rounded" />
+              <div className="space-y-2">
+                {Array.from({ length: 4 }).map((_, index) => (
+                  <div key={`deliverable-${index}`} className="shimmer h-4 w-3/4 rounded" />
+                ))}
+              </div>
+            </div>
+            <div className="next-card space-y-4">
+              <div className="shimmer h-5 w-1/2 rounded" />
+              <div className="shimmer h-6 w-2/3 rounded" />
+              <div className="shimmer h-4 w-full rounded" />
+              <div className="shimmer h-4 w-5/6 rounded" />
+            </div>
+          </div>
         </div>
       </div>
     );

@@ -32,7 +32,7 @@ const PortfolioPage = () => {
             {pageCopy.header_label || 'Portfolio vault'}
           </span>
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-semibold tracking-tight mb-6 text-balance">
-            {pageCopy.header_title || 'Case files that show how we deliver outcomes.'}
+            {pageCopy.header_title || 'Projects that show how we deliver outcomes.'}
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground text-balance">
             {pageCopy.header_subtitle || 'A selection of projects crafted with performance, clarity, and long-term scale in mind.'}
@@ -43,7 +43,17 @@ const PortfolioPage = () => {
       <section className="next-section-padding pt-0">
         <div className="next-container">
           {loading && (
-            <div className="text-sm text-muted-foreground">Loading portfolio...</div>
+            <div className="grid gap-8 lg:grid-cols-2">
+              {Array.from({ length: 2 }).map((_, index) => (
+                <div key={`portfolio-skeleton-${index}`} className="next-card space-y-4">
+                  <div className="shimmer h-56 w-full rounded" />
+                  <div className="shimmer h-5 w-1/2 rounded" />
+                  <div className="shimmer h-4 w-5/6 rounded" />
+                  <div className="shimmer h-4 w-2/3 rounded" />
+                  <div className="shimmer h-8 w-32 rounded" />
+                </div>
+              ))}
+            </div>
           )}
           {error && (
             <div className="text-sm text-red-400">Unable to load portfolio right now.</div>

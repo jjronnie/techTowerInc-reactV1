@@ -46,16 +46,27 @@ const PortfolioPreviewSection = () => {
             {intro.label || 'Portfolio'}
           </span>
           <h2 className="text-3xl md:text-4xl font-semibold mt-3 mb-4 text-foreground">
-            {intro.heading || 'Latest case files from our delivery vault.'}
+            {intro.heading || 'Latest projects we have delivered.'}
           </h2>
           <p className="text-lg text-muted-foreground text-balance">
             {intro.subheading ||
-              'Two of our most recent builds, designed like the case file folders you saw in the inspiration screenshots.'}
+              'Two of our most recent projects, built with performance, clarity, and long-term scale in mind.'}
           </p>
         </motion.div>
 
         {loading && (
-          <div className="text-sm text-muted-foreground">Loading portfolio...</div>
+          <div className="flex flex-nowrap gap-6 overflow-x-auto pb-6">
+            {Array.from({ length: 2 }).map((_, index) => (
+              <div key={`portfolio-preview-skeleton-${index}`} className="min-w-[320px] sm:min-w-[420px] lg:flex-1">
+                <div className="next-card space-y-4">
+                  <div className="shimmer h-44 w-full rounded" />
+                  <div className="shimmer h-5 w-1/2 rounded" />
+                  <div className="shimmer h-4 w-5/6 rounded" />
+                  <div className="shimmer h-4 w-2/3 rounded" />
+                </div>
+              </div>
+            ))}
+          </div>
         )}
         {error && (
           <div className="text-sm text-red-400">Unable to load portfolio right now.</div>

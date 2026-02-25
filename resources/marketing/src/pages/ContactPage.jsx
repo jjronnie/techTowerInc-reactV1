@@ -1,17 +1,36 @@
-
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
 import { Mail, Phone, MapPin, MessageSquare, Send, Building, Clock } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
+import { useApi } from '@/hooks/useApi';
+import { buildApiUrl } from '@/lib/api';
 import Seo from '@/components/Seo';
+
+const linkPattern = /(https?:\/\/|www\.)\S+|\b[a-z0-9.-]+\.[a-z]{2,}(?:\/\S*)?/i;
+
+const initialFormState = {
+  first_name: '',
+  last_name: '',
+  email: '',
+  phone: '',
+  service_id: '',
+  other_service_details: '',
+  message: '',
+  website: '',
+};
 
 const ContactPage = () => {
   const location = useLocation();
   const { settings } = useSiteSettings();
   const header = settings?.contact_header || {};
+  const { data: servicesData, loading: servicesLoading } = useApi('/services');
+  const services = useMemo(() => servicesData?.data ?? [], [servicesData]);
+  const [formData, setFormData] = useState(initialFormState);
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (location.hash === '#get-quote') {
@@ -22,14 +41,172 @@ const ContactPage = () => {
     }
   }, [location]);
 
-  const handleContactSubmit = (e) => {
-    e.preventDefault();
-    toast({
-      title: "Message Sent!",
-      description: "Thank you for reaching out. We'll get back to you within 24 business hours.",
-      className: "bg-primary text-primary-foreground border-primary",
+  const containsLink = (value) => {
+    if (!value) {
+      return false;
+    }
+
+    return linkPattern.test(value);
+  };
+
+  const validateForm = () => {
+    const nextErrors = {};
+
+    if (!formData.first_name.trim()) {
+      nextErrors.first_name = 'Please provide your first name.';
+    } else if (containsLink(formData.first_name)) {
+      nextErrors.first_name = 'Links are not allowed in this field.';
+    }
+
+    if (!formData.last_name.trim()) {
+      nextErrors.last_name = 'Please provide your last name.';
+    } else if (containsLink(formData.last_name)) {
+      nextErrors.last_name = 'Links are not allowed in this field.';
+    }
+
+    if (!formData.email.trim()) {
+      nextErrors.email = 'Please provide your email address.';
+    }
+
+    const normalizedPhone = formData.phone.replace(/\s+/g, '');
+    if (!normalizedPhone) {
+      nextErrors.phone = 'Please provide a phone or WhatsApp number.';
+    } else if (!/^\+\d{7,15}$/.test(normalizedPhone)) {
+      nextErrors.phone = 'Phone number must start with a country code, for example +256.';
+    } else if (containsLink(formData.phone)) {
+      nextErrors.phone = 'Links are not allowed in this field.';
+    }
+
+    if (!formData.service_id) {
+      nextErrors.service_id = 'Please select a service or choose Other.';
+    }
+
+    if (formData.service_id === 'other') {
+      if (!formData.other_service_details.trim()) {
+        nextErrors.other_service_details = 'Please provide details for the service you need.';
+      } else if (containsLink(formData.other_service_details)) {
+        nextErrors.other_service_details = 'Links are not allowed in this field.';
+      }
+    }
+
+    if (!formData.message.trim()) {
+      nextErrors.message = 'Please tell us about your project.';
+    } else if (containsLink(formData.message)) {
+      nextErrors.message = 'Links are not allowed in this field.';
+    }
+
+    return nextErrors;
+  };
+
+  const handleChange = (field) => (event) => {
+    const value = event.target.value;
+
+    setFormData((prev) => {
+      const nextState = {
+        ...prev,
+        [field]: value,
+      };
+
+      if (field === 'service_id' && value !== 'other') {
+        nextState.other_service_details = '';
+      }
+
+      return nextState;
     });
-    e.target.reset();
+  };
+
+  const handleContactSubmit = async (event) => {
+    event.preventDefault();
+
+    const validationErrors = validateForm();
+    setErrors(validationErrors);
+
+    if (Object.keys(validationErrors).length > 0) {
+      toast({
+        title: 'Please check the form.',
+        description: 'Fix the highlighted fields and try again.',
+      });
+      return;
+    }
+
+    const normalizedPhone = formData.phone.replace(/\s+/g, '');
+    const isOther = formData.service_id === 'other';
+
+    const payload = {
+      first_name: formData.first_name.trim(),
+      last_name: formData.last_name.trim(),
+      email: formData.email.trim(),
+      phone: normalizedPhone,
+      service_id: isOther ? null : Number(formData.service_id),
+      other_service_details: isOther ? formData.other_service_details.trim() : null,
+      message: formData.message.trim(),
+      website: formData.website,
+    };
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch(buildApiUrl('/contact-submissions'), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        credentials: 'same-origin',
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok || response.status !== 201) {
+        const errorBody = await response
+          .json()
+          .catch(() => ({ message: 'Request failed.' }));
+
+        if (response.status === 422 && errorBody?.errors) {
+          const normalizedErrors = Object.entries(errorBody.errors).reduce(
+            (acc, [field, messages]) => ({
+              ...acc,
+              [field]: Array.isArray(messages) ? messages[0] : messages,
+            }),
+            {},
+          );
+          setErrors(normalizedErrors);
+        }
+
+        let message = 'We could not send your message. Please try again.';
+
+        if (response.status === 422) {
+          message = 'Please fix the highlighted fields and try again.';
+        } else if (response.status === 429) {
+          message = 'Too many submissions. Please wait a moment and try again.';
+        } else if (response.status >= 500) {
+          message = 'We are having trouble sending your message right now. Please try again later.';
+        } else if (errorBody?.message) {
+          message = errorBody.message;
+        }
+
+        throw new Error(message);
+      }
+
+      toast({
+        title: 'Message Sent!',
+        description:
+          "Thank you for reaching out. We'll get back to you within 24 business hours.",
+        className: 'bg-primary text-primary-foreground border-primary',
+      });
+      setFormData(initialFormState);
+      setErrors({});
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'We could not send your message. Please try again.';
+      toast({
+        title: 'Submission failed.',
+        description: message,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const fadeInProps = (delay = 0, x = 0, y = 0) => ({
@@ -53,7 +230,7 @@ const ContactPage = () => {
     { icon_key: 'mail', title: "Email Us", content: "info@techtowerinc.com", href: "mailto:info@techtowerinc.com", aria_label: "Email TechTower Innovations" },
     { icon_key: 'phone', title: "Call Us", content: "+256 703 283 529", href: "tel:+256703283529", aria_label: "Call TechTower Innovations" },
     { icon_key: 'message-square', title: "WhatsApp", content: "Chat with us", href: "https://wa.me/256703283529", aria_label: "Message TechTower on WhatsApp" },
-    { icon_key: 'building', title: "Our Office", content: "Innovation Hub, Kampala, Uganda", href: "https://maps.google.com/?q=Innovation+Hub,+Kampala,+Uganda", aria_label: "View TechTower office location" },
+    { icon_key: 'building', title: "Our Office", content: "Kireka Namugongo Road, Kampala, Uganda (P.O BOX 118290)", href: "https://maps.google.com/?q=Kireka+Namugongo+Road,+Kampala,+Uganda", aria_label: "View TechTower office location" },
     { icon_key: 'clock', title: "Business Hours", content: "Mon - Fri, 9 AM - 5 PM (EAT)", href: null, aria_label: "TechTower business hours" },
   ];
 
@@ -140,30 +317,156 @@ const ContactPage = () => {
             >
               <form onSubmit={handleContactSubmit} className="next-card p-6 md:p-8">
                 <h2 className="text-2xl font-semibold text-foreground mb-6">Send Us a Message or Request a Quote</h2>
+                <input
+                  type="text"
+                  name="website"
+                  value={formData.website}
+                  onChange={handleChange('website')}
+                  autoComplete="off"
+                  tabIndex={-1}
+                  aria-hidden="true"
+                  className="sr-only"
+                />
                 <div className="grid sm:grid-cols-2 gap-x-6 gap-y-5 mb-5">
                   <div>
                     <label htmlFor="firstName" className="block text-sm font-medium text-muted-foreground mb-1.5">First Name</label>
-                    <input type="text" id="firstName" name="firstName" className="next-input" placeholder="e.g. Jjuuko" required aria-label="First Name" />
+                    <input
+                      type="text"
+                      id="firstName"
+                      name="first_name"
+                      className="next-input"
+                      placeholder="e.g. Jjuuko"
+                      value={formData.first_name}
+                      onChange={handleChange('first_name')}
+                      required
+                      aria-label="First Name"
+                      aria-invalid={!!errors.first_name}
+                    />
+                    {errors.first_name && (
+                      <p className="mt-1 text-xs text-destructive">{errors.first_name}</p>
+                    )}
                   </div>
                   <div>
                     <label htmlFor="lastName" className="block text-sm font-medium text-muted-foreground mb-1.5">Last Name</label>
-                    <input type="text" id="lastName" name="lastName" className="next-input" placeholder="e.g. Ronald" required aria-label="Last Name" />
+                    <input
+                      type="text"
+                      id="lastName"
+                      name="last_name"
+                      className="next-input"
+                      placeholder="e.g. Ronald"
+                      value={formData.last_name}
+                      onChange={handleChange('last_name')}
+                      required
+                      aria-label="Last Name"
+                      aria-invalid={!!errors.last_name}
+                    />
+                    {errors.last_name && (
+                      <p className="mt-1 text-xs text-destructive">{errors.last_name}</p>
+                    )}
                   </div>
                 </div>
                 <div className="mb-5">
                   <label htmlFor="email" className="block text-sm font-medium text-muted-foreground mb-1.5">Email Address</label>
-                  <input type="email" id="email" name="email" className="next-input" placeholder="you@example.com" required aria-label="Email Address"/>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    className="next-input"
+                    placeholder="you@example.com"
+                    value={formData.email}
+                    onChange={handleChange('email')}
+                    required
+                    aria-label="Email Address"
+                    aria-invalid={!!errors.email}
+                  />
+                  {errors.email && (
+                    <p className="mt-1 text-xs text-destructive">{errors.email}</p>
+                  )}
                 </div>
                 <div className="mb-5">
-                  <label htmlFor="subject" className="block text-sm font-medium text-muted-foreground mb-1.5">Subject / Service Interested In</label>
-                  <input type="text" id="subject" name="subject" className="next-input" placeholder="e.g., Web Development Quote, AI Consultation" required aria-label="Subject or Service Interested In" />
+                  <label htmlFor="phone" className="block text-sm font-medium text-muted-foreground mb-1.5">Phone / WhatsApp</label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    className="next-input"
+                    placeholder="e.g. +256703283529"
+                    value={formData.phone}
+                    onChange={handleChange('phone')}
+                    required
+                    aria-label="Phone or WhatsApp"
+                    aria-invalid={!!errors.phone}
+                  />
+                  {errors.phone && (
+                    <p className="mt-1 text-xs text-destructive">{errors.phone}</p>
+                  )}
                 </div>
+                <div className="mb-5">
+                  <label htmlFor="service" className="block text-sm font-medium text-muted-foreground mb-1.5">Service Interested In</label>
+                  <select
+                    id="service"
+                    name="service_id"
+                    className="next-input"
+                    value={formData.service_id}
+                    onChange={handleChange('service_id')}
+                    required
+                    aria-label="Service Interested In"
+                    aria-invalid={!!errors.service_id}
+                  >
+                    <option value="" disabled>
+                      {servicesLoading ? 'Loading services...' : 'Select a service'}
+                    </option>
+                    {services.map((service) => (
+                      <option key={service.id} value={service.id}>
+                        {service.title}
+                      </option>
+                    ))}
+                    <option value="other">Other</option>
+                  </select>
+                  {errors.service_id && (
+                    <p className="mt-1 text-xs text-destructive">{errors.service_id}</p>
+                  )}
+                </div>
+                {formData.service_id === 'other' && (
+                  <div className="mb-5">
+                    <label htmlFor="otherService" className="block text-sm font-medium text-muted-foreground mb-1.5">Tell us more</label>
+                    <input
+                      type="text"
+                      id="otherService"
+                      name="other_service_details"
+                      className="next-input"
+                      placeholder="Describe the service you need"
+                      value={formData.other_service_details}
+                      onChange={handleChange('other_service_details')}
+                      required
+                      aria-label="Other service details"
+                      aria-invalid={!!errors.other_service_details}
+                    />
+                    {errors.other_service_details && (
+                      <p className="mt-1 text-xs text-destructive">{errors.other_service_details}</p>
+                    )}
+                  </div>
+                )}
                 <div className="mb-6">
                   <label htmlFor="message" className="block text-sm font-medium text-muted-foreground mb-1.5">Your Message / Project Details</label>
-                  <textarea id="message" name="message" rows={5} className="next-input min-h-[120px]" placeholder="Tell us about your project, requirements, or any questions you have..." required aria-label="Your Message or Project Details"></textarea>
+                  <textarea
+                    id="message"
+                    name="message"
+                    rows={5}
+                    className="next-input min-h-[120px]"
+                    placeholder="Tell us about your project, requirements, or any questions you have..."
+                    value={formData.message}
+                    onChange={handleChange('message')}
+                    required
+                    aria-label="Your Message or Project Details"
+                    aria-invalid={!!errors.message}
+                  ></textarea>
+                  {errors.message && (
+                    <p className="mt-1 text-xs text-destructive">{errors.message}</p>
+                  )}
                 </div>
-                <Button type="submit" size="lg" className="w-full next-button">
-                  Send Message / Get Quote <Send className="ml-2 w-4 h-4" />
+                <Button type="submit" size="lg" className="w-full next-button" disabled={isSubmitting}>
+                  {isSubmitting ? 'Submitting...' : 'Send Message / Get Quote'} <Send className="ml-2 w-4 h-4" />
                 </Button>
               </form>
             </motion.div>

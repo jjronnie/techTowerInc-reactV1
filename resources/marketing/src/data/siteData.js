@@ -2,7 +2,7 @@ export const portfolioProjects = [
   {
     id: 'nova-pay',
     title: 'NovaPay Mobile Banking',
-    label: 'Case File',
+    label: 'Project',
     summary:
       'A secure, always-on banking suite with real-time transfers, biometrics, and multi-currency wallets.',
     resultLabel: 'Results',
@@ -14,7 +14,7 @@ export const portfolioProjects = [
   {
     id: 'storyframe',
     title: 'Storyframe Creator Hub',
-    label: 'Case File',
+    label: 'Project',
     summary:
       'A creator marketplace with AI-assisted editing, smart asset search, and streamlined licensing.',
     resultLabel: 'Results',
@@ -26,7 +26,7 @@ export const portfolioProjects = [
   {
     id: 'orbit-fulfillment',
     title: 'Orbit Fulfillment Cloud',
-    label: 'Case File',
+    label: 'Project',
     summary:
       'End-to-end logistics platform unifying warehouse automation, routing, and predictive inventory.',
     resultLabel: 'Results',
@@ -38,7 +38,7 @@ export const portfolioProjects = [
   {
     id: 'pulse-care',
     title: 'PulseCare Patient Portal',
-    label: 'Case File',
+    label: 'Project',
     summary:
       'A secure care platform for appointments, telehealth, and lab results with HIPAA-ready workflows.',
     resultLabel: 'Results',
@@ -50,7 +50,7 @@ export const portfolioProjects = [
   {
     id: 'learnsphere',
     title: 'Learnsphere LMS',
-    label: 'Case File',
+    label: 'Project',
     summary:
       'Interactive learning with adaptive paths, cohort analytics, and credentialing.',
     resultLabel: 'Results',
@@ -62,7 +62,7 @@ export const portfolioProjects = [
   {
     id: 'marketforge',
     title: 'MarketForge Commerce',
-    label: 'Case File',
+    label: 'Project',
     summary:
       'Composable commerce stack delivering personalized storefronts and frictionless checkout.',
     resultLabel: 'Results',

@@ -43,7 +43,20 @@ const ProductsPage = () => {
       <section className="next-section-padding pt-0">
         <div className="next-container">
           {loading && (
-            <div className="text-sm text-muted-foreground">Loading products...</div>
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+              {Array.from({ length: 3 }).map((_, index) => (
+                <div key={`product-skeleton-${index}`} className="next-card space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="shimmer h-3 w-20 rounded" />
+                    <div className="shimmer h-5 w-5 rounded" />
+                  </div>
+                  <div className="shimmer h-5 w-2/3 rounded" />
+                  <div className="shimmer h-4 w-full rounded" />
+                  <div className="shimmer h-4 w-5/6 rounded" />
+                  <div className="shimmer h-8 w-32 rounded" />
+                </div>
+              ))}
+            </div>
           )}
           {error && (
             <div className="text-sm text-red-400">Unable to load products right now.</div>

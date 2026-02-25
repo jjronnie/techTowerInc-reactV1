@@ -21,7 +21,7 @@ class AdminUserSeeder extends Seeder
         }
 
         User::query()->updateOrCreate(
-            ['email' => 'admin@techtower.ug'],
+            ['email' => 'ronaldjjuuko7@gmail.com'],
             [
                 'name' => 'TechTower Admin',
                 'password' => Hash::make($password),
