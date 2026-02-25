@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UpdateSiteSettingRequest;
+use App\Http\Resources\SiteSettingResource;
 use App\Models\SiteSetting;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
@@ -17,7 +18,7 @@ class SiteSettingController extends Controller
         $settings = SiteSetting::query()->firstOrFail();
 
         return Inertia::render('admin/site-settings/edit', [
-            'settings' => $settings,
+            'settings' => SiteSettingResource::make($settings),
         ]);
     }
 

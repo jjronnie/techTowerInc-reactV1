@@ -212,6 +212,9 @@ type ContactSocial = {
 type SiteSettings = {
     site_name: string;
     tagline: string | null;
+    logo_url?: string | null;
+    favicon_url?: string | null;
+    default_og_image_url?: string | null;
     company_email: string | null;
     company_phone: string | null;
     company_address: string | null;
@@ -409,6 +412,12 @@ const normalizeContactSocial = (
 });
 
 export default function EditSiteSettings({ settings }: EditSiteSettingsProps) {
+    const media = {
+        logo_url: settings.logo_url ?? null,
+        favicon_url: settings.favicon_url ?? null,
+        default_og_image_url: settings.default_og_image_url ?? null,
+    };
+
     const form = useForm<SiteSettingsFormData>({
         site_name: settings.site_name ?? '',
         tagline: settings.tagline ?? '',
@@ -537,6 +546,7 @@ export default function EditSiteSettings({ settings }: EditSiteSettingsProps) {
                     data={form.data}
                     errors={form.errors}
                     processing={form.processing}
+                    media={media}
                     onChange={form.setData}
                     onSubmit={submit}
                     submitLabel="Save Settings"

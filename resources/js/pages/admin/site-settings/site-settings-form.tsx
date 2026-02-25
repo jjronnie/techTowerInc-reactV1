@@ -248,10 +248,17 @@ export type SiteSettingsFormData = {
     contact_social: ContactSocial;
 };
 
+type SiteSettingMedia = {
+    logo_url: string | null;
+    favicon_url: string | null;
+    default_og_image_url: string | null;
+};
+
 type SiteSettingsFormProps = {
     data: SiteSettingsFormData;
     errors: Record<string, string>;
     processing: boolean;
+    media: SiteSettingMedia;
     onChange: (key: keyof SiteSettingsFormData, value: SiteSettingsFormData[keyof SiteSettingsFormData]) => void;
     onSubmit: (event: FormEvent<HTMLFormElement>) => void;
     submitLabel: string;
@@ -274,6 +281,7 @@ export default function SiteSettingsForm({
     data,
     errors,
     processing,
+    media,
     onChange,
     onSubmit,
     submitLabel,
@@ -746,6 +754,17 @@ export default function SiteSettingsForm({
                         }
                     />
                     <InputError message={errors.logo} />
+                    {media.logo_url && !data.remove_logo && (
+                        <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                            <img
+                                src={media.logo_url}
+                                alt="Current logo"
+                                className="h-12 w-12 rounded-md border border-border/60 bg-background object-contain p-1"
+                                loading="lazy"
+                            />
+                            <span>Current logo</span>
+                        </div>
+                    )}
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -770,6 +789,17 @@ export default function SiteSettingsForm({
                         }
                     />
                     <InputError message={errors.favicon} />
+                    {media.favicon_url && !data.remove_favicon && (
+                        <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                            <img
+                                src={media.favicon_url}
+                                alt="Current favicon"
+                                className="h-10 w-10 rounded-md border border-border/60 bg-background object-contain p-1"
+                                loading="lazy"
+                            />
+                            <span>Current favicon</span>
+                        </div>
+                    )}
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -918,6 +948,17 @@ export default function SiteSettingsForm({
                         }
                     />
                     <InputError message={errors.default_og_image} />
+                    {media.default_og_image_url && !data.remove_default_og_image && (
+                        <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                            <img
+                                src={media.default_og_image_url}
+                                alt="Current SEO image"
+                                className="h-20 w-32 rounded-md border border-border/60 bg-background object-cover"
+                                loading="lazy"
+                            />
+                            <span>Current SEO image</span>
+                        </div>
+                    )}
                 </div>
 
                 <div className="flex items-center gap-2">
