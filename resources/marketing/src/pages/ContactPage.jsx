@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
@@ -19,7 +19,7 @@ const initialFormState = {
   service_id: '',
   other_service_details: '',
   message: '',
-  company_website: '',
+  contact_time: '',
 };
 
 const ContactPage = () => {
@@ -31,6 +31,8 @@ const ContactPage = () => {
   const [formData, setFormData] = useState(initialFormState);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
+  const submissionLock = useRef(false);
 
   useEffect(() => {
     if (location.hash === '#get-quote') {
@@ -113,13 +115,32 @@ const ContactPage = () => {
 
       return nextState;
     });
+
+    setErrors((prev) => {
+      if (!prev[field]) {
+        return prev;
+      }
+
+      const nextErrors = { ...prev };
+      delete nextErrors[field];
+      return nextErrors;
+    });
+
+    if (submitError) {
+      setSubmitError('');
+    }
   };
 
   const handleContactSubmit = async (event) => {
     event.preventDefault();
 
+    if (submissionLock.current) {
+      return;
+    }
+
     const validationErrors = validateForm();
     setErrors(validationErrors);
+    setSubmitError('');
 
     if (Object.keys(validationErrors).length > 0) {
       toast({
@@ -140,9 +161,10 @@ const ContactPage = () => {
       service_id: isOther ? null : Number(formData.service_id),
       other_service_details: isOther ? formData.other_service_details.trim() : null,
       message: formData.message.trim(),
-      company_website: formData.company_website,
+      contact_time: formData.contact_time,
     };
 
+    submissionLock.current = true;
     setIsSubmitting(true);
 
     try {
@@ -176,6 +198,8 @@ const ContactPage = () => {
 
         if (response.status === 422) {
           message = 'Please fix the highlighted fields and try again.';
+        } else if (response.status === 202) {
+          message = 'We could not verify your submission. Please refresh the page and try again.';
         } else if (response.status === 429) {
           message = 'Too many submissions. Please wait a moment and try again.';
         } else if (response.status >= 500) {
@@ -195,17 +219,20 @@ const ContactPage = () => {
       });
       setFormData(initialFormState);
       setErrors({});
+      setSubmitError('');
     } catch (error) {
       const message =
         error instanceof Error
           ? error.message
           : 'We could not send your message. Please try again.';
+      setSubmitError(message);
       toast({
         title: 'Submission failed.',
         description: message,
       });
     } finally {
       setIsSubmitting(false);
+      submissionLock.current = false;
     }
   };
 
@@ -315,14 +342,25 @@ const ContactPage = () => {
               className="lg:col-span-3"
               {...fadeInProps(0.4, 20, 0)}
             >
-              <form onSubmit={handleContactSubmit} className="next-card p-6 md:p-8">
+              <form onSubmit={handleContactSubmit} className="next-card p-6 md:p-8" aria-busy={isSubmitting}>
                 <h2 className="text-2xl font-semibold text-foreground mb-6">Send Us a Message or Request a Quote</h2>
+                {submitError && (
+                  <div
+                    className="mb-5 rounded-lg border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive"
+                    role="alert"
+                  >
+                    {submitError}
+                  </div>
+                )}
                 <input
                   type="text"
-                  name="company_website"
-                  value={formData.company_website}
-                  onChange={handleChange('company_website')}
-                  autoComplete="new-password"
+                  name="contact_time"
+                  value={formData.contact_time}
+                  onChange={handleChange('contact_time')}
+                  autoComplete="off"
+                  inputMode="none"
+                  data-1p-ignore="true"
+                  data-lpignore="true"
                   tabIndex={-1}
                   aria-hidden="true"
                   className="sr-only"

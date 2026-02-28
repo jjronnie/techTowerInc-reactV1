@@ -76,7 +76,7 @@ const ProductsPage = () => {
                   <h2 className="text-xl font-semibold mb-3 text-foreground">{product.name}</h2>
                   <p className="text-sm text-muted-foreground mb-6">{product.short_description || product.description}</p>
                   <Button asChild variant="outline" size="sm" className="next-button-outline text-xs">
-                    <Link to="/contact">Request a Demo</Link>
+                    <Link to={product.slug ? `/products/${product.slug}` : '/products'}>View details</Link>
                   </Button>
                 </motion.div>
               ))}

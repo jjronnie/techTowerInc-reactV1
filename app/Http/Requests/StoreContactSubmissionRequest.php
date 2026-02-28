@@ -31,6 +31,7 @@ class StoreContactSubmissionRequest extends FormRequest
             'other_service_details' => ['nullable', 'string', 'max:2000', new NoLinks, 'required_without:service_id'],
             'message' => ['required', 'string', 'max:5000', new NoLinks],
             'company_website' => ['nullable', 'string'],
+            'contact_time' => ['nullable', 'string'],
         ];
     }
 

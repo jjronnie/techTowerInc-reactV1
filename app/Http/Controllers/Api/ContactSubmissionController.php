@@ -16,13 +16,13 @@ class ContactSubmissionController extends Controller
     {
         $data = $request->validated();
 
-        if (! empty($data['company_website'] ?? null)) {
+        if (! empty($data['contact_time'] ?? null)) {
             return response()->json([
                 'message' => 'Submission received.',
             ], 202);
         }
 
-        unset($data['company_website']);
+        unset($data['company_website'], $data['contact_time']);
 
         $submission = ContactSubmission::query()->create($data);
         $submission->load('service');

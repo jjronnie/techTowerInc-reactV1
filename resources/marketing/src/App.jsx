@@ -12,6 +12,7 @@ import PortfolioPage from '@/pages/PortfolioPage';
 import PortfolioShowPage from '@/pages/PortfolioShowPage';
 import BlogPage from '@/pages/BlogPage';
 import ProductsPage from '@/pages/ProductsPage';
+import ProductShowPage from '@/pages/ProductShowPage';
 import ServiceShowPage from '@/pages/ServiceShowPage';
 import SinglePostPage from '@/pages/SinglePostPage';
 import PrivacyPolicyPage from '@/pages/PrivacyPolicyPage';
@@ -157,6 +158,17 @@ const App = () => {
                   transition={pageTransition}
                 >
                   <ProductsPage />
+                </motion.div>
+              } />
+              <Route path="/products/:slug" element={
+                <motion.div
+                  initial="initial"
+                  animate="in"
+                  exit="out"
+                  variants={pageVariants}
+                  transition={pageTransition}
+                >
+                  <ProductShowPage />
                 </motion.div>
               } />
               <Route path="/blog" element={
