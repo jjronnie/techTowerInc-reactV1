@@ -28,6 +28,9 @@ type Portfolio = {
     is_featured: boolean;
     is_active: boolean;
     gallery_images: string[] | null;
+    featured_image_url: string | null;
+    og_image_url: string | null;
+    gallery_image_urls: { path: string; url: string }[] | null;
     seo_title: string | null;
     seo_description: string | null;
     seo_keywords: string | null;
@@ -95,7 +98,9 @@ export default function EditPortfolio({ portfolio }: EditPortfolioProps) {
                     submitLabel="Save Changes"
                     showExistingGallery
                     showRemoveImage
-                    availableGalleryImages={portfolio.gallery_images ?? []}
+                    availableGalleryImages={portfolio.gallery_image_urls ?? []}
+                    currentFeaturedImageUrl={portfolio.featured_image_url}
+                    currentOgImageUrl={portfolio.og_image_url}
                 />
             </div>
         </AppLayout>

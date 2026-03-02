@@ -64,7 +64,13 @@ class PortfolioController extends Controller
 
         $portfolio = Portfolio::query()->create($data);
 
-        return redirect()->route('admin.portfolios.edit', $portfolio);
+        return redirect()
+            ->route('admin.portfolios.edit', $portfolio)
+            ->with('notification', [
+                'type' => 'success',
+                'title' => 'Portfolio created',
+                'message' => "\"{$portfolio->title}\" is ready to edit.",
+            ]);
     }
 
     /**
@@ -80,6 +86,24 @@ class PortfolioController extends Controller
      */
     public function edit(Portfolio $portfolio): Response
     {
+        $portfolio->setAttribute(
+            'featured_image_url',
+            $portfolio->featured_image_path ? Storage::url($portfolio->featured_image_path) : null,
+        );
+        $portfolio->setAttribute(
+            'og_image_url',
+            $portfolio->og_image_path ? Storage::url($portfolio->og_image_path) : null,
+        );
+        $portfolio->setAttribute(
+            'gallery_image_urls',
+            collect($portfolio->gallery_images ?? [])
+                ->map(fn (string $path): array => [
+                    'path' => $path,
+                    'url' => Storage::url($path),
+                ])
+                ->all(),
+        );
+
         return Inertia::render('admin/portfolios/edit', [
             'portfolio' => $portfolio,
         ]);
@@ -162,7 +186,13 @@ class PortfolioController extends Controller
 
         $portfolio->update($data);
 
-        return redirect()->route('admin.portfolios.edit', $portfolio);
+        return redirect()
+            ->route('admin.portfolios.edit', $portfolio)
+            ->with('notification', [
+                'type' => 'success',
+                'title' => 'Portfolio updated',
+                'message' => "Changes to \"{$portfolio->title}\" have been saved.",
+            ]);
     }
 
     /**
@@ -184,6 +214,12 @@ class PortfolioController extends Controller
 
         $portfolio->delete();
 
-        return redirect()->route('admin.portfolios.index');
+        return redirect()
+            ->route('admin.portfolios.index')
+            ->with('notification', [
+                'type' => 'success',
+                'title' => 'Portfolio deleted',
+                'message' => 'The portfolio item has been removed.',
+            ]);
     }
 }

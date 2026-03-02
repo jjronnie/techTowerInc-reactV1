@@ -256,6 +256,7 @@ type SiteSettingMedia = {
 
 type SiteSettingsFormProps = {
     data: SiteSettingsFormData;
+    current: SiteSettingsFormData;
     errors: Record<string, string>;
     processing: boolean;
     media: SiteSettingMedia;
@@ -277,8 +278,29 @@ const IconHelperLink = () => (
     </a>
 );
 
+const formatCurrentValue = (value: string | number | null | undefined) => {
+    if (value === null || value === undefined || value === '') {
+        return 'Not set';
+    }
+
+    return String(value);
+};
+
+const CurrentValue = ({
+    value,
+    label = 'Current',
+}: {
+    value: string | number | null | undefined;
+    label?: string;
+}) => (
+    <p className="text-xs text-muted-foreground">
+        {label}: {formatCurrentValue(value)}
+    </p>
+);
+
 export default function SiteSettingsForm({
     data,
+    current,
     errors,
     processing,
     media,
@@ -670,6 +692,9 @@ export default function SiteSettingsForm({
 
                 <div className="grid gap-2">
                     <Label htmlFor="site_name">Site name</Label>
+                    <p className="text-sm text-muted-foreground">
+                        Used in the header, footer, and default SEO title.
+                    </p>
                     <Input
                         id="site_name"
                         value={data.site_name}
@@ -679,10 +704,14 @@ export default function SiteSettingsForm({
                         required
                     />
                     <InputError message={errors.site_name} />
+                    <CurrentValue value={current.site_name} />
                 </div>
 
                 <div className="grid gap-2">
                     <Label htmlFor="tagline">Tagline</Label>
+                    <p className="text-sm text-muted-foreground">
+                        Short phrase that appears near the logo and hero.
+                    </p>
                     <Input
                         id="tagline"
                         value={data.tagline}
@@ -691,10 +720,14 @@ export default function SiteSettingsForm({
                         }
                     />
                     <InputError message={errors.tagline} />
+                    <CurrentValue value={current.tagline} />
                 </div>
 
                 <div className="grid gap-2">
                     <Label htmlFor="company_email">Company email</Label>
+                    <p className="text-sm text-muted-foreground">
+                        Used on contact and footer sections.
+                    </p>
                     <Input
                         id="company_email"
                         type="email"
@@ -704,10 +737,14 @@ export default function SiteSettingsForm({
                         }
                     />
                     <InputError message={errors.company_email} />
+                    <CurrentValue value={current.company_email} />
                 </div>
 
                 <div className="grid gap-2">
                     <Label htmlFor="company_phone">Company phone</Label>
+                    <p className="text-sm text-muted-foreground">
+                        Primary contact number shown on the site.
+                    </p>
                     <Input
                         id="company_phone"
                         value={data.company_phone}
@@ -716,10 +753,14 @@ export default function SiteSettingsForm({
                         }
                     />
                     <InputError message={errors.company_phone} />
+                    <CurrentValue value={current.company_phone} />
                 </div>
 
                 <div className="grid gap-2">
                     <Label htmlFor="company_address">Company address</Label>
+                    <p className="text-sm text-muted-foreground">
+                        Office location displayed on the contact page.
+                    </p>
                     <Input
                         id="company_address"
                         value={data.company_address}
@@ -728,10 +769,14 @@ export default function SiteSettingsForm({
                         }
                     />
                     <InputError message={errors.company_address} />
+                    <CurrentValue value={current.company_address} />
                 </div>
 
                 <div className="grid gap-2">
                     <Label htmlFor="footer_text">Footer text</Label>
+                    <p className="text-sm text-muted-foreground">
+                        Displayed in the global footer.
+                    </p>
                     <Textarea
                         id="footer_text"
                         value={data.footer_text}
@@ -741,10 +786,14 @@ export default function SiteSettingsForm({
                         rows={3}
                     />
                     <InputError message={errors.footer_text} />
+                    <CurrentValue value={current.footer_text} />
                 </div>
 
                 <div className="grid gap-2">
                     <Label htmlFor="logo">Logo</Label>
+                    <p className="text-sm text-muted-foreground">
+                        Upload a square or horizontal logo for the header.
+                    </p>
                     <Input
                         id="logo"
                         type="file"
@@ -780,6 +829,9 @@ export default function SiteSettingsForm({
 
                 <div className="grid gap-2">
                     <Label htmlFor="favicon">Favicon</Label>
+                    <p className="text-sm text-muted-foreground">
+                        Small icon shown in browser tabs.
+                    </p>
                     <Input
                         id="favicon"
                         type="file"
@@ -822,6 +874,10 @@ export default function SiteSettingsForm({
                     <p className="text-sm text-muted-foreground">
                         Social profiles used in the footer and contact page.
                     </p>
+                    <CurrentValue
+                        value={current.social_links.length}
+                        label="Current links"
+                    />
                 </div>
 
                 <div className="flex justify-end">
@@ -834,6 +890,9 @@ export default function SiteSettingsForm({
                     <div key={`social-${index}`} className="grid gap-3 md:grid-cols-2">
                         <div className="grid gap-2">
                             <Label>Name</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Display name for the social network.
+                            </p>
                             <Input
                                 value={link.name}
                                 onChange={(event) =>
@@ -844,9 +903,13 @@ export default function SiteSettingsForm({
                                     )
                                 }
                             />
+                            <CurrentValue value={current.social_links[index]?.name} />
                         </div>
                         <div className="grid gap-2">
                             <Label>URL</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Full link to the profile.
+                            </p>
                             <Input
                                 value={link.href}
                                 onChange={(event) =>
@@ -857,9 +920,13 @@ export default function SiteSettingsForm({
                                     )
                                 }
                             />
+                            <CurrentValue value={current.social_links[index]?.href} />
                         </div>
                         <div className="grid gap-2">
                             <Label>Icon key</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Lucide icon name (lowercase).
+                            </p>
                             <Input
                                 value={link.icon_key}
                                 onChange={(event) =>
@@ -871,9 +938,13 @@ export default function SiteSettingsForm({
                                 }
                             />
                             <IconHelperLink />
+                            <CurrentValue value={current.social_links[index]?.icon_key} />
                         </div>
                         <div className="grid gap-2">
                             <Label>Label</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Accessible label for screen readers.
+                            </p>
                             <Input
                                 value={link.label}
                                 onChange={(event) =>
@@ -884,6 +955,7 @@ export default function SiteSettingsForm({
                                     )
                                 }
                             />
+                            <CurrentValue value={current.social_links[index]?.label} />
                         </div>
                         <div className="flex justify-end md:col-span-2">
                             <Button
@@ -909,6 +981,9 @@ export default function SiteSettingsForm({
 
                 <div className="grid gap-2">
                     <Label htmlFor="default_seo_title">Default SEO title</Label>
+                    <p className="text-sm text-muted-foreground">
+                        Used when pages do not set a custom title.
+                    </p>
                     <Input
                         id="default_seo_title"
                         value={data.default_seo_title}
@@ -917,12 +992,16 @@ export default function SiteSettingsForm({
                         }
                     />
                     <InputError message={errors.default_seo_title} />
+                    <CurrentValue value={current.default_seo_title} />
                 </div>
 
                 <div className="grid gap-2">
                     <Label htmlFor="default_seo_description">
                         Default SEO description
                     </Label>
+                    <p className="text-sm text-muted-foreground">
+                        Used for meta descriptions when none are provided.
+                    </p>
                     <Textarea
                         id="default_seo_description"
                         value={data.default_seo_description}
@@ -932,10 +1011,14 @@ export default function SiteSettingsForm({
                         rows={3}
                     />
                     <InputError message={errors.default_seo_description} />
+                    <CurrentValue value={current.default_seo_description} />
                 </div>
 
                 <div className="grid gap-2">
                     <Label htmlFor="default_og_image">Default SEO image</Label>
+                    <p className="text-sm text-muted-foreground">
+                        Used for social sharing when no image is set.
+                    </p>
                     <Input
                         id="default_og_image"
                         type="file"
@@ -981,6 +1064,10 @@ export default function SiteSettingsForm({
                     <p className="text-sm text-muted-foreground">
                         Optional verification tags (Google, Bing, etc.).
                     </p>
+                    <CurrentValue
+                        value={current.verification_meta.length}
+                        label="Current tags"
+                    />
                 </div>
 
                 <div className="flex justify-end">
@@ -997,6 +1084,9 @@ export default function SiteSettingsForm({
                     <div key={`meta-${index}`} className="grid gap-3 md:grid-cols-2">
                         <div className="grid gap-2">
                             <Label>Name</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Meta tag name (e.g. google-site-verification).
+                            </p>
                             <Input
                                 value={meta.name}
                                 onChange={(event) =>
@@ -1007,9 +1097,13 @@ export default function SiteSettingsForm({
                                     )
                                 }
                             />
+                            <CurrentValue value={current.verification_meta[index]?.name} />
                         </div>
                         <div className="grid gap-2">
                             <Label>Content</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Verification token provided by the service.
+                            </p>
                             <Input
                                 value={meta.content}
                                 onChange={(event) =>
@@ -1020,6 +1114,7 @@ export default function SiteSettingsForm({
                                     )
                                 }
                             />
+                            <CurrentValue value={current.verification_meta[index]?.content} />
                         </div>
                         <div className="flex justify-end md:col-span-2">
                             <Button
@@ -1048,6 +1143,9 @@ export default function SiteSettingsForm({
                     <div className="grid gap-3 md:grid-cols-2">
                         <div className="grid gap-2">
                             <Label>Badge text</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Short label above the headline.
+                            </p>
                             <Input
                                 value={data.home_hero.badge_text}
                                 onChange={(event) =>
@@ -1057,9 +1155,13 @@ export default function SiteSettingsForm({
                                     })
                                 }
                             />
+                            <CurrentValue value={current.home_hero.badge_text} />
                         </div>
                         <div className="grid gap-2">
                             <Label>Headline</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Main hero headline.
+                            </p>
                             <Input
                                 value={data.home_hero.headline}
                                 onChange={(event) =>
@@ -1069,9 +1171,13 @@ export default function SiteSettingsForm({
                                     })
                                 }
                             />
+                            <CurrentValue value={current.home_hero.headline} />
                         </div>
                         <div className="grid gap-2">
                             <Label>Headline emphasis</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Highlighted word or phrase.
+                            </p>
                             <Input
                                 value={data.home_hero.headline_emphasis}
                                 onChange={(event) =>
@@ -1081,9 +1187,13 @@ export default function SiteSettingsForm({
                                     })
                                 }
                             />
+                            <CurrentValue value={current.home_hero.headline_emphasis} />
                         </div>
                         <div className="grid gap-2">
                             <Label>Subheadline</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Supporting copy below the headline.
+                            </p>
                             <Textarea
                                 value={data.home_hero.subheadline}
                                 onChange={(event) =>
@@ -1094,9 +1204,13 @@ export default function SiteSettingsForm({
                                 }
                                 rows={2}
                             />
+                            <CurrentValue value={current.home_hero.subheadline} />
                         </div>
                         <div className="grid gap-2">
                             <Label>Primary CTA label</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Text for the main button.
+                            </p>
                             <Input
                                 value={data.home_hero.primary_cta_label}
                                 onChange={(event) =>
@@ -1106,9 +1220,13 @@ export default function SiteSettingsForm({
                                     })
                                 }
                             />
+                            <CurrentValue value={current.home_hero.primary_cta_label} />
                         </div>
                         <div className="grid gap-2">
                             <Label>Primary CTA link</Label>
+                            <p className="text-sm text-muted-foreground">
+                                URL for the main button.
+                            </p>
                             <Input
                                 value={data.home_hero.primary_cta_href}
                                 onChange={(event) =>
@@ -1118,9 +1236,13 @@ export default function SiteSettingsForm({
                                     })
                                 }
                             />
+                            <CurrentValue value={current.home_hero.primary_cta_href} />
                         </div>
                         <div className="grid gap-2">
                             <Label>Secondary CTA label</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Text for the secondary button.
+                            </p>
                             <Input
                                 value={data.home_hero.secondary_cta_label}
                                 onChange={(event) =>
@@ -1130,9 +1252,13 @@ export default function SiteSettingsForm({
                                     })
                                 }
                             />
+                            <CurrentValue value={current.home_hero.secondary_cta_label} />
                         </div>
                         <div className="grid gap-2">
                             <Label>Secondary CTA link</Label>
+                            <p className="text-sm text-muted-foreground">
+                                URL for the secondary button.
+                            </p>
                             <Input
                                 value={data.home_hero.secondary_cta_href}
                                 onChange={(event) =>
@@ -1142,6 +1268,7 @@ export default function SiteSettingsForm({
                                     })
                                 }
                             />
+                            <CurrentValue value={current.home_hero.secondary_cta_href} />
                         </div>
                     </div>
                     <InputError message={errors.home_hero} />
@@ -1154,6 +1281,10 @@ export default function SiteSettingsForm({
                             Add stat
                         </Button>
                     </div>
+                    <CurrentValue
+                        value={current.home_stats.length}
+                        label="Current stats"
+                    />
                     {data.home_stats.map((stat, index) => (
                         <div
                             key={`stat-${index}`}
@@ -1161,6 +1292,9 @@ export default function SiteSettingsForm({
                         >
                             <div className="grid gap-2">
                                 <Label>Number</Label>
+                                <p className="text-sm text-muted-foreground">
+                                    Numeric value shown in the stat.
+                                </p>
                                 <Input
                                     value={stat.number}
                                     onChange={(event) =>
@@ -1171,9 +1305,13 @@ export default function SiteSettingsForm({
                                         )
                                     }
                                 />
+                                <CurrentValue value={current.home_stats[index]?.number} />
                             </div>
                             <div className="grid gap-2">
                                 <Label>Label</Label>
+                                <p className="text-sm text-muted-foreground">
+                                    Description under the number.
+                                </p>
                                 <Input
                                     value={stat.label}
                                     onChange={(event) =>
@@ -1184,9 +1322,13 @@ export default function SiteSettingsForm({
                                         )
                                     }
                                 />
+                                <CurrentValue value={current.home_stats[index]?.label} />
                             </div>
                             <div className="grid gap-2">
                                 <Label>Suffix</Label>
+                                <p className="text-sm text-muted-foreground">
+                                    Optional suffix (%, +, etc.).
+                                </p>
                                 <Input
                                     value={stat.suffix}
                                     onChange={(event) =>
@@ -1197,9 +1339,13 @@ export default function SiteSettingsForm({
                                         )
                                     }
                                 />
+                                <CurrentValue value={current.home_stats[index]?.suffix} />
                             </div>
                             <div className="grid gap-2">
                                 <Label>Decimals</Label>
+                                <p className="text-sm text-muted-foreground">
+                                    Decimal precision for the number.
+                                </p>
                                 <Input
                                     value={stat.decimals}
                                     onChange={(event) =>
@@ -1210,6 +1356,7 @@ export default function SiteSettingsForm({
                                         )
                                     }
                                 />
+                                <CurrentValue value={current.home_stats[index]?.decimals} />
                             </div>
                             <div className="flex justify-end md:col-span-4">
                                 <Button
@@ -1236,6 +1383,10 @@ export default function SiteSettingsForm({
                             Add technology
                         </Button>
                     </div>
+                    <CurrentValue
+                        value={current.home_technologies.length}
+                        label="Current technologies"
+                    />
                     {data.home_technologies.map((tech, index) => (
                         <div
                             key={`tech-${index}`}
@@ -1243,6 +1394,9 @@ export default function SiteSettingsForm({
                         >
                             <div className="grid gap-2">
                                 <Label>Name</Label>
+                                <p className="text-sm text-muted-foreground">
+                                    Technology name shown on the home page.
+                                </p>
                                 <Input
                                     value={tech.name}
                                     onChange={(event) =>
@@ -1253,9 +1407,13 @@ export default function SiteSettingsForm({
                                         )
                                     }
                                 />
+                                <CurrentValue value={current.home_technologies[index]?.name} />
                             </div>
                             <div className="grid gap-2">
                                 <Label>Icon key</Label>
+                                <p className="text-sm text-muted-foreground">
+                                    Lucide icon name for the tech.
+                                </p>
                                 <Input
                                     value={tech.icon_key}
                                     onChange={(event) =>
@@ -1267,6 +1425,7 @@ export default function SiteSettingsForm({
                                     }
                                 />
                                 <IconHelperLink />
+                                <CurrentValue value={current.home_technologies[index]?.icon_key} />
                             </div>
                             <div className="flex justify-end md:col-span-2">
                                 <Button
@@ -1287,6 +1446,9 @@ export default function SiteSettingsForm({
                     <div className="grid gap-3 md:grid-cols-2">
                         <div className="grid gap-2">
                             <Label>Label</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Short kicker above the heading.
+                            </p>
                             <Input
                                 value={data.home_portfolio_intro.label}
                                 onChange={(event) =>
@@ -1296,9 +1458,13 @@ export default function SiteSettingsForm({
                                     })
                                 }
                             />
+                            <CurrentValue value={current.home_portfolio_intro.label} />
                         </div>
                         <div className="grid gap-2">
                             <Label>Heading</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Main title for the portfolio section.
+                            </p>
                             <Input
                                 value={data.home_portfolio_intro.heading}
                                 onChange={(event) =>
@@ -1308,9 +1474,13 @@ export default function SiteSettingsForm({
                                     })
                                 }
                             />
+                            <CurrentValue value={current.home_portfolio_intro.heading} />
                         </div>
                         <div className="grid gap-2 md:col-span-2">
                             <Label>Subheading</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Supporting sentence for the section.
+                            </p>
                             <Textarea
                                 value={data.home_portfolio_intro.subheading}
                                 onChange={(event) =>
@@ -1321,6 +1491,7 @@ export default function SiteSettingsForm({
                                 }
                                 rows={2}
                             />
+                            <CurrentValue value={current.home_portfolio_intro.subheading} />
                         </div>
                     </div>
                 </div>
@@ -1330,6 +1501,9 @@ export default function SiteSettingsForm({
                     <div className="grid gap-3 md:grid-cols-2">
                         <div className="grid gap-2">
                             <Label>Label</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Short kicker above the heading.
+                            </p>
                             <Input
                                 value={data.home_services_intro.label}
                                 onChange={(event) =>
@@ -1339,9 +1513,13 @@ export default function SiteSettingsForm({
                                     })
                                 }
                             />
+                            <CurrentValue value={current.home_services_intro.label} />
                         </div>
                         <div className="grid gap-2">
                             <Label>Heading</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Main title for the services section.
+                            </p>
                             <Input
                                 value={data.home_services_intro.heading}
                                 onChange={(event) =>
@@ -1351,9 +1529,13 @@ export default function SiteSettingsForm({
                                     })
                                 }
                             />
+                            <CurrentValue value={current.home_services_intro.heading} />
                         </div>
                         <div className="grid gap-2 md:col-span-2">
                             <Label>Subheading</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Supporting sentence for the section.
+                            </p>
                             <Textarea
                                 value={data.home_services_intro.subheading}
                                 onChange={(event) =>
@@ -1364,6 +1546,7 @@ export default function SiteSettingsForm({
                                 }
                                 rows={2}
                             />
+                            <CurrentValue value={current.home_services_intro.subheading} />
                         </div>
                     </div>
                 </div>
@@ -1379,9 +1562,16 @@ export default function SiteSettingsForm({
                             Add feature
                         </Button>
                     </div>
+                    <CurrentValue
+                        value={current.home_features.items.length}
+                        label="Current features"
+                    />
                     <div className="grid gap-3 md:grid-cols-2">
                         <div className="grid gap-2">
                             <Label>Label</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Small kicker above the features section.
+                            </p>
                             <Input
                                 value={data.home_features.label}
                                 onChange={(event) =>
@@ -1391,9 +1581,13 @@ export default function SiteSettingsForm({
                                     })
                                 }
                             />
+                            <CurrentValue value={current.home_features.label} />
                         </div>
                         <div className="grid gap-2">
                             <Label>Heading</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Main features section heading.
+                            </p>
                             <Input
                                 value={data.home_features.heading}
                                 onChange={(event) =>
@@ -1403,9 +1597,13 @@ export default function SiteSettingsForm({
                                     })
                                 }
                             />
+                            <CurrentValue value={current.home_features.heading} />
                         </div>
                         <div className="grid gap-2 md:col-span-2">
                             <Label>Subheading</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Supporting copy for the feature list.
+                            </p>
                             <Textarea
                                 value={data.home_features.subheading}
                                 onChange={(event) =>
@@ -1416,6 +1614,7 @@ export default function SiteSettingsForm({
                                 }
                                 rows={2}
                             />
+                            <CurrentValue value={current.home_features.subheading} />
                         </div>
                     </div>
 
@@ -1426,6 +1625,9 @@ export default function SiteSettingsForm({
                         >
                             <div className="grid gap-2">
                                 <Label>Icon key</Label>
+                                <p className="text-sm text-muted-foreground">
+                                    Lucide icon name for the feature.
+                                </p>
                                 <Input
                                     value={feature.icon_key}
                                     onChange={(event) =>
@@ -1437,9 +1639,13 @@ export default function SiteSettingsForm({
                                     }
                                 />
                                 <IconHelperLink />
+                                <CurrentValue value={current.home_features.items[index]?.icon_key} />
                             </div>
                             <div className="grid gap-2">
                                 <Label>Title</Label>
+                                <p className="text-sm text-muted-foreground">
+                                    Short feature name.
+                                </p>
                                 <Input
                                     value={feature.title}
                                     onChange={(event) =>
@@ -1450,9 +1656,13 @@ export default function SiteSettingsForm({
                                         )
                                     }
                                 />
+                                <CurrentValue value={current.home_features.items[index]?.title} />
                             </div>
                             <div className="grid gap-2">
                                 <Label>Description</Label>
+                                <p className="text-sm text-muted-foreground">
+                                    One-sentence description.
+                                </p>
                                 <Input
                                     value={feature.description}
                                     onChange={(event) =>
@@ -1463,6 +1673,7 @@ export default function SiteSettingsForm({
                                         )
                                     }
                                 />
+                                <CurrentValue value={current.home_features.items[index]?.description} />
                             </div>
                             <div className="flex justify-end md:col-span-3">
                                 <Button
@@ -1488,9 +1699,16 @@ export default function SiteSettingsForm({
                             Add testimonial
                         </Button>
                     </div>
+                    <CurrentValue
+                        value={current.home_testimonials.items.length}
+                        label="Current testimonials"
+                    />
                     <div className="grid gap-3 md:grid-cols-2">
                         <div className="grid gap-2">
                             <Label>Label</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Small kicker above the testimonials.
+                            </p>
                             <Input
                                 value={data.home_testimonials.label}
                                 onChange={(event) =>
@@ -1500,9 +1718,13 @@ export default function SiteSettingsForm({
                                     })
                                 }
                             />
+                            <CurrentValue value={current.home_testimonials.label} />
                         </div>
                         <div className="grid gap-2">
                             <Label>Heading</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Main testimonials heading.
+                            </p>
                             <Input
                                 value={data.home_testimonials.heading}
                                 onChange={(event) =>
@@ -1512,9 +1734,13 @@ export default function SiteSettingsForm({
                                     })
                                 }
                             />
+                            <CurrentValue value={current.home_testimonials.heading} />
                         </div>
                         <div className="grid gap-2 md:col-span-2">
                             <Label>Subheading</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Supporting sentence for the section.
+                            </p>
                             <Textarea
                                 value={data.home_testimonials.subheading}
                                 onChange={(event) =>
@@ -1525,6 +1751,7 @@ export default function SiteSettingsForm({
                                 }
                                 rows={2}
                             />
+                            <CurrentValue value={current.home_testimonials.subheading} />
                         </div>
                     </div>
 
@@ -1535,6 +1762,9 @@ export default function SiteSettingsForm({
                         >
                             <div className="grid gap-2">
                                 <Label>Name</Label>
+                                <p className="text-sm text-muted-foreground">
+                                    Person giving the testimonial.
+                                </p>
                                 <Input
                                     value={item.name}
                                     onChange={(event) =>
@@ -1545,9 +1775,13 @@ export default function SiteSettingsForm({
                                         )
                                     }
                                 />
+                                <CurrentValue value={current.home_testimonials.items[index]?.name} />
                             </div>
                             <div className="grid gap-2">
                                 <Label>Company</Label>
+                                <p className="text-sm text-muted-foreground">
+                                    Organization or role.
+                                </p>
                                 <Input
                                     value={item.company}
                                     onChange={(event) =>
@@ -1558,9 +1792,13 @@ export default function SiteSettingsForm({
                                         )
                                     }
                                 />
+                                <CurrentValue value={current.home_testimonials.items[index]?.company} />
                             </div>
                             <div className="grid gap-2">
                                 <Label>Rating</Label>
+                                <p className="text-sm text-muted-foreground">
+                                    Score out of 5.
+                                </p>
                                 <Input
                                     value={item.rating}
                                     onChange={(event) =>
@@ -1571,9 +1809,13 @@ export default function SiteSettingsForm({
                                         )
                                     }
                                 />
+                                <CurrentValue value={current.home_testimonials.items[index]?.rating} />
                             </div>
                             <div className="grid gap-2 md:col-span-3">
                                 <Label>Testimonial text</Label>
+                                <p className="text-sm text-muted-foreground">
+                                    Short quote shown on the site.
+                                </p>
                                 <Textarea
                                     value={item.text}
                                     onChange={(event) =>
@@ -1585,9 +1827,13 @@ export default function SiteSettingsForm({
                                     }
                                     rows={2}
                                 />
+                                <CurrentValue value={current.home_testimonials.items[index]?.text} />
                             </div>
                             <div className="grid gap-2 md:col-span-3">
                                 <Label>Avatar URL</Label>
+                                <p className="text-sm text-muted-foreground">
+                                    Optional headshot image link.
+                                </p>
                                 <Input
                                     value={item.avatar_url}
                                     onChange={(event) =>
@@ -1598,6 +1844,7 @@ export default function SiteSettingsForm({
                                         )
                                     }
                                 />
+                                <CurrentValue value={current.home_testimonials.items[index]?.avatar_url} />
                             </div>
                             <div className="flex justify-end md:col-span-3">
                                 <Button
@@ -1623,9 +1870,16 @@ export default function SiteSettingsForm({
                             Add FAQ
                         </Button>
                     </div>
+                    <CurrentValue
+                        value={current.home_faqs.items.length}
+                        label="Current FAQs"
+                    />
                     <div className="grid gap-3 md:grid-cols-2">
                         <div className="grid gap-2">
                             <Label>Label</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Small kicker above the FAQ section.
+                            </p>
                             <Input
                                 value={data.home_faqs.label}
                                 onChange={(event) =>
@@ -1635,9 +1889,13 @@ export default function SiteSettingsForm({
                                     })
                                 }
                             />
+                            <CurrentValue value={current.home_faqs.label} />
                         </div>
                         <div className="grid gap-2">
                             <Label>Subheading</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Supporting sentence for the FAQ section.
+                            </p>
                             <Input
                                 value={data.home_faqs.subheading}
                                 onChange={(event) =>
@@ -1647,6 +1905,7 @@ export default function SiteSettingsForm({
                                     })
                                 }
                             />
+                            <CurrentValue value={current.home_faqs.subheading} />
                         </div>
                     </div>
 
@@ -1657,6 +1916,9 @@ export default function SiteSettingsForm({
                         >
                             <div className="grid gap-2">
                                 <Label>Question</Label>
+                                <p className="text-sm text-muted-foreground">
+                                    Short question shown in the accordion.
+                                </p>
                                 <Input
                                     value={item.question}
                                     onChange={(event) =>
@@ -1667,9 +1929,13 @@ export default function SiteSettingsForm({
                                         )
                                     }
                                 />
+                                <CurrentValue value={current.home_faqs.items[index]?.question} />
                             </div>
                             <div className="grid gap-2">
                                 <Label>Answer</Label>
+                                <p className="text-sm text-muted-foreground">
+                                    Concise answer shown on expand.
+                                </p>
                                 <Input
                                     value={item.answer}
                                     onChange={(event) =>
@@ -1680,6 +1946,7 @@ export default function SiteSettingsForm({
                                         )
                                     }
                                 />
+                                <CurrentValue value={current.home_faqs.items[index]?.answer} />
                             </div>
                             <div className="flex justify-end md:col-span-2">
                                 <Button
@@ -1699,6 +1966,9 @@ export default function SiteSettingsForm({
                     <div className="grid gap-3 md:grid-cols-2">
                         <div className="grid gap-2">
                             <Label>Icon key</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Icon displayed next to the CTA heading.
+                            </p>
                             <Input
                                 value={data.home_cta.icon_key}
                                 onChange={(event) =>
@@ -1709,9 +1979,13 @@ export default function SiteSettingsForm({
                                 }
                             />
                             <IconHelperLink />
+                            <CurrentValue value={current.home_cta.icon_key} />
                         </div>
                         <div className="grid gap-2">
                             <Label>Heading</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Main CTA heading.
+                            </p>
                             <Input
                                 value={data.home_cta.heading}
                                 onChange={(event) =>
@@ -1721,9 +1995,13 @@ export default function SiteSettingsForm({
                                     })
                                 }
                             />
+                            <CurrentValue value={current.home_cta.heading} />
                         </div>
                         <div className="grid gap-2 md:col-span-2">
                             <Label>Body</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Short supporting copy.
+                            </p>
                             <Textarea
                                 value={data.home_cta.body}
                                 onChange={(event) =>
@@ -1734,9 +2012,13 @@ export default function SiteSettingsForm({
                                 }
                                 rows={2}
                             />
+                            <CurrentValue value={current.home_cta.body} />
                         </div>
                         <div className="grid gap-2">
                             <Label>Primary CTA label</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Text for the main CTA button.
+                            </p>
                             <Input
                                 value={data.home_cta.primary_cta_label}
                                 onChange={(event) =>
@@ -1746,9 +2028,13 @@ export default function SiteSettingsForm({
                                     })
                                 }
                             />
+                            <CurrentValue value={current.home_cta.primary_cta_label} />
                         </div>
                         <div className="grid gap-2">
                             <Label>Primary CTA link</Label>
+                            <p className="text-sm text-muted-foreground">
+                                URL for the main CTA button.
+                            </p>
                             <Input
                                 value={data.home_cta.primary_cta_href}
                                 onChange={(event) =>
@@ -1758,9 +2044,13 @@ export default function SiteSettingsForm({
                                     })
                                 }
                             />
+                            <CurrentValue value={current.home_cta.primary_cta_href} />
                         </div>
                         <div className="grid gap-2">
                             <Label>Secondary CTA label</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Text for the secondary CTA button.
+                            </p>
                             <Input
                                 value={data.home_cta.secondary_cta_label}
                                 onChange={(event) =>
@@ -1770,9 +2060,13 @@ export default function SiteSettingsForm({
                                     })
                                 }
                             />
+                            <CurrentValue value={current.home_cta.secondary_cta_label} />
                         </div>
                         <div className="grid gap-2">
                             <Label>Secondary CTA link</Label>
+                            <p className="text-sm text-muted-foreground">
+                                URL for the secondary CTA button.
+                            </p>
                             <Input
                                 value={data.home_cta.secondary_cta_href}
                                 onChange={(event) =>
@@ -1782,6 +2076,7 @@ export default function SiteSettingsForm({
                                     })
                                 }
                             />
+                            <CurrentValue value={current.home_cta.secondary_cta_href} />
                         </div>
                     </div>
                 </div>
@@ -1800,6 +2095,9 @@ export default function SiteSettingsForm({
                     <div className="grid gap-3 md:grid-cols-2">
                         <div className="grid gap-2">
                             <Label>Badge text</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Small label above the about headline.
+                            </p>
                             <Input
                                 value={data.about_header.badge_text}
                                 onChange={(event) =>
@@ -1809,9 +2107,13 @@ export default function SiteSettingsForm({
                                     })
                                 }
                             />
+                            <CurrentValue value={current.about_header.badge_text} />
                         </div>
                         <div className="grid gap-2">
                             <Label>Headline</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Main heading for the about page.
+                            </p>
                             <Input
                                 value={data.about_header.headline}
                                 onChange={(event) =>
@@ -1821,9 +2123,13 @@ export default function SiteSettingsForm({
                                     })
                                 }
                             />
+                            <CurrentValue value={current.about_header.headline} />
                         </div>
                         <div className="grid gap-2 md:col-span-2">
                             <Label>Subheadline</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Supporting copy below the headline.
+                            </p>
                             <Textarea
                                 value={data.about_header.subheadline}
                                 onChange={(event) =>
@@ -1834,6 +2140,7 @@ export default function SiteSettingsForm({
                                 }
                                 rows={2}
                             />
+                            <CurrentValue value={current.about_header.subheadline} />
                         </div>
                     </div>
                 </div>
@@ -1849,9 +2156,16 @@ export default function SiteSettingsForm({
                             Add paragraph
                         </Button>
                     </div>
+                    <CurrentValue
+                        value={current.about_story.body_paragraphs.length}
+                        label="Current paragraphs"
+                    />
                     <div className="grid gap-3 md:grid-cols-2">
                         <div className="grid gap-2">
                             <Label>Heading</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Section heading for the story.
+                            </p>
                             <Input
                                 value={data.about_story.heading}
                                 onChange={(event) =>
@@ -1861,9 +2175,13 @@ export default function SiteSettingsForm({
                                     })
                                 }
                             />
+                            <CurrentValue value={current.about_story.heading} />
                         </div>
                         <div className="grid gap-2">
                             <Label>CTA label</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Button text for the story CTA.
+                            </p>
                             <Input
                                 value={data.about_story.cta_label}
                                 onChange={(event) =>
@@ -1873,9 +2191,13 @@ export default function SiteSettingsForm({
                                     })
                                 }
                             />
+                            <CurrentValue value={current.about_story.cta_label} />
                         </div>
                         <div className="grid gap-2">
                             <Label>CTA link</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Destination URL for the CTA button.
+                            </p>
                             <Input
                                 value={data.about_story.cta_href}
                                 onChange={(event) =>
@@ -1885,9 +2207,13 @@ export default function SiteSettingsForm({
                                     })
                                 }
                             />
+                            <CurrentValue value={current.about_story.cta_href} />
                         </div>
                         <div className="grid gap-2">
                             <Label>Image URL</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Hero image shown alongside the story.
+                            </p>
                             <Input
                                 value={data.about_story.image_url}
                                 onChange={(event) =>
@@ -1897,9 +2223,13 @@ export default function SiteSettingsForm({
                                     })
                                 }
                             />
+                            <CurrentValue value={current.about_story.image_url} />
                         </div>
                         <div className="grid gap-2">
                             <Label>Image alt text</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Accessibility text for the story image.
+                            </p>
                             <Input
                                 value={data.about_story.image_alt}
                                 onChange={(event) =>
@@ -1909,6 +2239,7 @@ export default function SiteSettingsForm({
                                     })
                                 }
                             />
+                            <CurrentValue value={current.about_story.image_alt} />
                         </div>
                     </div>
 
@@ -1925,6 +2256,7 @@ export default function SiteSettingsForm({
                                 }
                                 rows={2}
                             />
+                            <CurrentValue value={current.about_story.body_paragraphs[index]} />
                             <div className="flex justify-end">
                                 <Button
                                     type="button"
@@ -1949,9 +2281,16 @@ export default function SiteSettingsForm({
                             Add principle
                         </Button>
                     </div>
+                    <CurrentValue
+                        value={current.about_principles.items.length}
+                        label="Current principles"
+                    />
                     <div className="grid gap-3 md:grid-cols-2">
                         <div className="grid gap-2">
                             <Label>Section heading</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Heading above the principles list.
+                            </p>
                             <Input
                                 value={data.about_principles.section_heading}
                                 onChange={(event) =>
@@ -1961,9 +2300,13 @@ export default function SiteSettingsForm({
                                     })
                                 }
                             />
+                            <CurrentValue value={current.about_principles.section_heading} />
                         </div>
                         <div className="grid gap-2">
                             <Label>Section subheading</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Supporting copy for the section.
+                            </p>
                             <Input
                                 value={data.about_principles.section_subheading}
                                 onChange={(event) =>
@@ -1973,6 +2316,7 @@ export default function SiteSettingsForm({
                                     })
                                 }
                             />
+                            <CurrentValue value={current.about_principles.section_subheading} />
                         </div>
                     </div>
 
@@ -1983,6 +2327,9 @@ export default function SiteSettingsForm({
                         >
                             <div className="grid gap-2">
                                 <Label>Icon key</Label>
+                                <p className="text-sm text-muted-foreground">
+                                    Lucide icon name for the principle.
+                                </p>
                                 <Input
                                     value={item.icon_key}
                                     onChange={(event) =>
@@ -1994,9 +2341,13 @@ export default function SiteSettingsForm({
                                     }
                                 />
                                 <IconHelperLink />
+                                <CurrentValue value={current.about_principles.items[index]?.icon_key} />
                             </div>
                             <div className="grid gap-2">
                                 <Label>Title</Label>
+                                <p className="text-sm text-muted-foreground">
+                                    Principle name.
+                                </p>
                                 <Input
                                     value={item.title}
                                     onChange={(event) =>
@@ -2007,9 +2358,13 @@ export default function SiteSettingsForm({
                                         )
                                     }
                                 />
+                                <CurrentValue value={current.about_principles.items[index]?.title} />
                             </div>
                             <div className="grid gap-2">
                                 <Label>Description</Label>
+                                <p className="text-sm text-muted-foreground">
+                                    Short description of the principle.
+                                </p>
                                 <Input
                                     value={item.description}
                                     onChange={(event) =>
@@ -2020,6 +2375,7 @@ export default function SiteSettingsForm({
                                         )
                                     }
                                 />
+                                <CurrentValue value={current.about_principles.items[index]?.description} />
                             </div>
                             <div className="flex justify-end md:col-span-3">
                                 <Button
@@ -2045,6 +2401,10 @@ export default function SiteSettingsForm({
                             Add card
                         </Button>
                     </div>
+                    <CurrentValue
+                        value={current.about_cards.items.length}
+                        label="Current cards"
+                    />
                     {data.about_cards.items.map((item, index) => (
                         <div
                             key={`card-${index}`}
@@ -2052,6 +2412,9 @@ export default function SiteSettingsForm({
                         >
                             <div className="grid gap-2">
                                 <Label>Icon key</Label>
+                                <p className="text-sm text-muted-foreground">
+                                    Lucide icon name for the card.
+                                </p>
                                 <Input
                                     value={item.icon_key}
                                     onChange={(event) =>
@@ -2063,9 +2426,13 @@ export default function SiteSettingsForm({
                                     }
                                 />
                                 <IconHelperLink />
+                                <CurrentValue value={current.about_cards.items[index]?.icon_key} />
                             </div>
                             <div className="grid gap-2">
                                 <Label>Title</Label>
+                                <p className="text-sm text-muted-foreground">
+                                    Card heading.
+                                </p>
                                 <Input
                                     value={item.title}
                                     onChange={(event) =>
@@ -2076,9 +2443,13 @@ export default function SiteSettingsForm({
                                         )
                                     }
                                 />
+                                <CurrentValue value={current.about_cards.items[index]?.title} />
                             </div>
                             <div className="grid gap-2">
                                 <Label>Description</Label>
+                                <p className="text-sm text-muted-foreground">
+                                    Short supporting sentence.
+                                </p>
                                 <Input
                                     value={item.description}
                                     onChange={(event) =>
@@ -2089,6 +2460,7 @@ export default function SiteSettingsForm({
                                         )
                                     }
                                 />
+                                <CurrentValue value={current.about_cards.items[index]?.description} />
                             </div>
                             <div className="flex justify-end md:col-span-3">
                                 <Button
@@ -2114,9 +2486,16 @@ export default function SiteSettingsForm({
                             Add team member
                         </Button>
                     </div>
+                    <CurrentValue
+                        value={current.about_team.members.length}
+                        label="Current team members"
+                    />
                     <div className="grid gap-3 md:grid-cols-2">
                         <div className="grid gap-2">
                             <Label>Section heading</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Heading above the team list.
+                            </p>
                             <Input
                                 value={data.about_team.section_heading}
                                 onChange={(event) =>
@@ -2126,9 +2505,13 @@ export default function SiteSettingsForm({
                                     })
                                 }
                             />
+                            <CurrentValue value={current.about_team.section_heading} />
                         </div>
                         <div className="grid gap-2">
                             <Label>Section subheading</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Supporting copy under the heading.
+                            </p>
                             <Input
                                 value={data.about_team.section_subheading}
                                 onChange={(event) =>
@@ -2138,6 +2521,7 @@ export default function SiteSettingsForm({
                                     })
                                 }
                             />
+                            <CurrentValue value={current.about_team.section_subheading} />
                         </div>
                     </div>
 
@@ -2148,6 +2532,9 @@ export default function SiteSettingsForm({
                         >
                             <div className="grid gap-2">
                                 <Label>Name</Label>
+                                <p className="text-sm text-muted-foreground">
+                                    Team member name.
+                                </p>
                                 <Input
                                     value={member.name}
                                     onChange={(event) =>
@@ -2158,9 +2545,13 @@ export default function SiteSettingsForm({
                                         )
                                     }
                                 />
+                                <CurrentValue value={current.about_team.members[index]?.name} />
                             </div>
                             <div className="grid gap-2">
                                 <Label>Role</Label>
+                                <p className="text-sm text-muted-foreground">
+                                    Job title or role.
+                                </p>
                                 <Input
                                     value={member.role}
                                     onChange={(event) =>
@@ -2171,9 +2562,13 @@ export default function SiteSettingsForm({
                                         )
                                     }
                                 />
+                                <CurrentValue value={current.about_team.members[index]?.role} />
                             </div>
                             <div className="grid gap-2 md:col-span-2">
                                 <Label>Description</Label>
+                                <p className="text-sm text-muted-foreground">
+                                    Short bio or highlight.
+                                </p>
                                 <Textarea
                                     value={member.description}
                                     onChange={(event) =>
@@ -2185,9 +2580,13 @@ export default function SiteSettingsForm({
                                     }
                                     rows={2}
                                 />
+                                <CurrentValue value={current.about_team.members[index]?.description} />
                             </div>
                             <div className="grid gap-2">
                                 <Label>Image URL</Label>
+                                <p className="text-sm text-muted-foreground">
+                                    Headshot or avatar URL.
+                                </p>
                                 <Input
                                     value={member.image_url}
                                     onChange={(event) =>
@@ -2198,9 +2597,13 @@ export default function SiteSettingsForm({
                                         )
                                     }
                                 />
+                                <CurrentValue value={current.about_team.members[index]?.image_url} />
                             </div>
                             <div className="grid gap-2">
                                 <Label>Image alt</Label>
+                                <p className="text-sm text-muted-foreground">
+                                    Accessibility text for the image.
+                                </p>
                                 <Input
                                     value={member.image_alt}
                                     onChange={(event) =>
@@ -2211,6 +2614,7 @@ export default function SiteSettingsForm({
                                         )
                                     }
                                 />
+                                <CurrentValue value={current.about_team.members[index]?.image_alt} />
                             </div>
                             <div className="flex justify-end md:col-span-2">
                                 <Button
@@ -2230,6 +2634,9 @@ export default function SiteSettingsForm({
                     <div className="grid gap-3 md:grid-cols-2">
                     <div className="grid gap-2">
                         <Label>Icon key</Label>
+                        <p className="text-sm text-muted-foreground">
+                            Icon displayed next to the CTA heading.
+                        </p>
                         <Input
                             value={data.about_cta.icon_key}
                             onChange={(event) =>
@@ -2240,9 +2647,13 @@ export default function SiteSettingsForm({
                             }
                         />
                         <IconHelperLink />
+                        <CurrentValue value={current.about_cta.icon_key} />
                     </div>
                         <div className="grid gap-2">
                             <Label>Heading</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Main CTA heading.
+                            </p>
                             <Input
                                 value={data.about_cta.heading}
                                 onChange={(event) =>
@@ -2252,9 +2663,13 @@ export default function SiteSettingsForm({
                                     })
                                 }
                             />
+                            <CurrentValue value={current.about_cta.heading} />
                         </div>
                         <div className="grid gap-2 md:col-span-2">
                             <Label>Body</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Supporting copy for the CTA.
+                            </p>
                             <Textarea
                                 value={data.about_cta.body}
                                 onChange={(event) =>
@@ -2265,9 +2680,13 @@ export default function SiteSettingsForm({
                                 }
                                 rows={2}
                             />
+                            <CurrentValue value={current.about_cta.body} />
                         </div>
                         <div className="grid gap-2">
                             <Label>CTA label</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Text for the CTA button.
+                            </p>
                             <Input
                                 value={data.about_cta.cta_label}
                                 onChange={(event) =>
@@ -2277,9 +2696,13 @@ export default function SiteSettingsForm({
                                     })
                                 }
                             />
+                            <CurrentValue value={current.about_cta.cta_label} />
                         </div>
                         <div className="grid gap-2">
                             <Label>CTA link</Label>
+                            <p className="text-sm text-muted-foreground">
+                                URL for the CTA button.
+                            </p>
                             <Input
                                 value={data.about_cta.cta_href}
                                 onChange={(event) =>
@@ -2289,6 +2712,7 @@ export default function SiteSettingsForm({
                                     })
                                 }
                             />
+                            <CurrentValue value={current.about_cta.cta_href} />
                         </div>
                     </div>
                 </div>
@@ -2301,6 +2725,9 @@ export default function SiteSettingsForm({
                 <div className="grid gap-3 md:grid-cols-2">
                     <div className="grid gap-2">
                         <Label>Header label</Label>
+                        <p className="text-sm text-muted-foreground">
+                            Small kicker above the services header.
+                        </p>
                         <Input
                             value={data.services_page.header_label}
                             onChange={(event) =>
@@ -2310,9 +2737,13 @@ export default function SiteSettingsForm({
                                 })
                             }
                         />
+                        <CurrentValue value={current.services_page.header_label} />
                     </div>
                     <div className="grid gap-2">
                         <Label>Header title</Label>
+                        <p className="text-sm text-muted-foreground">
+                            Main services header title.
+                        </p>
                         <Input
                             value={data.services_page.header_title}
                             onChange={(event) =>
@@ -2322,9 +2753,13 @@ export default function SiteSettingsForm({
                                 })
                             }
                         />
+                        <CurrentValue value={current.services_page.header_title} />
                     </div>
                     <div className="grid gap-2 md:col-span-2">
                         <Label>Header subtitle</Label>
+                        <p className="text-sm text-muted-foreground">
+                            Supporting sentence under the header.
+                        </p>
                         <Textarea
                             value={data.services_page.header_subtitle}
                             onChange={(event) =>
@@ -2335,9 +2770,13 @@ export default function SiteSettingsForm({
                             }
                             rows={2}
                         />
+                        <CurrentValue value={current.services_page.header_subtitle} />
                     </div>
                     <div className="grid gap-2">
                         <Label>CTA heading</Label>
+                        <p className="text-sm text-muted-foreground">
+                            Call-to-action headline on the services page.
+                        </p>
                         <Input
                             value={data.services_page.cta_heading}
                             onChange={(event) =>
@@ -2347,9 +2786,13 @@ export default function SiteSettingsForm({
                                 })
                             }
                         />
+                        <CurrentValue value={current.services_page.cta_heading} />
                     </div>
                     <div className="grid gap-2">
                         <Label>CTA button label</Label>
+                        <p className="text-sm text-muted-foreground">
+                            Text for the CTA button.
+                        </p>
                         <Input
                             value={data.services_page.cta_button_label}
                             onChange={(event) =>
@@ -2359,9 +2802,13 @@ export default function SiteSettingsForm({
                                 })
                             }
                         />
+                        <CurrentValue value={current.services_page.cta_button_label} />
                     </div>
                     <div className="grid gap-2 md:col-span-2">
                         <Label>CTA body</Label>
+                        <p className="text-sm text-muted-foreground">
+                            Supporting CTA copy.
+                        </p>
                         <Textarea
                             value={data.services_page.cta_body}
                             onChange={(event) =>
@@ -2372,9 +2819,13 @@ export default function SiteSettingsForm({
                             }
                             rows={2}
                         />
+                        <CurrentValue value={current.services_page.cta_body} />
                     </div>
                     <div className="grid gap-2 md:col-span-2">
                         <Label>CTA button link</Label>
+                        <p className="text-sm text-muted-foreground">
+                            URL for the CTA button.
+                        </p>
                         <Input
                             value={data.services_page.cta_button_href}
                             onChange={(event) =>
@@ -2384,6 +2835,7 @@ export default function SiteSettingsForm({
                                 })
                             }
                         />
+                        <CurrentValue value={current.services_page.cta_button_href} />
                     </div>
                 </div>
             </section>
@@ -2395,6 +2847,9 @@ export default function SiteSettingsForm({
                 <div className="grid gap-3 md:grid-cols-2">
                     <div className="grid gap-2">
                         <Label>Header label</Label>
+                        <p className="text-sm text-muted-foreground">
+                            Small kicker above the portfolio header.
+                        </p>
                         <Input
                             value={data.portfolio_page.header_label}
                             onChange={(event) =>
@@ -2404,9 +2859,13 @@ export default function SiteSettingsForm({
                                 })
                             }
                         />
+                        <CurrentValue value={current.portfolio_page.header_label} />
                     </div>
                     <div className="grid gap-2">
                         <Label>Header title</Label>
+                        <p className="text-sm text-muted-foreground">
+                            Main portfolio header title.
+                        </p>
                         <Input
                             value={data.portfolio_page.header_title}
                             onChange={(event) =>
@@ -2416,9 +2875,13 @@ export default function SiteSettingsForm({
                                 })
                             }
                         />
+                        <CurrentValue value={current.portfolio_page.header_title} />
                     </div>
                     <div className="grid gap-2 md:col-span-2">
                         <Label>Header subtitle</Label>
+                        <p className="text-sm text-muted-foreground">
+                            Supporting sentence under the header.
+                        </p>
                         <Textarea
                             value={data.portfolio_page.header_subtitle}
                             onChange={(event) =>
@@ -2429,9 +2892,13 @@ export default function SiteSettingsForm({
                             }
                             rows={2}
                         />
+                        <CurrentValue value={current.portfolio_page.header_subtitle} />
                     </div>
                     <div className="grid gap-2">
                         <Label>CTA heading</Label>
+                        <p className="text-sm text-muted-foreground">
+                            Call-to-action headline on the portfolio page.
+                        </p>
                         <Input
                             value={data.portfolio_page.cta_heading}
                             onChange={(event) =>
@@ -2441,9 +2908,13 @@ export default function SiteSettingsForm({
                                 })
                             }
                         />
+                        <CurrentValue value={current.portfolio_page.cta_heading} />
                     </div>
                     <div className="grid gap-2">
                         <Label>CTA button label</Label>
+                        <p className="text-sm text-muted-foreground">
+                            Text for the CTA button.
+                        </p>
                         <Input
                             value={data.portfolio_page.cta_button_label}
                             onChange={(event) =>
@@ -2453,9 +2924,13 @@ export default function SiteSettingsForm({
                                 })
                             }
                         />
+                        <CurrentValue value={current.portfolio_page.cta_button_label} />
                     </div>
                     <div className="grid gap-2 md:col-span-2">
                         <Label>CTA body</Label>
+                        <p className="text-sm text-muted-foreground">
+                            Supporting CTA copy.
+                        </p>
                         <Textarea
                             value={data.portfolio_page.cta_body}
                             onChange={(event) =>
@@ -2466,9 +2941,13 @@ export default function SiteSettingsForm({
                             }
                             rows={2}
                         />
+                        <CurrentValue value={current.portfolio_page.cta_body} />
                     </div>
                     <div className="grid gap-2 md:col-span-2">
                         <Label>CTA button link</Label>
+                        <p className="text-sm text-muted-foreground">
+                            URL for the CTA button.
+                        </p>
                         <Input
                             value={data.portfolio_page.cta_button_href}
                             onChange={(event) =>
@@ -2478,6 +2957,7 @@ export default function SiteSettingsForm({
                                 })
                             }
                         />
+                        <CurrentValue value={current.portfolio_page.cta_button_href} />
                     </div>
                 </div>
             </section>
@@ -2489,6 +2969,9 @@ export default function SiteSettingsForm({
                 <div className="grid gap-3 md:grid-cols-2">
                     <div className="grid gap-2">
                         <Label>Header label</Label>
+                        <p className="text-sm text-muted-foreground">
+                            Small kicker above the products header.
+                        </p>
                         <Input
                             value={data.products_page.header_label}
                             onChange={(event) =>
@@ -2498,9 +2981,13 @@ export default function SiteSettingsForm({
                                 })
                             }
                         />
+                        <CurrentValue value={current.products_page.header_label} />
                     </div>
                     <div className="grid gap-2">
                         <Label>Header title</Label>
+                        <p className="text-sm text-muted-foreground">
+                            Main products header title.
+                        </p>
                         <Input
                             value={data.products_page.header_title}
                             onChange={(event) =>
@@ -2510,9 +2997,13 @@ export default function SiteSettingsForm({
                                 })
                             }
                         />
+                        <CurrentValue value={current.products_page.header_title} />
                     </div>
                     <div className="grid gap-2 md:col-span-2">
                         <Label>Header subtitle</Label>
+                        <p className="text-sm text-muted-foreground">
+                            Supporting sentence under the header.
+                        </p>
                         <Textarea
                             value={data.products_page.header_subtitle}
                             onChange={(event) =>
@@ -2523,6 +3014,7 @@ export default function SiteSettingsForm({
                             }
                             rows={2}
                         />
+                        <CurrentValue value={current.products_page.header_subtitle} />
                     </div>
                 </div>
             </section>
@@ -2534,6 +3026,9 @@ export default function SiteSettingsForm({
                 <div className="grid gap-3 md:grid-cols-2">
                     <div className="grid gap-2">
                         <Label>Header label</Label>
+                        <p className="text-sm text-muted-foreground">
+                            Small kicker above the blog header.
+                        </p>
                         <Input
                             value={data.blog_page.header_label}
                             onChange={(event) =>
@@ -2543,9 +3038,13 @@ export default function SiteSettingsForm({
                                 })
                             }
                         />
+                        <CurrentValue value={current.blog_page.header_label} />
                     </div>
                     <div className="grid gap-2">
                         <Label>Header title</Label>
+                        <p className="text-sm text-muted-foreground">
+                            Main blog header title.
+                        </p>
                         <Input
                             value={data.blog_page.header_title}
                             onChange={(event) =>
@@ -2555,9 +3054,13 @@ export default function SiteSettingsForm({
                                 })
                             }
                         />
+                        <CurrentValue value={current.blog_page.header_title} />
                     </div>
                     <div className="grid gap-2 md:col-span-2">
                         <Label>Header subtitle</Label>
+                        <p className="text-sm text-muted-foreground">
+                            Supporting sentence under the header.
+                        </p>
                         <Textarea
                             value={data.blog_page.header_subtitle}
                             onChange={(event) =>
@@ -2568,6 +3071,7 @@ export default function SiteSettingsForm({
                             }
                             rows={2}
                         />
+                        <CurrentValue value={current.blog_page.header_subtitle} />
                     </div>
                 </div>
             </section>
@@ -2582,6 +3086,9 @@ export default function SiteSettingsForm({
                     <div className="grid gap-3 md:grid-cols-2">
                         <div className="grid gap-2">
                             <Label>Badge text</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Small label above the contact header.
+                            </p>
                             <Input
                                 value={data.contact_header.badge_text}
                                 onChange={(event) =>
@@ -2591,9 +3098,13 @@ export default function SiteSettingsForm({
                                     })
                                 }
                             />
+                            <CurrentValue value={current.contact_header.badge_text} />
                         </div>
                         <div className="grid gap-2">
                             <Label>Headline</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Main contact header title.
+                            </p>
                             <Input
                                 value={data.contact_header.headline}
                                 onChange={(event) =>
@@ -2603,9 +3114,13 @@ export default function SiteSettingsForm({
                                     })
                                 }
                             />
+                            <CurrentValue value={current.contact_header.headline} />
                         </div>
                         <div className="grid gap-2 md:col-span-2">
                             <Label>Subheadline</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Supporting sentence under the header.
+                            </p>
                             <Textarea
                                 value={data.contact_header.subheadline}
                                 onChange={(event) =>
@@ -2616,6 +3131,7 @@ export default function SiteSettingsForm({
                                 }
                                 rows={2}
                             />
+                            <CurrentValue value={current.contact_header.subheadline} />
                         </div>
                     </div>
                 </div>
@@ -2631,6 +3147,10 @@ export default function SiteSettingsForm({
                             Add detail
                         </Button>
                     </div>
+                    <CurrentValue
+                        value={current.contact_details.length}
+                        label="Current details"
+                    />
 
                     {data.contact_details.map((detail, index) => (
                         <div
@@ -2639,6 +3159,9 @@ export default function SiteSettingsForm({
                         >
                             <div className="grid gap-2">
                                 <Label>Icon key</Label>
+                                <p className="text-sm text-muted-foreground">
+                                    Icon shown next to the detail.
+                                </p>
                                 <Input
                                     value={detail.icon_key}
                                     onChange={(event) =>
@@ -2650,9 +3173,13 @@ export default function SiteSettingsForm({
                                     }
                                 />
                                 <IconHelperLink />
+                                <CurrentValue value={current.contact_details[index]?.icon_key} />
                             </div>
                             <div className="grid gap-2">
                                 <Label>Title</Label>
+                                <p className="text-sm text-muted-foreground">
+                                    Label for the detail (e.g. Email, Phone).
+                                </p>
                                 <Input
                                     value={detail.title}
                                     onChange={(event) =>
@@ -2663,9 +3190,13 @@ export default function SiteSettingsForm({
                                         )
                                     }
                                 />
+                                <CurrentValue value={current.contact_details[index]?.title} />
                             </div>
                             <div className="grid gap-2">
                                 <Label>Content</Label>
+                                <p className="text-sm text-muted-foreground">
+                                    Visible text shown to users.
+                                </p>
                                 <Input
                                     value={detail.content}
                                     onChange={(event) =>
@@ -2676,9 +3207,13 @@ export default function SiteSettingsForm({
                                         )
                                     }
                                 />
+                                <CurrentValue value={current.contact_details[index]?.content} />
                             </div>
                             <div className="grid gap-2">
                                 <Label>Link</Label>
+                                <p className="text-sm text-muted-foreground">
+                                    Link target (mailto:, tel:, or URL).
+                                </p>
                                 <Input
                                     value={detail.href}
                                     onChange={(event) =>
@@ -2689,9 +3224,13 @@ export default function SiteSettingsForm({
                                         )
                                     }
                                 />
+                                <CurrentValue value={current.contact_details[index]?.href} />
                             </div>
                             <div className="grid gap-2 md:col-span-2">
                                 <Label>Aria label</Label>
+                                <p className="text-sm text-muted-foreground">
+                                    Accessibility label for the link.
+                                </p>
                                 <Input
                                     value={detail.aria_label}
                                     onChange={(event) =>
@@ -2702,6 +3241,7 @@ export default function SiteSettingsForm({
                                         )
                                     }
                                 />
+                                <CurrentValue value={current.contact_details[index]?.aria_label} />
                             </div>
                             <div className="flex justify-end md:col-span-2">
                                 <Button
@@ -2727,10 +3267,17 @@ export default function SiteSettingsForm({
                             Add contact social link
                         </Button>
                     </div>
+                    <CurrentValue
+                        value={current.contact_social.links.length}
+                        label="Current links"
+                    />
 
                     <div className="grid gap-3 md:grid-cols-2">
                         <div className="grid gap-2">
                             <Label>Heading</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Heading above the social links list.
+                            </p>
                             <Input
                                 value={data.contact_social.heading}
                                 onChange={(event) =>
@@ -2740,9 +3287,13 @@ export default function SiteSettingsForm({
                                     })
                                 }
                             />
+                            <CurrentValue value={current.contact_social.heading} />
                         </div>
                         <div className="grid gap-2">
                             <Label>Subheading</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Supporting sentence for the social section.
+                            </p>
                             <Input
                                 value={data.contact_social.subheading}
                                 onChange={(event) =>
@@ -2752,6 +3303,7 @@ export default function SiteSettingsForm({
                                     })
                                 }
                             />
+                            <CurrentValue value={current.contact_social.subheading} />
                         </div>
                     </div>
 
@@ -2762,6 +3314,9 @@ export default function SiteSettingsForm({
                         >
                             <div className="grid gap-2">
                                 <Label>Name</Label>
+                                <p className="text-sm text-muted-foreground">
+                                    Display name for the social network.
+                                </p>
                                 <Input
                                     value={link.name}
                                     onChange={(event) =>
@@ -2772,9 +3327,13 @@ export default function SiteSettingsForm({
                                         )
                                     }
                                 />
+                                <CurrentValue value={current.contact_social.links[index]?.name} />
                             </div>
                             <div className="grid gap-2">
                                 <Label>URL</Label>
+                                <p className="text-sm text-muted-foreground">
+                                    Full link to the profile.
+                                </p>
                                 <Input
                                     value={link.href}
                                     onChange={(event) =>
@@ -2785,9 +3344,13 @@ export default function SiteSettingsForm({
                                         )
                                     }
                                 />
+                                <CurrentValue value={current.contact_social.links[index]?.href} />
                             </div>
                             <div className="grid gap-2">
                                 <Label>Icon key</Label>
+                                <p className="text-sm text-muted-foreground">
+                                    Lucide icon name (lowercase).
+                                </p>
                                 <Input
                                     value={link.icon_key}
                                     onChange={(event) =>
@@ -2799,9 +3362,13 @@ export default function SiteSettingsForm({
                                     }
                                 />
                                 <IconHelperLink />
+                                <CurrentValue value={current.contact_social.links[index]?.icon_key} />
                             </div>
                             <div className="grid gap-2">
                                 <Label>Label</Label>
+                                <p className="text-sm text-muted-foreground">
+                                    Accessible label for screen readers.
+                                </p>
                                 <Input
                                     value={link.label}
                                     onChange={(event) =>
@@ -2812,6 +3379,7 @@ export default function SiteSettingsForm({
                                         )
                                     }
                                 />
+                                <CurrentValue value={current.contact_social.links[index]?.label} />
                             </div>
                             <div className="flex justify-end md:col-span-2">
                                 <Button

@@ -80,6 +80,12 @@ class SiteSettingController extends Controller
 
         $settings->update($data);
 
-        return redirect()->route('admin.site-settings.edit');
+        return redirect()
+            ->route('admin.site-settings.edit')
+            ->with('notification', [
+                'type' => 'success',
+                'title' => 'Settings saved',
+                'message' => 'Your site settings have been updated.',
+            ]);
     }
 }

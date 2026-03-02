@@ -38,6 +38,11 @@ export type PortfolioFormData = {
     seo_keywords: string;
 };
 
+type GalleryImage = {
+    path: string;
+    url: string;
+};
+
 type PortfolioFormProps = {
     data: PortfolioFormData;
     errors: Record<string, string>;
@@ -47,7 +52,9 @@ type PortfolioFormProps = {
     submitLabel: string;
     showExistingGallery?: boolean;
     showRemoveImage?: boolean;
-    availableGalleryImages?: string[];
+    availableGalleryImages?: GalleryImage[];
+    currentFeaturedImageUrl?: string | null;
+    currentOgImageUrl?: string | null;
 };
 
 export default function PortfolioForm({
@@ -60,6 +67,8 @@ export default function PortfolioForm({
     showExistingGallery = false,
     showRemoveImage = false,
     availableGalleryImages = [],
+    currentFeaturedImageUrl = null,
+    currentOgImageUrl = null,
 }: PortfolioFormProps) {
     const updateTechnology = (index: number, value: string) => {
         const updated = [...data.technologies];
@@ -97,6 +106,9 @@ export default function PortfolioForm({
         <form onSubmit={onSubmit} className="space-y-6">
             <div className="grid gap-2">
                 <Label htmlFor="title">Title</Label>
+                <p className="text-sm text-muted-foreground">
+                    Project name shown on cards and detail pages.
+                </p>
                 <Input
                     id="title"
                     value={data.title}
@@ -108,6 +120,9 @@ export default function PortfolioForm({
 
             <div className="grid gap-2">
                 <Label htmlFor="slug">Slug</Label>
+                <p className="text-sm text-muted-foreground">
+                    URL-friendly identifier. Leave blank to auto-generate.
+                </p>
                 <Input
                     id="slug"
                     value={data.slug}
@@ -118,6 +133,9 @@ export default function PortfolioForm({
 
             <div className="grid gap-2">
                 <Label htmlFor="label">Label</Label>
+                <p className="text-sm text-muted-foreground">
+                    Short tag shown on portfolio cards.
+                </p>
                 <Input
                     id="label"
                     value={data.label}
@@ -128,6 +146,9 @@ export default function PortfolioForm({
 
             <div className="grid gap-2">
                 <Label htmlFor="summary">Summary</Label>
+                <p className="text-sm text-muted-foreground">
+                    One-paragraph overview for previews.
+                </p>
                 <Textarea
                     id="summary"
                     value={data.summary}
@@ -139,6 +160,9 @@ export default function PortfolioForm({
 
             <div className="grid gap-2">
                 <Label htmlFor="result_label">Result label</Label>
+                <p className="text-sm text-muted-foreground">
+                    Metric name (e.g. ROI, Growth, Conversion lift).
+                </p>
                 <Input
                     id="result_label"
                     value={data.result_label}
@@ -151,6 +175,9 @@ export default function PortfolioForm({
 
             <div className="grid gap-2">
                 <Label htmlFor="result_value">Result value</Label>
+                <p className="text-sm text-muted-foreground">
+                    Metric value (e.g. 35%, 2x, 1.2M).
+                </p>
                 <Input
                     id="result_value"
                     value={data.result_value}
@@ -163,6 +190,9 @@ export default function PortfolioForm({
 
             <div className="grid gap-2">
                 <Label htmlFor="category">Category</Label>
+                <p className="text-sm text-muted-foreground">
+                    Used for filtering and grouping portfolio items.
+                </p>
                 <Input
                     id="category"
                     value={data.category}
@@ -173,6 +203,9 @@ export default function PortfolioForm({
 
             <div className="grid gap-2">
                 <Label htmlFor="badge_text">Badge text</Label>
+                <p className="text-sm text-muted-foreground">
+                    Short highlight shown on the card (max 10 chars).
+                </p>
                 <Input
                     id="badge_text"
                     value={data.badge_text}
@@ -185,6 +218,9 @@ export default function PortfolioForm({
 
             <div className="grid gap-2">
                 <Label htmlFor="badge_color">Badge color</Label>
+                <p className="text-sm text-muted-foreground">
+                    Hex or CSS color used for the badge.
+                </p>
                 <Input
                     id="badge_color"
                     value={data.badge_color}
@@ -198,6 +234,9 @@ export default function PortfolioForm({
 
             <div className="grid gap-2">
                 <Label htmlFor="excerpt">Excerpt</Label>
+                <p className="text-sm text-muted-foreground">
+                    Short teaser for cards and listings.
+                </p>
                 <Textarea
                     id="excerpt"
                     value={data.excerpt}
@@ -209,6 +248,9 @@ export default function PortfolioForm({
 
             <div className="grid gap-2">
                 <Label htmlFor="description">Description</Label>
+                <p className="text-sm text-muted-foreground">
+                    Full case study details.
+                </p>
                 <Textarea
                     id="description"
                     value={data.description}
@@ -222,6 +264,9 @@ export default function PortfolioForm({
 
             <div className="grid gap-2">
                 <Label htmlFor="client_name">Client name</Label>
+                <p className="text-sm text-muted-foreground">
+                    The client or brand for this project.
+                </p>
                 <Input
                     id="client_name"
                     value={data.client_name}
@@ -234,6 +279,9 @@ export default function PortfolioForm({
 
             <div className="grid gap-2">
                 <Label htmlFor="project_url">Project URL</Label>
+                <p className="text-sm text-muted-foreground">
+                    External link to the live project or case study.
+                </p>
                 <Input
                     id="project_url"
                     value={data.project_url}
@@ -256,6 +304,9 @@ export default function PortfolioForm({
                         Add technology
                     </Button>
                 </div>
+                <p className="text-sm text-muted-foreground">
+                    Tech stack shown on the project detail page.
+                </p>
                 {data.technologies.map((tech, index) => (
                     <div className="flex gap-2" key={`tech-${index}`}>
                         <Input
@@ -278,6 +329,9 @@ export default function PortfolioForm({
 
             <div className="grid gap-2">
                 <Label htmlFor="started_at">Started at</Label>
+                <p className="text-sm text-muted-foreground">
+                    Project start date for the timeline.
+                </p>
                 <Input
                     id="started_at"
                     type="date"
@@ -291,6 +345,9 @@ export default function PortfolioForm({
 
             <div className="grid gap-2">
                 <Label htmlFor="completed_at">Completed at</Label>
+                <p className="text-sm text-muted-foreground">
+                    Project completion date (optional).
+                </p>
                 <Input
                     id="completed_at"
                     type="date"
@@ -304,6 +361,9 @@ export default function PortfolioForm({
 
             <div className="grid gap-2">
                 <Label htmlFor="sort_order">Sort order</Label>
+                <p className="text-sm text-muted-foreground">
+                    Lower numbers appear first in listings.
+                </p>
                 <Input
                     id="sort_order"
                     type="number"
@@ -315,30 +375,43 @@ export default function PortfolioForm({
                 <InputError message={errors.sort_order} />
             </div>
 
-            <div className="flex items-center gap-2">
-                <Checkbox
-                    id="is_featured"
-                    checked={data.is_featured}
-                    onCheckedChange={(checked) =>
-                        onChange('is_featured', Boolean(checked))
-                    }
-                />
-                <Label htmlFor="is_featured">Featured</Label>
+            <div className="grid gap-1">
+                <div className="flex items-center gap-2">
+                    <Checkbox
+                        id="is_featured"
+                        checked={data.is_featured}
+                        onCheckedChange={(checked) =>
+                            onChange('is_featured', Boolean(checked))
+                        }
+                    />
+                    <Label htmlFor="is_featured">Featured</Label>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                    Highlight this project in featured sections.
+                </p>
             </div>
 
-            <div className="flex items-center gap-2">
-                <Checkbox
-                    id="is_active"
-                    checked={data.is_active}
-                    onCheckedChange={(checked) =>
-                        onChange('is_active', Boolean(checked))
-                    }
-                />
-                <Label htmlFor="is_active">Active</Label>
+            <div className="grid gap-1">
+                <div className="flex items-center gap-2">
+                    <Checkbox
+                        id="is_active"
+                        checked={data.is_active}
+                        onCheckedChange={(checked) =>
+                            onChange('is_active', Boolean(checked))
+                        }
+                    />
+                    <Label htmlFor="is_active">Active</Label>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                    Toggle visibility on the public portfolio.
+                </p>
             </div>
 
             <div className="grid gap-2">
                 <Label htmlFor="featured_image">Featured image</Label>
+                <p className="text-sm text-muted-foreground">
+                    Main visual used for cards and hero sections.
+                </p>
                 <Input
                     id="featured_image"
                     type="file"
@@ -351,6 +424,16 @@ export default function PortfolioForm({
                     }
                 />
                 <InputError message={errors.featured_image} />
+                {currentFeaturedImageUrl && !data.remove_featured_image && (
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                        <img
+                            src={currentFeaturedImageUrl}
+                            alt="Current featured"
+                            className="h-12 w-20 rounded-md object-cover"
+                        />
+                        <span>Current featured image</span>
+                    </div>
+                )}
             </div>
 
             {showRemoveImage && (
@@ -371,28 +454,38 @@ export default function PortfolioForm({
             {showExistingGallery && (
                 <div className="grid gap-2">
                     <Label>Existing gallery images</Label>
+                    <p className="text-sm text-muted-foreground">
+                        Toggle images to keep them in the gallery.
+                    </p>
                     <div className="space-y-2">
                         {availableGalleryImages.length === 0 && (
                             <p className="text-sm text-muted-foreground">
                                 No gallery images yet.
                             </p>
                         )}
-                        {availableGalleryImages.map((path) => (
+                        {availableGalleryImages.map((image) => (
                             <div
-                                className="flex items-center gap-2"
-                                key={path}
+                                className="flex items-center gap-3"
+                                key={image.path}
                             >
                                 <Checkbox
-                                    checked={data.existing_gallery_images.includes(path)}
+                                    checked={data.existing_gallery_images.includes(
+                                        image.path,
+                                    )}
                                     onCheckedChange={(checked) =>
                                         toggleExistingGallery(
-                                            path,
+                                            image.path,
                                             Boolean(checked),
                                         )
                                     }
                                 />
-                                <span className="text-sm text-muted-foreground">
-                                    {path}
+                                <img
+                                    src={image.url}
+                                    alt="Gallery"
+                                    className="h-12 w-16 rounded-md object-cover"
+                                />
+                                <span className="text-xs text-muted-foreground">
+                                    {image.path}
                                 </span>
                             </div>
                         ))}
@@ -414,6 +507,9 @@ export default function PortfolioForm({
 
             <div className="grid gap-2">
                 <Label htmlFor="gallery_images">Gallery images</Label>
+                <p className="text-sm text-muted-foreground">
+                    Additional visuals shown on the project page.
+                </p>
                 <Input
                     id="gallery_images"
                     type="file"
@@ -433,6 +529,9 @@ export default function PortfolioForm({
 
             <div className="grid gap-2">
                 <Label htmlFor="seo_title">SEO title</Label>
+                <p className="text-sm text-muted-foreground">
+                    Overrides the default page title for search.
+                </p>
                 <Input
                     id="seo_title"
                     value={data.seo_title}
@@ -443,6 +542,9 @@ export default function PortfolioForm({
 
             <div className="grid gap-2">
                 <Label htmlFor="seo_description">SEO description</Label>
+                <p className="text-sm text-muted-foreground">
+                    Summary used in search previews.
+                </p>
                 <Textarea
                     id="seo_description"
                     value={data.seo_description}
@@ -456,6 +558,9 @@ export default function PortfolioForm({
 
             <div className="grid gap-2">
                 <Label htmlFor="seo_keywords">SEO keywords</Label>
+                <p className="text-sm text-muted-foreground">
+                    Comma-separated keywords for metadata.
+                </p>
                 <Textarea
                     id="seo_keywords"
                     value={data.seo_keywords}
@@ -469,6 +574,9 @@ export default function PortfolioForm({
 
             <div className="grid gap-2">
                 <Label htmlFor="og_image">SEO image</Label>
+                <p className="text-sm text-muted-foreground">
+                    Image used for social sharing cards.
+                </p>
                 <Input
                     id="og_image"
                     type="file"
@@ -481,6 +589,16 @@ export default function PortfolioForm({
                     }
                 />
                 <InputError message={errors.og_image} />
+                {currentOgImageUrl && !data.remove_og_image && (
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                        <img
+                            src={currentOgImageUrl}
+                            alt="Current SEO"
+                            className="h-12 w-20 rounded-md object-cover"
+                        />
+                        <span>Current SEO image</span>
+                    </div>
+                )}
             </div>
 
             {showRemoveImage && (

@@ -48,8 +48,8 @@ export default function PortfoliosIndex({ portfolios }: PortfoliosIndexProps) {
                     </Button>
                 </div>
 
-                <div className="overflow-hidden rounded-xl border border-sidebar-border/70 bg-card">
-                    <table className="w-full text-sm">
+                <div className="overflow-x-auto rounded-xl border border-sidebar-border/70 bg-card">
+                    <table className="min-w-[640px] w-full text-sm">
                         <thead className="bg-muted/50 text-xs uppercase text-muted-foreground">
                             <tr>
                                 <th className="px-4 py-3 text-left">Title</th>

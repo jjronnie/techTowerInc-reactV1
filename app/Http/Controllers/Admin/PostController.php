@@ -67,7 +67,13 @@ class PostController extends Controller
 
         $post = Post::query()->create($data);
 
-        return redirect()->route('admin.posts.edit', $post);
+        return redirect()
+            ->route('admin.posts.edit', $post)
+            ->with('notification', [
+                'type' => 'success',
+                'title' => 'Post created',
+                'message' => "\"{$post->title}\" is ready to edit.",
+            ]);
     }
 
     /**
@@ -84,6 +90,14 @@ class PostController extends Controller
     public function edit(Post $post): Response
     {
         $post->loadMissing('author');
+        $post->setAttribute(
+            'featured_image_url',
+            $post->featured_image_path ? Storage::url($post->featured_image_path) : null,
+        );
+        $post->setAttribute(
+            'og_image_url',
+            $post->og_image_path ? Storage::url($post->og_image_path) : null,
+        );
 
         return Inertia::render('admin/posts/edit', [
             'post' => $post,
@@ -143,7 +157,13 @@ class PostController extends Controller
 
         $post->update($data);
 
-        return redirect()->route('admin.posts.edit', $post);
+        return redirect()
+            ->route('admin.posts.edit', $post)
+            ->with('notification', [
+                'type' => 'success',
+                'title' => 'Post updated',
+                'message' => "Changes to \"{$post->title}\" have been saved.",
+            ]);
     }
 
     /**
@@ -161,6 +181,12 @@ class PostController extends Controller
 
         $post->delete();
 
-        return redirect()->route('admin.posts.index');
+        return redirect()
+            ->route('admin.posts.index')
+            ->with('notification', [
+                'type' => 'success',
+                'title' => 'Post deleted',
+                'message' => 'The post has been removed.',
+            ]);
     }
 }

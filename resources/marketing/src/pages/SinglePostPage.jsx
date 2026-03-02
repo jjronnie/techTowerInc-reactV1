@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, CalendarDays, Tag, UserCircle, Share2, Printer } from 'lucide-react';
+import { ArrowLeft, CalendarDays, Tag, UserCircle, Facebook, Linkedin, Mail, Twitter, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useApi } from '@/hooks/useApi';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
@@ -53,23 +53,47 @@ const SinglePostPage = () => {
     );
   }
 
-  const handleShare = () => {
-    const siteName = settings?.site_name || 'TechTower Innovations';
+  const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
+  const siteName = settings?.site_name || 'TechTower Innovations';
+  const shareText = `Check out this article from ${siteName}: ${post.title}`;
+  const encodedUrl = encodeURIComponent(shareUrl);
+  const encodedText = encodeURIComponent(shareText);
 
-    if (navigator.share) {
-      navigator.share({
-        title: post.title,
-        text: `Check out this article from ${siteName}: ${post.title}`,
-        url: window.location.href,
-      })
-      .catch(error => console.log('Error sharing:', error));
-    } else {
-      alert('Web Share API not supported in your browser. You can manually copy the URL.');
+  const socialLinks = [
+    {
+      label: 'Share on X',
+      href: `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`,
+      icon: Twitter,
+    },
+    {
+      label: 'Share on Facebook',
+      href: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
+      icon: Facebook,
+    },
+    {
+      label: 'Share on LinkedIn',
+      href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
+      icon: Linkedin,
+    },
+    {
+      label: 'Share by email',
+      href: `mailto:?subject=${encodedText}&body=${encodedUrl}`,
+      icon: Mail,
+    },
+  ];
+
+  const handleCopyLink = async () => {
+    if (!shareUrl) {
+      return;
     }
-  };
 
-  const handlePrint = () => {
-    window.print();
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      alert('Link copied to clipboard.');
+    } catch (error) {
+      console.error('Error copying link:', error);
+      alert('Unable to copy link. Please copy it manually.');
+    }
   };
 
   const categories = post.categories?.length ? post.categories : (post.category ? [post.category] : []);
@@ -146,13 +170,28 @@ const SinglePostPage = () => {
                 </Link>
               ))}
             </div>
-            <div className="flex items-center space-x-3">
-                <Button variant="outline" size="sm" onClick={handleShare} aria-label="Share this article">
-                    <Share2 className="w-4 h-4 mr-2"/> Share
-                </Button>
-                <Button variant="outline" size="sm" onClick={handlePrint} aria-label="Print this article">
-                    <Printer className="w-4 h-4 mr-2"/> Print
-                </Button>
+            <div className="flex flex-wrap items-center gap-3">
+                <span className="text-sm font-semibold text-muted-foreground">Share:</span>
+                <div className="flex flex-wrap gap-2">
+                    {socialLinks.map((link) => {
+                      const Icon = link.icon;
+                      return (
+                        <Button key={link.label} variant="outline" size="icon" asChild aria-label={link.label}>
+                          <a href={link.href} target="_blank" rel="noopener noreferrer">
+                            <Icon className="h-4 w-4" />
+                          </a>
+                        </Button>
+                      );
+                    })}
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={handleCopyLink}
+                      aria-label="Copy link"
+                    >
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                </div>
             </div>
           </motion.footer>
         </article>

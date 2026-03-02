@@ -418,7 +418,7 @@ export default function EditSiteSettings({ settings }: EditSiteSettingsProps) {
         default_og_image_url: settings.default_og_image_url ?? null,
     };
 
-    const form = useForm<SiteSettingsFormData>({
+    const currentValues: SiteSettingsFormData = {
         site_name: settings.site_name ?? '',
         tagline: settings.tagline ?? '',
         company_email: settings.company_email ?? '',
@@ -520,7 +520,9 @@ export default function EditSiteSettings({ settings }: EditSiteSettingsProps) {
         },
         contact_details: normalizeContactDetails(settings.contact_details),
         contact_social: normalizeContactSocial(settings.contact_social),
-    });
+    };
+
+    const form = useForm<SiteSettingsFormData>(currentValues);
 
     const submit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -544,6 +546,7 @@ export default function EditSiteSettings({ settings }: EditSiteSettingsProps) {
                 />
                 <SiteSettingsForm
                     data={form.data}
+                    current={currentValues}
                     errors={form.errors}
                     processing={form.processing}
                     media={media}

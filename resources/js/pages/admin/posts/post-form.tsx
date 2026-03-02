@@ -37,6 +37,8 @@ type PostFormProps = {
     onSubmit: (event: FormEvent<HTMLFormElement>) => void;
     submitLabel: string;
     showRemoveImage?: boolean;
+    currentFeaturedImageUrl?: string | null;
+    currentOgImageUrl?: string | null;
 };
 
 export default function PostForm({
@@ -47,6 +49,8 @@ export default function PostForm({
     onSubmit,
     submitLabel,
     showRemoveImage = false,
+    currentFeaturedImageUrl = null,
+    currentOgImageUrl = null,
 }: PostFormProps) {
     const updateArrayItem = (
         key: 'categories' | 'tags',
@@ -73,6 +77,9 @@ export default function PostForm({
         <form onSubmit={onSubmit} className="space-y-6">
             <div className="grid gap-2">
                 <Label htmlFor="title">Title</Label>
+                <p className="text-sm text-muted-foreground">
+                    The headline shown on the post page and blog listings.
+                </p>
                 <Input
                     id="title"
                     value={data.title}
@@ -84,6 +91,9 @@ export default function PostForm({
 
             <div className="grid gap-2">
                 <Label htmlFor="slug">Slug</Label>
+                <p className="text-sm text-muted-foreground">
+                    URL-friendly identifier. Leave blank to auto-generate.
+                </p>
                 <Input
                     id="slug"
                     value={data.slug}
@@ -94,6 +104,9 @@ export default function PostForm({
 
             <div className="grid gap-2">
                 <Label htmlFor="excerpt">Excerpt</Label>
+                <p className="text-sm text-muted-foreground">
+                    Short summary for blog cards and meta previews.
+                </p>
                 <Textarea
                     id="excerpt"
                     value={data.excerpt}
@@ -105,6 +118,9 @@ export default function PostForm({
 
             <div className="grid gap-2">
                 <Label htmlFor="content">Content</Label>
+                <p className="text-sm text-muted-foreground">
+                    Main body of the article.
+                </p>
                 <RichTextEditor
                     id="content"
                     value={data.content}
@@ -116,6 +132,9 @@ export default function PostForm({
 
             <div className="grid gap-2">
                 <Label htmlFor="status">Status</Label>
+                <p className="text-sm text-muted-foreground">
+                    Draft posts are hidden. Published posts show on the site.
+                </p>
                 <select
                     id="status"
                     className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm shadow-xs"
@@ -130,6 +149,9 @@ export default function PostForm({
 
             <div className="grid gap-2">
                 <Label htmlFor="published_at">Publish date</Label>
+                <p className="text-sm text-muted-foreground">
+                    Used when the status is set to published.
+                </p>
                 <Input
                     id="published_at"
                     type="datetime-local"
@@ -143,6 +165,9 @@ export default function PostForm({
 
             <div className="grid gap-2">
                 <Label htmlFor="reading_time">Reading time (minutes)</Label>
+                <p className="text-sm text-muted-foreground">
+                    Displayed on the post detail page.
+                </p>
                 <Input
                     id="reading_time"
                     type="number"
@@ -166,6 +191,9 @@ export default function PostForm({
                         Add category
                     </Button>
                 </div>
+                <p className="text-sm text-muted-foreground">
+                    Used for filtering and grouping posts.
+                </p>
                 {data.categories.map((category, index) => (
                     <div className="flex gap-2" key={`category-${index}`}>
                         <Input
@@ -204,6 +232,9 @@ export default function PostForm({
                         Add tag
                     </Button>
                 </div>
+                <p className="text-sm text-muted-foreground">
+                    Helps readers find related topics.
+                </p>
                 {data.tags.map((tag, index) => (
                     <div className="flex gap-2" key={`tag-${index}`}>
                         <Input
@@ -230,6 +261,9 @@ export default function PostForm({
 
             <div className="grid gap-2">
                 <Label htmlFor="featured_image">Featured image</Label>
+                <p className="text-sm text-muted-foreground">
+                    Displayed on blog cards and at the top of the post.
+                </p>
                 <Input
                     id="featured_image"
                     type="file"
@@ -242,6 +276,16 @@ export default function PostForm({
                     }
                 />
                 <InputError message={errors.featured_image} />
+                {currentFeaturedImageUrl && !data.remove_featured_image && (
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                        <img
+                            src={currentFeaturedImageUrl}
+                            alt="Current featured"
+                            className="h-12 w-20 rounded-md object-cover"
+                        />
+                        <span>Current featured image</span>
+                    </div>
+                )}
             </div>
 
             {showRemoveImage && (
@@ -261,6 +305,9 @@ export default function PostForm({
 
             <div className="grid gap-2">
                 <Label htmlFor="image_alt">Image alt text</Label>
+                <p className="text-sm text-muted-foreground">
+                    Accessibility text for the featured image.
+                </p>
                 <Input
                     id="image_alt"
                     value={data.image_alt}
@@ -271,6 +318,9 @@ export default function PostForm({
 
             <div className="grid gap-2">
                 <Label htmlFor="seo_title">SEO title</Label>
+                <p className="text-sm text-muted-foreground">
+                    Overrides the default page title for search engines.
+                </p>
                 <Input
                     id="seo_title"
                     value={data.seo_title}
@@ -281,6 +331,9 @@ export default function PostForm({
 
             <div className="grid gap-2">
                 <Label htmlFor="seo_description">SEO description</Label>
+                <p className="text-sm text-muted-foreground">
+                    Appears in search results and social previews.
+                </p>
                 <Textarea
                     id="seo_description"
                     value={data.seo_description}
@@ -294,6 +347,9 @@ export default function PostForm({
 
             <div className="grid gap-2">
                 <Label htmlFor="seo_keywords">SEO keywords</Label>
+                <p className="text-sm text-muted-foreground">
+                    Comma-separated keywords for search metadata.
+                </p>
                 <Textarea
                     id="seo_keywords"
                     value={data.seo_keywords}
@@ -307,6 +363,9 @@ export default function PostForm({
 
             <div className="grid gap-2">
                 <Label htmlFor="canonical_url">Canonical URL</Label>
+                <p className="text-sm text-muted-foreground">
+                    Use this to prevent duplicate content issues.
+                </p>
                 <Input
                     id="canonical_url"
                     value={data.canonical_url}
@@ -319,6 +378,9 @@ export default function PostForm({
 
             <div className="grid gap-2">
                 <Label htmlFor="robots">Robots</Label>
+                <p className="text-sm text-muted-foreground">
+                    Controls indexing (e.g. index, follow or noindex, nofollow).
+                </p>
                 <Input
                     id="robots"
                     value={data.robots}
@@ -330,6 +392,9 @@ export default function PostForm({
 
             <div className="grid gap-2">
                 <Label htmlFor="og_image">SEO image</Label>
+                <p className="text-sm text-muted-foreground">
+                    Image used for social sharing cards.
+                </p>
                 <Input
                     id="og_image"
                     type="file"
@@ -342,6 +407,16 @@ export default function PostForm({
                     }
                 />
                 <InputError message={errors.og_image} />
+                {currentOgImageUrl && !data.remove_og_image && (
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                        <img
+                            src={currentOgImageUrl}
+                            alt="Current SEO"
+                            className="h-12 w-20 rounded-md object-cover"
+                        />
+                        <span>Current SEO image</span>
+                    </div>
+                )}
             </div>
 
             {showRemoveImage && (

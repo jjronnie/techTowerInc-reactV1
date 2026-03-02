@@ -17,7 +17,9 @@ type Post = {
     reading_time: number | null;
     categories: string[] | null;
     tags: string[] | null;
+    featured_image_url: string | null;
     image_alt: string | null;
+    og_image_url: string | null;
     seo_title: string | null;
     seo_description: string | null;
     seo_keywords: string | null;
@@ -93,6 +95,8 @@ export default function EditPost({ post }: EditPostProps) {
                     onSubmit={submit}
                     submitLabel="Save Changes"
                     showRemoveImage
+                    currentFeaturedImageUrl={post.featured_image_url}
+                    currentOgImageUrl={post.og_image_url}
                 />
             </div>
         </AppLayout>
