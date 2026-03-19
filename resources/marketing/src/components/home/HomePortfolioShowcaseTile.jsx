@@ -19,9 +19,9 @@ const HomePortfolioShowcaseTile = ({ project, className = '' }) => {
         alt={project.title}
         loading="lazy"
         onLoad={() => setIsLoaded(true)}
-        className={`h-full w-full object-cover object-center transition duration-700 ${
+        className={`h-full w-full object-fill transition duration-700 ${
           isLoaded ? 'opacity-100' : 'opacity-0'
-        } group-hover:scale-[1.01]`}
+        }`}
       />
 
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent opacity-75 transition duration-300 group-hover:opacity-90" />
