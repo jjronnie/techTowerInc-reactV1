@@ -69,6 +69,16 @@ class TechnologyController extends Controller
 
     public function destroy(Technology $technology): RedirectResponse
     {
+        if ($technology->portfolios()->exists()) {
+            return redirect()
+                ->route('admin.technologies.index')
+                ->with('notification', [
+                    'type' => 'error',
+                    'title' => 'Technology not deleted',
+                    'message' => "\"{$technology->name}\" is still attached to portfolio projects. Detach it first.",
+                ]);
+        }
+
         $name = $technology->name;
         $technology->delete();
 

@@ -18,9 +18,10 @@ const HomePage = () => {
   return (
     <>
       <Seo
-        title={settings?.default_seo_title || settings?.site_name}
+        title="Website Design in Uganda | SEO Services in Uganda | Website Development"
         description={settings?.default_seo_description}
         image={settings?.default_og_image_url}
+        appendAppName={false}
       />
       <HeroSection />
       <StatsSection />

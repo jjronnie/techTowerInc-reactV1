@@ -11,11 +11,21 @@ const getAppName = () =>
         .querySelector('meta[name="application-name"]')
         ?.getAttribute('content') || document.title || 'App';
 
+const RAW_TITLE_PREFIX = '__RAW_TITLE__::';
+
 createInertiaApp({
     title: (title) => {
         const appName = getAppName();
 
-        return title ? `${title} | ${appName}` : appName;
+        if (!title) {
+            return appName;
+        }
+
+        if (title.startsWith(RAW_TITLE_PREFIX)) {
+            return title.slice(RAW_TITLE_PREFIX.length);
+        }
+
+        return `${title} | ${appName}`;
     },
     resolve: (name) =>
         resolvePageComponent(

@@ -3,6 +3,8 @@ import createServer from '@inertiajs/react/server';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import ReactDOMServer from 'react-dom/server';
 
+const RAW_TITLE_PREFIX = '__RAW_TITLE__::';
+
 createServer((page) =>
     createInertiaApp({
         page,
@@ -13,7 +15,15 @@ createServer((page) =>
                 import.meta.env.VITE_APP_NAME ||
                 'App';
 
-            return title ? `${title} | ${appName}` : appName;
+            if (!title) {
+                return appName;
+            }
+
+            if (title.startsWith(RAW_TITLE_PREFIX)) {
+                return title.slice(RAW_TITLE_PREFIX.length);
+            }
+
+            return `${title} | ${appName}`;
         },
         resolve: (name) =>
             resolvePageComponent(

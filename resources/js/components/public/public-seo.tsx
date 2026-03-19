@@ -19,12 +19,13 @@ export default function PublicSeo({ seo, siteSettings }: PublicSeoProps) {
         siteSettings.default_seo_title ||
         siteSettings.site_name ||
         'TechTower Innovations';
+    const headTitle = seo.appendAppName === false ? `__RAW_TITLE__::${title}` : title;
     const verificationMeta = Array.isArray(siteSettings.verification_meta)
         ? siteSettings.verification_meta
         : [];
 
     return (
-        <Head title={title}>
+        <Head title={headTitle}>
             <meta name="description" content={description} />
             <meta name="robots" content={robots} />
             {seo.keywords && <meta name="keywords" content={seo.keywords} />}

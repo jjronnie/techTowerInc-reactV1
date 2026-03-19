@@ -104,6 +104,16 @@ class ClientController extends Controller
 
     public function destroy(Client $client): RedirectResponse
     {
+        if ($client->portfolios()->exists()) {
+            return redirect()
+                ->route('admin.clients.index')
+                ->with('notification', [
+                    'type' => 'error',
+                    'title' => 'Client not deleted',
+                    'message' => "\"{$client->name}\" is still attached to portfolio projects. Detach it first.",
+                ]);
+        }
+
         $name = $client->name;
 
         if ($client->logo_path) {

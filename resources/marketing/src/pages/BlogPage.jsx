@@ -2,20 +2,33 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@marketing/components/ui/button';
 import { ArrowRight, CalendarDays, UserCircle } from 'lucide-react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { useApi } from '@marketing/hooks/useApi';
 import { useSiteSettings } from '@marketing/context/SiteSettingsContext';
 import Seo from '@marketing/components/Seo';
 
 const BlogPage = () => {
   const { categorySlug } = useParams();
+  const location = useLocation();
   const { settings } = useSiteSettings();
   const activeCategory = categorySlug || null;
-  const apiPath = activeCategory
-    ? `/posts?category=${encodeURIComponent(activeCategory)}`
-    : '/posts';
+  const searchParams = new URLSearchParams(location.search);
+  const parsedPage = Number(searchParams.get('page') || '1');
+  const currentPage = Number.isFinite(parsedPage) && parsedPage > 0 ? parsedPage : 1;
+  const query = new URLSearchParams();
+
+  if (activeCategory) {
+    query.set('category', activeCategory);
+  }
+
+  if (currentPage > 1) {
+    query.set('page', String(currentPage));
+  }
+
+  const apiPath = `/posts${query.toString() ? `?${query.toString()}` : ''}`;
   const { data, loading, error } = useApi(apiPath);
   const blogPosts = data?.data || [];
+  const pagination = data?.meta || null;
   const pageCopy = settings?.blog_page || {};
   const activeCategoryLabel = activeCategory
     ? activeCategory
@@ -30,6 +43,18 @@ const BlogPage = () => {
     viewport: { once: true, amount: 0.2 },
     transition: { duration: 0.6, delay }
   });
+  const buildPageUrl = (page) => {
+    const params = new URLSearchParams();
+
+    if (page > 1) {
+      params.set('page', String(page));
+    }
+
+    const basePath = activeCategory ? `/news/category/${activeCategory}` : '/news';
+    const nextQuery = params.toString();
+
+    return nextQuery ? `${basePath}?${nextQuery}` : basePath;
+  };
 
   return (
     <div className="bg-background text-foreground pt-24 md:pt-32 pb-16">
@@ -173,6 +198,46 @@ const BlogPage = () => {
               <p className="mt-2 text-sm text-muted-foreground">
                 Try another category or browse the full news archive.
               </p>
+            </div>
+          )}
+          {!loading && !error && pagination?.last_page > 1 && (
+            <div className="mt-12 flex flex-col items-center gap-4">
+              <p className="text-sm text-muted-foreground">
+                Page {pagination.current_page} of {pagination.last_page}
+              </p>
+              <nav
+                aria-label="News pagination"
+                className="flex flex-wrap items-center justify-center gap-2"
+              >
+                {pagination.current_page > 1 && (
+                  <Button asChild variant="outline" size="sm" className="next-button-outline">
+                    <Link to={buildPageUrl(pagination.current_page - 1)}>
+                      Previous page
+                    </Link>
+                  </Button>
+                )}
+                {Array.from({ length: pagination.last_page }, (_, index) => index + 1).map((page) => (
+                  <Link
+                    key={`news-page-${page}`}
+                    to={buildPageUrl(page)}
+                    className={`inline-flex h-10 min-w-10 items-center justify-center rounded-full border px-4 text-sm transition ${
+                      page === pagination.current_page
+                        ? 'border-primary bg-primary text-primary-foreground'
+                        : 'border-border/70 text-muted-foreground hover:border-primary/40 hover:text-foreground'
+                    }`}
+                    aria-current={page === pagination.current_page ? 'page' : undefined}
+                  >
+                    {page}
+                  </Link>
+                ))}
+                {pagination.current_page < pagination.last_page && (
+                  <Button asChild variant="outline" size="sm" className="next-button-outline">
+                    <Link to={buildPageUrl(pagination.current_page + 1)}>
+                      Next page
+                    </Link>
+                  </Button>
+                )}
+              </nav>
             </div>
           )}
         </div>

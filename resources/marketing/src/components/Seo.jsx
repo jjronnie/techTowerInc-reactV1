@@ -1,18 +1,27 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useLocation } from 'react-router-dom';
 import { useSiteSettings } from '@marketing/context/SiteSettingsContext';
 
-const buildTitle = (title, siteName, defaultTitle) => {
+const getAppName = () =>
+  document
+    .querySelector('meta[name="application-name"]')
+    ?.getAttribute('content') || 'App';
+
+const buildTitle = (title, appName, defaultTitle, appendAppName = true) => {
   if (!title) {
-    return defaultTitle || siteName;
+    return defaultTitle || appName;
   }
 
-  if (siteName && title.toLowerCase().includes(siteName.toLowerCase())) {
+  if (!appendAppName) {
     return title;
   }
 
-  return siteName ? `${title} | ${siteName}` : title;
+  if (appName && title.toLowerCase().includes(appName.toLowerCase())) {
+    return title;
+  }
+
+  return appName ? `${title} | ${appName}` : title;
 };
 
 const Seo = ({
@@ -24,12 +33,14 @@ const Seo = ({
   robots,
   keywords,
   type = 'website',
+  appendAppName = true,
   publishedTime,
   modifiedTime,
 }) => {
   const { settings } = useSiteSettings();
   const location = useLocation();
   const siteName = settings?.site_name || 'TechTower Inc';
+  const appName = getAppName();
   const defaultTitle = settings?.default_seo_title || siteName;
   const defaultDescription = settings?.default_seo_description || '';
   const defaultImage = settings?.default_og_image_url || null;
@@ -37,7 +48,7 @@ const Seo = ({
     ? settings.verification_meta
     : [];
 
-  const metaTitle = buildTitle(title, siteName, defaultTitle);
+  const metaTitle = buildTitle(title, appName, defaultTitle, appendAppName);
   const metaDescription = description || defaultDescription;
   const metaImage = image || defaultImage;
   const origin = typeof window !== 'undefined' ? window.location.origin : '';
@@ -49,6 +60,14 @@ const Seo = ({
   const robotsContent =
     robots || (noIndex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large');
   const metaKeywords = keywords || null;
+
+  useEffect(() => {
+    if (typeof document === 'undefined') {
+      return;
+    }
+
+    document.title = metaTitle;
+  }, [metaTitle]);
 
   const verificationTags = verificationMeta.map((meta, index) => {
     const key = meta?.name;

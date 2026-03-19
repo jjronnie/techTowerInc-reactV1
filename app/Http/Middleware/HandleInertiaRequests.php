@@ -2,7 +2,6 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\SiteSetting;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -36,11 +35,9 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        $siteName = SiteSetting::query()->value('site_name') ?? config('app.name');
-
         return [
             ...parent::share($request),
-            'name' => $siteName,
+            'name' => config('app.name'),
             'auth' => [
                 'user' => $request->user(),
             ],

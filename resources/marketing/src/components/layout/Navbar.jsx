@@ -22,7 +22,7 @@ const Navbar = () => {
     { to: "/portfolio", text: "Portfolio" },
     { to: "/about", text: "About" },
     { to: "/contact", text: "Contact" },
-    { to: "/news", text: "Updates" },
+    { to: "/news", text: "News" },
 
   ];
 

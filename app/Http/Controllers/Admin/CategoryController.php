@@ -69,6 +69,16 @@ class CategoryController extends Controller
 
     public function destroy(Category $category): RedirectResponse
     {
+        if ($category->posts()->exists() || $category->portfolios()->exists()) {
+            return redirect()
+                ->route('admin.categories.index')
+                ->with('notification', [
+                    'type' => 'error',
+                    'title' => 'Category not deleted',
+                    'message' => "\"{$category->name}\" is still attached to posts or portfolio projects. Detach it first.",
+                ]);
+        }
+
         $name = $category->name;
         $category->delete();
 

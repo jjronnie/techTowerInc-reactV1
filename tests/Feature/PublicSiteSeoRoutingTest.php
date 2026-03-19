@@ -77,6 +77,17 @@ test('public service pages are rendered through inertia public pages', function 
             ->where('seo.canonical', url("/services/{$service->slug}")));
 });
 
+test('home page uses an exact raw seo title without app name suffix', function () {
+    $response = $this->get('/');
+
+    $response
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('public/legacy')
+            ->where('seo.title', 'Website Design in Uganda | SEO Services in Uganda | Website Development')
+            ->where('seo.appendAppName', false));
+});
+
 test('thin client pages are served with noindex robots', function () {
     $client = Client::factory()->create([
         'name' => 'Thin Client',
@@ -123,6 +134,34 @@ test('privacy policy page has explicit public seo props', function () {
             ->where('legacyPath', '/privacy-policy')
             ->where('seo.canonical', url('/privacy-policy'))
             ->where('seo.title', 'Privacy Policy'));
+});
+
+test('paginated news archives keep a page-specific canonical and return pagination data', function () {
+    Post::factory()->count(7)->create([
+        'status' => 'published',
+        'published_at' => now()->subDay(),
+    ]);
+
+    $response = $this->get('/news?page=2');
+
+    $response
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('public/legacy')
+            ->where('legacyPath', '/news?page=2')
+            ->where('seo.canonical', url('/news?page=2'))
+            ->where('legacyApiCache./posts?page=2.meta.current_page', 2)
+            ->where('legacyApiCache./posts?page=2.meta.last_page', 2));
+});
+
+test('empty paginated news archives return a 404', function () {
+    Post::factory()->create([
+        'status' => 'published',
+        'published_at' => now()->subDay(),
+    ]);
+
+    $this->get('/news?page=99')
+        ->assertStatus(404);
 });
 
 test('sitemap includes intended public urls and excludes weak product pages', function () {

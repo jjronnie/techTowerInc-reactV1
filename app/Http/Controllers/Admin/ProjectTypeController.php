@@ -69,6 +69,16 @@ class ProjectTypeController extends Controller
 
     public function destroy(ProjectType $projectType): RedirectResponse
     {
+        if ($projectType->portfolios()->exists()) {
+            return redirect()
+                ->route('admin.project-types.index')
+                ->with('notification', [
+                    'type' => 'error',
+                    'title' => 'Project type not deleted',
+                    'message' => "\"{$projectType->name}\" is still attached to portfolio projects. Detach it first.",
+                ]);
+        }
+
         $name = $projectType->name;
         $projectType->delete();
 

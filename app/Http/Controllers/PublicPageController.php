@@ -66,7 +66,7 @@ class PublicPageController extends Controller
                 '/technologies' => ['data' => $technologiesData],
             ],
             'seo' => $this->seo($request, [
-                'title' => 'Software Development Company in Uganda',
+                'title' => 'Website Design in Uganda | SEO Services in Uganda | Website Development',
                 'description' => data_get(
                     $settings,
                     'default_seo_description',
@@ -74,6 +74,7 @@ class PublicPageController extends Controller
                 ),
                 'canonical' => url('/'),
                 'keywords' => 'software development company Uganda, tech company Kampala, digital solutions Uganda',
+                'appendAppName' => false,
                 'structuredData' => array_values(array_filter([
                     $this->organizationSchema('Organization'),
                     $this->websiteSchema(),
@@ -152,10 +153,29 @@ class PublicPageController extends Controller
 
         $settings = $this->siteSettings();
         $serviceData = (new ServiceResource($service))->resolve();
+        $featuredProjectsData = PortfolioResource::collection(
+            Portfolio::query()
+                ->where('is_active', true)
+                ->where('is_featured', true)
+                ->with(['client', 'categories', 'projectTypes', 'technologies'])
+                ->orderByRaw('coalesce(completed_at, started_at, created_at) desc')
+                ->orderByDesc('id')
+                ->limit(6)
+                ->get(),
+        )->resolve();
+        $latestPostsData = PostResource::collection(
+            $this->publishedPostsQuery()
+                ->with(['author', 'categories'])
+                ->orderByDesc('published_at')
+                ->limit(6)
+                ->get(),
+        )->resolve();
 
         return $this->renderLegacyPage($request, [
             'legacyApiCache' => [
                 "/services/{$service->slug}" => ['data' => $serviceData],
+                '/portfolio?featured=1&sort=latest' => ['data' => $featuredProjectsData],
+                '/posts?per_page=6' => ['data' => $latestPostsData],
             ],
             'seo' => $this->seo($request, [
                 'title' => data_get($serviceData, 'seo.title', $service->title),
@@ -339,10 +359,29 @@ class PublicPageController extends Controller
 
         $post->loadMissing(['author', 'categories']);
         $postData = (new PostResource($post))->resolve();
+        $servicesData = ServiceResource::collection(
+            Service::query()
+                ->where('is_active', true)
+                ->orderBy('sort_order')
+                ->orderBy('title')
+                ->get(),
+        )->resolve();
+        $featuredProjectsData = PortfolioResource::collection(
+            Portfolio::query()
+                ->where('is_active', true)
+                ->where('is_featured', true)
+                ->with(['client', 'categories', 'projectTypes', 'technologies'])
+                ->orderByRaw('coalesce(completed_at, started_at, created_at) desc')
+                ->orderByDesc('id')
+                ->limit(6)
+                ->get(),
+        )->resolve();
 
         return $this->renderLegacyPage($request, [
             'legacyApiCache' => [
                 "/posts/{$post->slug}" => ['data' => $postData],
+                '/services' => ['data' => $servicesData],
+                '/portfolio?featured=1&sort=latest' => ['data' => $featuredProjectsData],
             ],
             'seo' => $this->seo($request, [
                 'title' => data_get($postData, 'seo.title', $post->title),
@@ -483,6 +522,7 @@ class PublicPageController extends Controller
     private function renderNewsArchive(Request $request, ?Category $category): HttpResponse
     {
         $settings = $this->siteSettings();
+        $currentPage = max(1, (int) $request->query('page', 1));
         $postsQuery = $this->publishedPostsQuery()->with(['author', 'categories']);
 
         if ($category) {
@@ -496,18 +536,26 @@ class PublicPageController extends Controller
             ->paginate(6)
             ->withQueryString();
 
-        if ($category && $posts->isEmpty()) {
+        if (($category || $currentPage > 1) && $posts->isEmpty()) {
             return $this->notFound($request);
         }
 
-        $postsData = PostResource::collection($posts->getCollection())->resolve();
-        $apiPath = $category
-            ? "/posts?category={$category->slug}"
-            : '/posts';
+        /** @var array{data: array<int, array<string, mixed>>, links?: mixed, meta?: mixed} $postsPayload */
+        $postsPayload = PostResource::collection($posts)->response()->getData(true);
+        $query = array_filter([
+            'category' => $category?->slug,
+            'page' => $currentPage > 1 ? $currentPage : null,
+        ]);
+        $apiPath = '/posts'.($query === [] ? '' : '?'.http_build_query($query));
+        $canonicalUrl = $currentPage > 1
+            ? $request->fullUrl()
+            : ($category
+                ? url("/news/category/{$category->slug}")
+                : url('/news'));
 
         return $this->renderLegacyPage($request, [
             'legacyApiCache' => [
-                $apiPath => ['data' => $postsData],
+                $apiPath => $postsPayload,
             ],
             'seo' => $this->seo($request, [
                 'title' => $category
@@ -516,9 +564,7 @@ class PublicPageController extends Controller
                 'description' => $category
                     ? "Read {$category->name} articles and updates from TechTower."
                     : data_get($settings, 'blog_page.header_subtitle'),
-                'canonical' => $category
-                    ? url("/news/category/{$category->slug}")
-                    : url('/news'),
+                'canonical' => $canonicalUrl,
                 'structuredData' => [
                     $this->organizationSchema('Organization'),
                     $this->breadcrumbSchema(array_values(array_filter([
@@ -562,6 +608,7 @@ class PublicPageController extends Controller
             'keywords' => null,
             'image' => $this->absoluteUrl(data_get($settings, 'default_og_image_url')),
             'type' => 'website',
+            'appendAppName' => true,
             'structuredData' => [],
         ], array_filter($overrides, fn ($value) => $value !== null));
     }

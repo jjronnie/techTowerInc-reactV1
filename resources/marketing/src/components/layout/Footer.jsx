@@ -47,11 +47,11 @@ const Footer = () => {
     {
       title: "More",
       links: [
+        { text: "News", to: "/news" },
+        { text: "Website Design", to: "/services/website-design-re-design-and-development" },
+        { text: "Mobile App Development", to: "/services/mobile-app-development" },
+        { text: "Custom Software Development", to: "/services/system-development-architecture" },
         { text: "Privacy Policy", to: "/privacy-policy" },
-        { text: "Inventory MGT & POS Software", to: "https://getnovas.com?utm_source=TechTowerIncfooter" },
-        { text: "Tech News & Guides", to: "https://thetechtower.com?utm_source=TechTowerIncfooter" },
-        { text: "FPL Galaxy", to: "https://fantasy.thetechtower.com?utm_source=TechTowerIncfooter" },
-        { text: "Web Design Listings", to: "https://www.webdesignlistings.org" },
       ]
     },
 

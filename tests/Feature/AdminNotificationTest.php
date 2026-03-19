@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Category;
+use App\Models\Client;
 use App\Models\Portfolio;
 use App\Models\Post;
 use App\Models\ProjectType;
@@ -87,6 +88,105 @@ it('flashes a notification when deleting a post', function () {
         'title' => 'Post deleted',
         'message' => 'The post has been removed.',
     ]);
+});
+
+it('prevents deleting a category while it is attached to content', function () {
+    $admin = User::factory()->create([
+        'is_admin' => true,
+    ]);
+    $category = Category::factory()->create([
+        'name' => 'Protected Category',
+    ]);
+    $post = Post::factory()->create();
+    $portfolio = Portfolio::factory()->create();
+
+    $post->categories()->sync([$category->id]);
+    $portfolio->categories()->sync([$category->id]);
+
+    $response = $this->actingAs($admin)
+        ->delete(route('admin.categories.destroy', $category));
+
+    $response->assertRedirect(route('admin.categories.index'));
+    $response->assertSessionHas('notification', [
+        'type' => 'error',
+        'title' => 'Category not deleted',
+        'message' => '"Protected Category" is still attached to posts or portfolio projects. Detach it first.',
+    ]);
+
+    expect($category->fresh())->not->toBeNull();
+});
+
+it('prevents deleting a client while it is attached to portfolio projects', function () {
+    $admin = User::factory()->create([
+        'is_admin' => true,
+    ]);
+    $client = Client::factory()->create([
+        'name' => 'Protected Client',
+    ]);
+
+    Portfolio::factory()->create([
+        'client_id' => $client->id,
+    ]);
+
+    $response = $this->actingAs($admin)
+        ->delete(route('admin.clients.destroy', $client));
+
+    $response->assertRedirect(route('admin.clients.index'));
+    $response->assertSessionHas('notification', [
+        'type' => 'error',
+        'title' => 'Client not deleted',
+        'message' => '"Protected Client" is still attached to portfolio projects. Detach it first.',
+    ]);
+
+    expect($client->fresh())->not->toBeNull();
+});
+
+it('prevents deleting a technology while it is attached to portfolio projects', function () {
+    $admin = User::factory()->create([
+        'is_admin' => true,
+    ]);
+    $technology = Technology::factory()->create([
+        'name' => 'Protected Technology',
+    ]);
+    $portfolio = Portfolio::factory()->create();
+
+    $portfolio->technologies()->sync([$technology->id]);
+
+    $response = $this->actingAs($admin)
+        ->delete(route('admin.technologies.destroy', $technology));
+
+    $response->assertRedirect(route('admin.technologies.index'));
+    $response->assertSessionHas('notification', [
+        'type' => 'error',
+        'title' => 'Technology not deleted',
+        'message' => '"Protected Technology" is still attached to portfolio projects. Detach it first.',
+    ]);
+
+    expect($technology->fresh())->not->toBeNull();
+});
+
+it('prevents deleting a project type while it is attached to portfolio projects', function () {
+    $admin = User::factory()->create([
+        'is_admin' => true,
+    ]);
+    $projectType = ProjectType::factory()->create([
+        'name' => 'Protected Type',
+    ]);
+    $portfolio = Portfolio::factory()->create();
+
+    $portfolio->projectTypes()->sync([$projectType->id]);
+
+    $response = $this->actingAs($admin)
+        ->delete(route('admin.project-types.destroy', $projectType));
+
+    $response->assertRedirect(route('admin.project-types.index'));
+    $response->assertSessionHas('notification', [
+        'type' => 'error',
+        'title' => 'Project type not deleted',
+        'message' => '"Protected Type" is still attached to portfolio projects. Detach it first.',
+    ]);
+
+    expect($projectType->fresh())->not->toBeNull();
 });
 
 it('flashes a notification when creating a portfolio entry', function () {

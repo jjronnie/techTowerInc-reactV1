@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, CalendarDays, Tag, UserCircle, Facebook, Linkedin, Mail, Twitter, Copy } from 'lucide-react';
@@ -7,12 +7,26 @@ import { toast } from '@marketing/components/ui/use-toast';
 import { useApi } from '@marketing/hooks/useApi';
 import { useSiteSettings } from '@marketing/context/SiteSettingsContext';
 import Seo from '@marketing/components/Seo';
+import {
+  pickRelatedProjectsForPost,
+  pickRelatedServicesForPost,
+} from '@marketing/data/seoSupport';
 
 const SinglePostPage = () => {
   const { slug } = useParams();
   const { settings } = useSiteSettings();
   const { data, loading, error } = useApi(slug ? `/posts/${slug}` : null, { skip: !slug });
+  const { data: servicesData } = useApi('/services');
+  const { data: projectsData } = useApi('/portfolio?featured=1&sort=latest');
   const post = data?.data;
+  const relatedServices = useMemo(
+    () => pickRelatedServicesForPost(post, servicesData?.data || [], 3),
+    [post, servicesData?.data]
+  );
+  const relatedProjects = useMemo(
+    () => pickRelatedProjectsForPost(post, projectsData?.data || [], 2),
+    [post, projectsData?.data]
+  );
 
   const fadeInProps = (delay = 0) => ({
     initial: { opacity: 0, y: 20 },
@@ -213,6 +227,84 @@ const SinglePostPage = () => {
             </div>
           </motion.footer>
         </article>
+
+        {(relatedServices.length > 0 || relatedProjects.length > 0) && (
+          <section className="mt-16 space-y-10">
+            {relatedServices.length > 0 && (
+              <div>
+                <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+                  <div>
+                    <h2 className="text-2xl font-semibold text-foreground">Related services</h2>
+                    <p className="text-sm text-muted-foreground">
+                      If this topic matches your next project, these are the service pages to explore next.
+                    </p>
+                  </div>
+                  <Button asChild variant="outline" className="next-button-outline rounded-full px-6">
+                    <Link to="/services">All services</Link>
+                  </Button>
+                </div>
+
+                <div className="grid gap-6 md:grid-cols-3">
+                  {relatedServices.map((service) => (
+                    <article key={service.slug} className="next-card">
+                      <p className="mb-3 text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                        Service
+                      </p>
+                      <h3 className="mb-3 text-xl font-semibold text-foreground">
+                        <Link to={`/services/${service.slug}`} className="transition hover:text-primary">
+                          {service.title}
+                        </Link>
+                      </h3>
+                      <p className="mb-5 text-sm leading-7 text-muted-foreground">
+                        {service.short_description || service.description}
+                      </p>
+                      <Link to={`/services/${service.slug}`} className="text-sm font-medium text-primary">
+                        View service
+                      </Link>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {relatedProjects.length > 0 && (
+              <div>
+                <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+                  <div>
+                    <h2 className="text-2xl font-semibold text-foreground">Related case studies</h2>
+                    <p className="text-sm text-muted-foreground">
+                      Recent project examples connected to the ideas covered in this article.
+                    </p>
+                  </div>
+                  <Button asChild variant="outline" className="next-button-outline rounded-full px-6">
+                    <Link to="/portfolio">Portfolio</Link>
+                  </Button>
+                </div>
+
+                <div className="grid gap-6 lg:grid-cols-2">
+                  {relatedProjects.map((project) => (
+                    <article key={project.id} className="next-card">
+                      <p className="mb-3 text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                        Project
+                      </p>
+                      <h3 className="mb-3 text-2xl font-semibold text-foreground">
+                        <Link to={`/project/${project.slug}`} className="transition hover:text-primary">
+                          {project.title}
+                        </Link>
+                      </h3>
+                      <p className="mb-5 text-sm leading-7 text-muted-foreground">
+                        {project.summary || project.excerpt || project.description}
+                      </p>
+                      <Link to={`/project/${project.slug}`} className="text-sm font-medium text-primary">
+                        View case study
+                      </Link>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            )}
+          </section>
+        )}
       </div>
     </div>
   );

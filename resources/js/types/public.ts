@@ -51,6 +51,7 @@ export type SeoData = {
     keywords?: string | null;
     image?: string | null;
     type?: string | null;
+    appendAppName?: boolean | null;
     structuredData?: Array<Record<string, unknown>>;
 };
 
