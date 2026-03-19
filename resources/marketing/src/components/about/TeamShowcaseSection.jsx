@@ -1,45 +1,24 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useApi } from '@marketing/hooks/useApi';
 
 const TeamShowcaseSection = ({ section }) => {
   const { data, loading } = useApi('/team-members');
-  const sectionRef = useRef(null);
-  const [isInView, setIsInView] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
 
   const members = useMemo(() => data?.data || [], [data?.data]);
 
   useEffect(() => {
-    const element = sectionRef.current;
-
-    if (!element) {
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsInView(entry.isIntersecting);
-      },
-      { threshold: 0.3 }
-    );
-
-    observer.observe(element);
-
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (!isInView || members.length <= 1) {
+    if (members.length <= 1) {
       return;
     }
 
     const interval = window.setInterval(() => {
       setActiveIndex((currentIndex) => (currentIndex + 1) % members.length);
-    }, 3600);
+    }, 3000);
 
     return () => window.clearInterval(interval);
-  }, [isInView, members.length]);
+  }, [members.length]);
 
   useEffect(() => {
     if (activeIndex >= members.length) {
@@ -58,7 +37,7 @@ const TeamShowcaseSection = ({ section }) => {
   }
 
   return (
-    <section ref={sectionRef} id="team" className="next-section-padding">
+    <section id="team" className="next-section-padding">
       <div className="next-container">
         <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
           <motion.div

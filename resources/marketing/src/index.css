@@ -339,10 +339,13 @@
 .faq-content {
   display: grid;
   grid-template-rows: 0fr;
+  min-height: 0;
+  overflow: hidden;
   transition: grid-template-rows 0.3s ease;
 }
 
 .faq-content-inner {
+  min-height: 0;
   overflow: hidden;
   opacity: 0;
   transform: translateY(-6px);
