@@ -88,6 +88,12 @@ test('home page uses an exact raw seo title without app name suffix', function (
             ->where('seo.appendAppName', false));
 });
 
+test('public pages include the fallback favicon asset in the app shell', function () {
+    $this->get('/')
+        ->assertOk()
+        ->assertSee('href="/favicon.png"', false);
+});
+
 test('thin client pages are served with noindex robots', function () {
     $client = Client::factory()->create([
         'name' => 'Thin Client',
