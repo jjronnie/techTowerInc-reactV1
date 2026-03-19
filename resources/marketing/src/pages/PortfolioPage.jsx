@@ -133,10 +133,10 @@ const PortfolioPage = () => {
         )}
       </header>
 
-      <section className="next-section-padding pt-0">
+      <section className="next-section-padding overflow-x-hidden pt-0">
         <div className="next-container">
           {loading && (
-            <div className="grid gap-8 lg:grid-cols-2">
+            <div className="grid min-w-0 gap-8 lg:grid-cols-2">
               {Array.from({ length: 2 }).map((_, index) => (
                 <div key={`portfolio-skeleton-${index}`} className="next-card space-y-4">
                   <div className="shimmer h-56 w-full rounded" />
@@ -152,11 +152,11 @@ const PortfolioPage = () => {
             <div className="text-sm text-red-400">Unable to load portfolio right now.</div>
           )}
           {!loading && !error && (
-            <div className="grid gap-8 lg:grid-cols-2">
+            <div className="grid min-w-0 gap-8 lg:grid-cols-2">
               {filteredProjects.map((project, index) => (
                 <motion.div
                   key={project.id}
-                  className="h-full"
+                  className="h-full min-w-0"
                   {...fadeInProps(index * 0.1)}
                 >
                   <FolderCard project={project} />

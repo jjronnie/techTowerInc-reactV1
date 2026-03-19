@@ -11,7 +11,7 @@ const FolderCard = ({ project }) => {
   const primaryType = project.primary_type || types[0] || null;
 
   return (
-    <article className="next-card group relative flex h-full min-w-0 cursor-pointer flex-col overflow-hidden p-0">
+    <article className="next-card group relative flex h-full w-full min-w-0 max-w-full cursor-pointer flex-col overflow-hidden p-0">
       <Link
         to={`/project/${project.slug}`}
         aria-label={`Open ${project.title}`}
@@ -44,7 +44,7 @@ const FolderCard = ({ project }) => {
               <Link
                 to={`/clients/${client.slug}`}
                 onClick={(event) => event.stopPropagation()}
-                className="relative z-20 inline-flex min-w-0 max-w-full items-center gap-2 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground transition hover:text-foreground"
+                className="relative z-20 inline-flex w-full min-w-0 max-w-full items-center gap-2 overflow-hidden text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground transition hover:text-foreground sm:w-auto"
               >
                 <span className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full border border-border/70 bg-muted/40">
                   {client.logo_url ? (
@@ -60,7 +60,7 @@ const FolderCard = ({ project }) => {
                 <span className="max-w-full truncate sm:max-w-[12rem]">{client.name}</span>
               </Link>
             ) : (
-              <div className="inline-flex min-w-0 max-w-full items-center gap-2 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
+              <div className="inline-flex w-full min-w-0 max-w-full items-center gap-2 overflow-hidden text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground sm:w-auto">
                 <span className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full border border-border/70 bg-muted/40">
                   {client.logo_url ? (
                     <img
@@ -93,7 +93,7 @@ const FolderCard = ({ project }) => {
               <Link
                 to={`/portfolio/category/${primaryCategory.slug}`}
                 onClick={(event) => event.stopPropagation()}
-                className="max-w-full truncate rounded-full border border-border/70 px-3 py-1 text-xs text-muted-foreground transition hover:border-primary/40 hover:text-foreground"
+                className="block max-w-full truncate rounded-full border border-border/70 px-3 py-1 text-xs text-muted-foreground transition hover:border-primary/40 hover:text-foreground"
               >
                 {primaryCategory.name}
               </Link>
