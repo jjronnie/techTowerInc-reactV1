@@ -51,8 +51,10 @@ const Footer = () => {
         { text: "Inventory MGT & POS Software", to: "https://getnovas.com?utm_source=TechTowerIncfooter" },
         { text: "Tech News & Guides", to: "https://thetechtower.com?utm_source=TechTowerIncfooter" },
         { text: "FPL Galaxy", to: "https://fantasy.thetechtower.com?utm_source=TechTowerIncfooter" },
+        { text: "Web Design Listings", to: "https://www.webdesignlistings.org" },
       ]
     },
+
     {
       title: "Get in Touch",
       links: [
