@@ -11,7 +11,7 @@ const HomePortfolioShowcaseTile = ({ project, className = '' }) => {
 
   return (
     <article
-      className={`group relative overflow-hidden border border-white/10 bg-card/40 ${className}`}
+      className={`group relative overflow-hidden border border-white/10 bg-black ${className}`}
     >
       {!isLoaded && <div className="shimmer absolute inset-0" />}
       <img
@@ -19,7 +19,7 @@ const HomePortfolioShowcaseTile = ({ project, className = '' }) => {
         alt={project.title}
         loading="lazy"
         onLoad={() => setIsLoaded(true)}
-        className={`h-full w-full object-fill transition duration-700 ${
+        className={`h-full w-full object-contain object-center transition duration-700 ${
           isLoaded ? 'opacity-100' : 'opacity-0'
         }`}
       />
