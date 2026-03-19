@@ -2,10 +2,11 @@
 
 namespace Database\Factories;
 
+use App\Models\ContactSubmission;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ContactSubmission>
+ * @extends Factory<ContactSubmission>
  */
 class ContactSubmissionFactory extends Factory
 {
@@ -17,8 +18,8 @@ class ContactSubmissionFactory extends Factory
     public function definition(): array
     {
         return [
-            'first_name' => fake()->firstName(),
-            'last_name' => fake()->lastName(),
+            'name' => fake()->name(),
+            'company_name' => fake()->boolean(60) ? fake()->company() : null,
             'email' => fake()->safeEmail(),
             'phone' => '+256'.fake()->numberBetween(700000000, 799999999),
             'service_id' => null,

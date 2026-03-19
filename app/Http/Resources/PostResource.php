@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 
 class PostResource extends JsonResource
@@ -15,7 +16,8 @@ class PostResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $categories = $this->categories ?? [];
+        $categories = $this->whenLoaded('categories');
+        $primaryCategory = $categories instanceof Collection ? $categories->first() : null;
 
         return [
             'id' => $this->id,
@@ -28,8 +30,8 @@ class PostResource extends JsonResource
             'author_name' => $this->author?->name,
             'published_at' => optional($this->published_at)->toIso8601String(),
             'reading_time' => $this->reading_time,
-            'category' => $categories[0] ?? null,
-            'categories' => $categories,
+            'primary_category' => CategoryResource::make($primaryCategory),
+            'categories' => CategoryResource::collection($categories),
             'tags' => $this->tags ?? [],
             'seo' => [
                 'title' => $this->seo_title,

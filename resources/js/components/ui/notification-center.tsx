@@ -55,13 +55,39 @@ export function NotificationCenter() {
     const lastStatusRef = useRef<string | null>(null);
     const lastErrorsRef = useRef<string | null>(null);
 
-    const errorSignature = useMemo(() => {
+    const validationMessages = useMemo(() => {
         if (!errors || Object.keys(errors).length === 0) {
+            return [];
+        }
+
+        return Array.from(
+            new Set(
+                Object.values(errors)
+                    .map((message) => message?.trim())
+                    .filter(Boolean),
+            ),
+        );
+    }, [errors]);
+
+    const errorSignature = useMemo(() => {
+        if (validationMessages.length === 0) {
             return null;
         }
 
-        return Object.keys(errors).sort().join('|');
-    }, [errors]);
+        return validationMessages.join('|');
+    }, [validationMessages]);
+
+    const validationToastMessage = useMemo(() => {
+        if (validationMessages.length === 0) {
+            return DEFAULT_ERROR_MESSAGE;
+        }
+
+        if (validationMessages.length === 1) {
+            return validationMessages[0];
+        }
+
+        return `${validationMessages.length} fields need attention. First issue: ${validationMessages[0]}`;
+    }, [validationMessages]);
 
     const pushToast = (toast: Omit<Toast, 'id'>) => {
         const id = createToastId();
@@ -125,10 +151,10 @@ export function NotificationCenter() {
 
         pushToast({
             type: 'error',
-            title: 'Action needed',
-            message: DEFAULT_ERROR_MESSAGE,
+            title: 'Please review the form',
+            message: validationToastMessage,
         });
-    }, [errorSignature]);
+    }, [errorSignature, validationToastMessage]);
 
     if (toasts.length === 0) {
         return null;
@@ -143,17 +169,19 @@ export function NotificationCenter() {
                     <div
                         key={toast.id}
                         className={cn(
-                            'pointer-events-auto w-full max-w-sm rounded-2xl border border-white/40 bg-white/80 p-4 shadow-lg shadow-black/5 backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/70',
+                            'pointer-events-auto relative w-full max-w-md overflow-hidden rounded-[1.75rem] border border-white/50 bg-white/75 p-4 shadow-[0_24px_60px_-32px_rgba(15,23,42,0.5)] backdrop-blur-2xl before:absolute before:inset-x-6 before:top-0 before:h-px before:bg-white/80 dark:border-white/10 dark:bg-slate-950/78 dark:before:bg-white/15',
                             'animate-in fade-in slide-in-from-top-2',
                         )}
                     >
                         <div className="flex items-start gap-3">
-                            <Icon
-                                className={cn(
-                                    'mt-0.5 h-5 w-5 shrink-0',
-                                    toneMap[toast.type],
-                                )}
-                            />
+                            <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/50 bg-white/55 shadow-sm dark:border-white/10 dark:bg-white/5">
+                                <Icon
+                                    className={cn(
+                                        'h-5 w-5 shrink-0',
+                                        toneMap[toast.type],
+                                    )}
+                                />
+                            </span>
                             <div className="space-y-1">
                                 {toast.title && (
                                     <p className="text-sm font-semibold text-foreground">

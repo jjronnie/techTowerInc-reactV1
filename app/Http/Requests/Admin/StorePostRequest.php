@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin;
 
 use App\Support\HtmlSanitizer;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StorePostRequest extends FormRequest
@@ -18,7 +19,7 @@ class StorePostRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
@@ -32,8 +33,8 @@ class StorePostRequest extends FormRequest
             'status' => ['required', 'in:draft,published'],
             'published_at' => ['nullable', 'date'],
             'reading_time' => ['nullable', 'integer'],
-            'categories' => ['nullable', 'array'],
-            'categories.*' => ['nullable', 'string', 'max:255'],
+            'category_ids' => ['required', 'array', 'min:1'],
+            'category_ids.*' => ['integer', 'exists:categories,id'],
             'tags' => ['nullable', 'array'],
             'tags.*' => ['nullable', 'string', 'max:255'],
             'seo_title' => ['nullable', 'string', 'max:255'],
@@ -51,6 +52,8 @@ class StorePostRequest extends FormRequest
             'title.required' => 'A post title is required.',
             'content.required' => 'Post content is required.',
             'slug.unique' => 'This slug is already in use.',
+            'category_ids.required' => 'Choose at least one category.',
+            'category_ids.min' => 'Choose at least one category.',
             'featured_image.image' => 'The featured image must be a valid image file.',
             'og_image.image' => 'The SEO image must be a valid image file.',
         ];

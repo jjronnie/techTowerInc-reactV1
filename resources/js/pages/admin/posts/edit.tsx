@@ -4,7 +4,10 @@ import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 import { dashboard } from '@/routes';
 import { index, update } from '@/routes/admin/posts';
-import PostForm, { type PostFormData } from './post-form';
+import PostForm, {
+    type PostCategoryOption,
+    type PostFormData,
+} from './post-form';
 
 type Post = {
     id: number;
@@ -15,8 +18,7 @@ type Post = {
     status: string;
     published_at: string | null;
     reading_time: number | null;
-    categories: string[] | null;
-    tags: string[] | null;
+    category_ids: number[] | null;
     featured_image_url: string | null;
     image_alt: string | null;
     og_image_url: string | null;
@@ -25,10 +27,12 @@ type Post = {
     seo_keywords: string | null;
     canonical_url: string | null;
     robots: string | null;
+    tags: string[] | null;
 };
 
 type EditPostProps = {
     post: Post;
+    categories: PostCategoryOption[];
 };
 
 const formatDatetimeLocal = (value: string | null) => {
@@ -48,7 +52,7 @@ const formatDatetimeLocal = (value: string | null) => {
     return local.toISOString().slice(0, 16);
 };
 
-export default function EditPost({ post }: EditPostProps) {
+export default function EditPost({ post, categories }: EditPostProps) {
     const form = useForm<PostFormData>({
         title: post.title ?? '',
         slug: post.slug ?? '',
@@ -57,7 +61,7 @@ export default function EditPost({ post }: EditPostProps) {
         status: post.status ?? 'draft',
         published_at: formatDatetimeLocal(post.published_at),
         reading_time: post.reading_time ?? '',
-        categories: post.categories ?? [],
+        category_ids: post.category_ids ?? [],
         tags: post.tags ?? [],
         featured_image: null,
         remove_featured_image: false,
@@ -91,10 +95,10 @@ export default function EditPost({ post }: EditPostProps) {
                     data={form.data}
                     errors={form.errors}
                     processing={form.processing}
+                    categories={categories}
                     onChange={form.setData}
                     onSubmit={submit}
                     submitLabel="Save Changes"
-                    showRemoveImage
                     currentFeaturedImageUrl={post.featured_image_url}
                     currentOgImageUrl={post.og_image_url}
                 />

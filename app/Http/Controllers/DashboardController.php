@@ -32,7 +32,7 @@ class DashboardController extends Controller
         $recentSubmissions = ContactSubmission::query()
             ->latest()
             ->limit(5)
-            ->get(['id', 'first_name', 'last_name', 'email', 'created_at']);
+            ->get(['id', 'name', 'company_name', 'email', 'created_at']);
 
         return Inertia::render('dashboard', [
             'stats' => $stats,

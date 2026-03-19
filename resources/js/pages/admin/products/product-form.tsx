@@ -1,5 +1,6 @@
-import { ChangeEvent, FormEvent } from 'react';
+import { FormEvent } from 'react';
 import InputError from '@/components/input-error';
+import { ImageUploadField } from '@/components/ui/image-upload-field';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -32,7 +33,8 @@ type ProductFormProps = {
     onChange: (key: keyof ProductFormData, value: ProductFormData[keyof ProductFormData]) => void;
     onSubmit: (event: FormEvent<HTMLFormElement>) => void;
     submitLabel: string;
-    showRemoveImage?: boolean;
+    currentImageUrl?: string | null;
+    currentOgImageUrl?: string | null;
 };
 
 export default function ProductForm({
@@ -42,7 +44,8 @@ export default function ProductForm({
     onChange,
     onSubmit,
     submitLabel,
-    showRemoveImage = false,
+    currentImageUrl = null,
+    currentOgImageUrl = null,
 }: ProductFormProps) {
     return (
         <form onSubmit={onSubmit} className="space-y-6">
@@ -152,36 +155,19 @@ export default function ProductForm({
                 <Label htmlFor="is_active">Active</Label>
             </div>
 
-            <div className="grid gap-2">
-                <Label htmlFor="image">Product image</Label>
-                <Input
-                    id="image"
-                    type="file"
-                    accept="image/*"
-                    onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                        onChange(
-                            'image',
-                            event.target.files?.[0] ?? null,
-                        )
-                    }
-                />
-                <InputError message={errors.image} />
-            </div>
-
-            {showRemoveImage && (
-                <div className="flex items-center gap-2">
-                    <Checkbox
-                        id="remove_image"
-                        checked={data.remove_image}
-                        onCheckedChange={(checked) =>
-                            onChange('remove_image', Boolean(checked))
-                        }
-                    />
-                    <Label htmlFor="remove_image">
-                        Remove current image
-                    </Label>
-                </div>
-            )}
+            <ImageUploadField
+                id="image"
+                label="Product image"
+                description="Shown on product cards and the product detail page."
+                file={data.image}
+                onChange={(file) => onChange('image', file)}
+                currentImageUrl={currentImageUrl}
+                error={errors.image}
+                removeCurrent={data.remove_image}
+                onRemoveCurrentChange={(value) =>
+                    onChange('remove_image', value)
+                }
+            />
 
             <div className="grid gap-2">
                 <Label htmlFor="seo_title">SEO title</Label>
@@ -219,36 +205,19 @@ export default function ProductForm({
                 <InputError message={errors.seo_keywords} />
             </div>
 
-            <div className="grid gap-2">
-                <Label htmlFor="og_image">SEO image</Label>
-                <Input
-                    id="og_image"
-                    type="file"
-                    accept="image/*"
-                    onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                        onChange(
-                            'og_image',
-                            event.target.files?.[0] ?? null,
-                        )
-                    }
-                />
-                <InputError message={errors.og_image} />
-            </div>
-
-            {showRemoveImage && (
-                <div className="flex items-center gap-2">
-                    <Checkbox
-                        id="remove_og_image"
-                        checked={data.remove_og_image}
-                        onCheckedChange={(checked) =>
-                            onChange('remove_og_image', Boolean(checked))
-                        }
-                    />
-                    <Label htmlFor="remove_og_image">
-                        Remove current SEO image
-                    </Label>
-                </div>
-            )}
+            <ImageUploadField
+                id="og_image"
+                label="SEO image"
+                description="Used for social sharing and search previews."
+                file={data.og_image}
+                onChange={(file) => onChange('og_image', file)}
+                currentImageUrl={currentOgImageUrl}
+                error={errors.og_image}
+                removeCurrent={data.remove_og_image}
+                onRemoveCurrentChange={(value) =>
+                    onChange('remove_og_image', value)
+                }
+            />
 
             <Button type="submit" disabled={processing}>
                 {submitLabel}

@@ -41,8 +41,8 @@ type DashboardProps = {
     }>;
     recent_submissions: Array<{
         id: number;
-        first_name: string;
-        last_name: string;
+        name: string;
+        company_name: string | null;
         email: string;
         created_at: string;
     }>;
@@ -208,8 +208,7 @@ export default function Dashboard({
                                     >
                                         <div className="space-y-1">
                                             <p className="font-medium">
-                                                {submission.first_name}{' '}
-                                                {submission.last_name}
+                                                {submission.name}
                                             </p>
                                             <p className="text-xs text-muted-foreground">
                                                 {submission.email} ·{' '}

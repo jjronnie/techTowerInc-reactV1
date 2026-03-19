@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use Database\Factories\SiteSettingFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class SiteSetting extends Model
 {
-    /** @use HasFactory<\Database\Factories\SiteSettingFactory> */
+    /** @use HasFactory<SiteSettingFactory> */
     use HasFactory;
 
     /**
@@ -29,7 +30,6 @@ class SiteSetting extends Model
         'verification_meta',
         'home_hero',
         'home_stats',
-        'home_technologies',
         'home_portfolio_intro',
         'home_services_intro',
         'home_features',
@@ -61,7 +61,6 @@ class SiteSetting extends Model
             'verification_meta' => 'array',
             'home_hero' => 'array',
             'home_stats' => 'array',
-            'home_technologies' => 'array',
             'home_portfolio_intro' => 'array',
             'home_services_intro' => 'array',
             'home_features' => 'array',

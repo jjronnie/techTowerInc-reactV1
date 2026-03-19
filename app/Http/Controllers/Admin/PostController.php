@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StorePostRequest;
 use App\Http\Requests\Admin\UpdatePostRequest;
+use App\Http\Resources\CategoryResource;
+use App\Models\Category;
 use App\Models\Post;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
@@ -19,7 +21,7 @@ class PostController extends Controller
     public function index(): Response
     {
         $posts = Post::query()
-            ->with('author')
+            ->with(['author', 'categories'])
             ->orderByDesc('published_at')
             ->orderByDesc('updated_at')
             ->get();
@@ -34,7 +36,11 @@ class PostController extends Controller
      */
     public function create(): Response
     {
-        return Inertia::render('admin/posts/create');
+        return Inertia::render('admin/posts/create', [
+            'categories' => CategoryResource::collection(
+                Category::query()->orderBy('name')->get(),
+            )->resolve(),
+        ]);
     }
 
     /**
@@ -43,6 +49,7 @@ class PostController extends Controller
     public function store(StorePostRequest $request): RedirectResponse
     {
         $data = $request->validated();
+        $categoryIds = $data['category_ids'];
 
         $data['author_id'] = $request->user()->id;
         $data['status'] = $data['status'] ?? 'draft';
@@ -63,9 +70,10 @@ class PostController extends Controller
             $data['og_image_path'] = $request->file('og_image')->store('posts/og-images', 'public');
         }
 
-        unset($data['featured_image'], $data['og_image']);
+        unset($data['category_ids'], $data['featured_image'], $data['og_image']);
 
         $post = Post::query()->create($data);
+        $post->categories()->sync($categoryIds);
 
         return redirect()
             ->route('admin.posts.edit', $post)
@@ -89,7 +97,7 @@ class PostController extends Controller
      */
     public function edit(Post $post): Response
     {
-        $post->loadMissing('author');
+        $post->loadMissing(['author', 'categories']);
         $post->setAttribute(
             'featured_image_url',
             $post->featured_image_path ? Storage::url($post->featured_image_path) : null,
@@ -98,9 +106,13 @@ class PostController extends Controller
             'og_image_url',
             $post->og_image_path ? Storage::url($post->og_image_path) : null,
         );
+        $post->setAttribute('category_ids', $post->categories->pluck('id')->all());
 
         return Inertia::render('admin/posts/edit', [
             'post' => $post,
+            'categories' => CategoryResource::collection(
+                Category::query()->orderBy('name')->get(),
+            )->resolve(),
         ]);
     }
 
@@ -110,6 +122,7 @@ class PostController extends Controller
     public function update(UpdatePostRequest $request, Post $post): RedirectResponse
     {
         $data = $request->validated();
+        $categoryIds = $data['category_ids'];
         $data['status'] = $data['status'] ?? $post->status;
 
         if ($data['status'] === 'published' && empty($data['published_at'])) {
@@ -149,6 +162,7 @@ class PostController extends Controller
         }
 
         unset(
+            $data['category_ids'],
             $data['featured_image'],
             $data['og_image'],
             $data['remove_featured_image'],
@@ -156,6 +170,7 @@ class PostController extends Controller
         );
 
         $post->update($data);
+        $post->categories()->sync($categoryIds);
 
         return redirect()
             ->route('admin.posts.edit', $post)

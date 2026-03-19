@@ -4,32 +4,32 @@ import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 import { dashboard } from '@/routes';
 import { index, update } from '@/routes/admin/portfolios';
-import PortfolioForm, { type PortfolioFormData } from './portfolio-form';
+import PortfolioForm, {
+    type PortfolioFormData,
+    type PortfolioOption,
+    type TechnologyOption,
+} from './portfolio-form';
 
 type Portfolio = {
     id: number;
     title: string;
+    type: string | null;
     slug: string;
-    label: string | null;
     summary: string | null;
-    result_label: string | null;
-    result_value: string | null;
-    category: string | null;
-    badge_text: string | null;
-    badge_color: string | null;
     excerpt: string | null;
     description: string | null;
-    client_name: string | null;
+    client_id: number | null;
+    category_ids: number[] | null;
+    technology_ids: number[] | null;
     project_url: string | null;
-    technologies: string[] | null;
     started_at: string | null;
     completed_at: string | null;
     sort_order: number | null;
     is_featured: boolean;
     is_active: boolean;
-    gallery_images: string[] | null;
     featured_image_url: string | null;
     og_image_url: string | null;
+    gallery_images: string[] | null;
     gallery_image_urls: { path: string; url: string }[] | null;
     seo_title: string | null;
     seo_description: string | null;
@@ -38,24 +38,28 @@ type Portfolio = {
 
 type EditPortfolioProps = {
     portfolio: Portfolio;
+    categories: PortfolioOption[];
+    clients: PortfolioOption[];
+    technologies: TechnologyOption[];
 };
 
-export default function EditPortfolio({ portfolio }: EditPortfolioProps) {
+export default function EditPortfolio({
+    portfolio,
+    categories,
+    clients,
+    technologies,
+}: EditPortfolioProps) {
     const form = useForm<PortfolioFormData>({
         title: portfolio.title ?? '',
+        type: portfolio.type ?? '',
         slug: portfolio.slug ?? '',
-        label: portfolio.label ?? '',
         summary: portfolio.summary ?? '',
-        result_label: portfolio.result_label ?? '',
-        result_value: portfolio.result_value ?? '',
-        category: portfolio.category ?? '',
-        badge_text: portfolio.badge_text ?? '',
-        badge_color: portfolio.badge_color ?? '',
         excerpt: portfolio.excerpt ?? '',
         description: portfolio.description ?? '',
-        client_name: portfolio.client_name ?? '',
+        client_id: portfolio.client_id ?? null,
+        category_ids: portfolio.category_ids ?? [],
+        technology_ids: portfolio.technology_ids ?? [],
         project_url: portfolio.project_url ?? '',
-        technologies: portfolio.technologies ?? [],
         started_at: portfolio.started_at ?? '',
         completed_at: portfolio.completed_at ?? '',
         sort_order: portfolio.sort_order ?? 0,
@@ -93,11 +97,12 @@ export default function EditPortfolio({ portfolio }: EditPortfolioProps) {
                     data={form.data}
                     errors={form.errors}
                     processing={form.processing}
+                    categories={categories}
+                    clients={clients}
+                    technologies={technologies}
                     onChange={form.setData}
                     onSubmit={submit}
                     submitLabel="Save Changes"
-                    showExistingGallery
-                    showRemoveImage
                     availableGalleryImages={portfolio.gallery_image_urls ?? []}
                     currentFeaturedImageUrl={portfolio.featured_image_url}
                     currentOgImageUrl={portfolio.og_image_url}

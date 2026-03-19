@@ -4,7 +4,17 @@ import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 import { dashboard } from '@/routes';
 import { index, store } from '@/routes/admin/portfolios';
-import PortfolioForm, { type PortfolioFormData } from './portfolio-form';
+import PortfolioForm, {
+    type PortfolioFormData,
+    type PortfolioOption,
+    type TechnologyOption,
+} from './portfolio-form';
+
+type CreatePortfolioProps = {
+    categories: PortfolioOption[];
+    clients: PortfolioOption[];
+    technologies: TechnologyOption[];
+};
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: dashboard().url },
@@ -12,22 +22,22 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Create', href: index().url },
 ];
 
-export default function CreatePortfolio() {
+export default function CreatePortfolio({
+    categories,
+    clients,
+    technologies,
+}: CreatePortfolioProps) {
     const form = useForm<PortfolioFormData>({
         title: '',
+        type: '',
         slug: '',
-        label: '',
         summary: '',
-        result_label: '',
-        result_value: '',
-        category: '',
-        badge_text: '',
-        badge_color: '',
         excerpt: '',
         description: '',
-        client_name: '',
+        client_id: null,
+        category_ids: [],
+        technology_ids: [],
         project_url: '',
-        technologies: [],
         started_at: '',
         completed_at: '',
         sort_order: 0,
@@ -54,11 +64,17 @@ export default function CreatePortfolio() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Create Portfolio" />
             <div className="flex flex-col gap-6 p-4">
-                <Heading title="Create Portfolio" />
+                <Heading
+                    title="Create Portfolio"
+                    description="Add a new project with relational content selections."
+                />
                 <PortfolioForm
                     data={form.data}
                     errors={form.errors}
                     processing={form.processing}
+                    categories={categories}
+                    clients={clients}
+                    technologies={technologies}
                     onChange={form.setData}
                     onSubmit={submit}
                     submitLabel="Create Portfolio"

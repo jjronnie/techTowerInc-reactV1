@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateSiteSettingRequest extends FormRequest
@@ -17,7 +18,7 @@ class UpdateSiteSettingRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
@@ -56,9 +57,6 @@ class UpdateSiteSettingRequest extends FormRequest
             'home_stats.*.label' => ['nullable', 'string', 'max:255'],
             'home_stats.*.suffix' => ['nullable', 'string', 'max:10'],
             'home_stats.*.decimals' => ['nullable', 'integer'],
-            'home_technologies' => ['nullable', 'array'],
-            'home_technologies.*.name' => ['nullable', 'string', 'max:255'],
-            'home_technologies.*.icon_key' => ['nullable', 'string', 'max:255'],
             'home_portfolio_intro' => ['nullable', 'array'],
             'home_portfolio_intro.label' => ['nullable', 'string', 'max:255'],
             'home_portfolio_intro.heading' => ['nullable', 'string', 'max:255'],

@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Plus } from 'lucide-react';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
 
@@ -10,13 +9,7 @@ const FaqSection = () => {
   return (
     <section className="next-section-padding bg-background">
       <div className="next-container">
-        <motion.div
-          className="next-card p-8 md:p-12"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.6 }}
-        >
+        <div className="next-card p-8 md:p-12">
           <div className="flex flex-col items-center text-center mb-10">
             <span className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
               {faqConfig.label || 'Frequently Asked Questions'}
@@ -45,7 +38,7 @@ const FaqSection = () => {
               </details>
             ))}
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

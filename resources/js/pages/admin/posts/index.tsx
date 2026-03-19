@@ -12,6 +12,10 @@ type Post = {
     slug: string;
     status: string;
     published_at: string | null;
+    categories?: Array<{
+        id: number;
+        name: string;
+    }>;
 };
 
 type PostsIndexProps = {
@@ -46,10 +50,11 @@ export default function PostsIndex({ posts }: PostsIndexProps) {
                 </div>
 
                 <div className="overflow-x-auto rounded-xl border border-sidebar-border/70 bg-card">
-                    <table className="min-w-[640px] w-full text-sm">
+                    <table className="min-w-[880px] w-full text-sm">
                         <thead className="bg-muted/50 text-xs uppercase text-muted-foreground">
                             <tr>
                                 <th className="px-4 py-3 text-left">Title</th>
+                                <th className="px-4 py-3 text-left">Categories</th>
                                 <th className="px-4 py-3 text-left">Status</th>
                                 <th className="px-4 py-3 text-left">Published</th>
                                 <th className="px-4 py-3 text-right">Actions</th>
@@ -61,8 +66,22 @@ export default function PostsIndex({ posts }: PostsIndexProps) {
                                     key={post.id}
                                     className="border-t border-sidebar-border/70"
                                 >
-                                    <td className="px-4 py-3 font-medium">
-                                        {post.title}
+                                    <td className="px-4 py-3">
+                                        <div className="grid gap-1">
+                                            <span className="font-medium">
+                                                {post.title}
+                                            </span>
+                                            <span className="text-xs text-muted-foreground">
+                                                {post.slug}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td className="px-4 py-3 text-muted-foreground">
+                                        {post.categories?.length
+                                            ? post.categories
+                                                  .map((category) => category.name)
+                                                  .join(', ')
+                                            : 'Uncategorized'}
                                     </td>
                                     <td className="px-4 py-3 text-muted-foreground">
                                         {post.status}
@@ -76,11 +95,7 @@ export default function PostsIndex({ posts }: PostsIndexProps) {
                                     </td>
                                     <td className="px-4 py-3 text-right">
                                         <div className="flex justify-end gap-2">
-                                            <Button
-                                                asChild
-                                                size="sm"
-                                                variant="outline"
-                                            >
+                                            <Button asChild size="sm" variant="outline">
                                                 <Link href={edit(post.id)}>
                                                     Edit
                                                 </Link>
@@ -88,9 +103,7 @@ export default function PostsIndex({ posts }: PostsIndexProps) {
                                             <Button
                                                 size="sm"
                                                 variant="destructive"
-                                                onClick={() =>
-                                                    handleDelete(post)
-                                                }
+                                                onClick={() => handleDelete(post)}
                                             >
                                                 Delete
                                             </Button>
@@ -101,7 +114,7 @@ export default function PostsIndex({ posts }: PostsIndexProps) {
                             {!posts.length && (
                                 <tr>
                                     <td
-                                        colSpan={4}
+                                        colSpan={5}
                                         className="px-4 py-8 text-center text-muted-foreground"
                                     >
                                         No posts yet.

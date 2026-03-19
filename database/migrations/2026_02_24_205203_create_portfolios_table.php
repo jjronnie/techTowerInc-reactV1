@@ -14,21 +14,15 @@ return new class extends Migration
         Schema::create('portfolios', function (Blueprint $table) {
             $table->id();
             $table->string('title');
+            $table->string('type');
             $table->string('slug')->unique();
-            $table->string('label')->nullable();
             $table->text('summary')->nullable();
-            $table->string('result_label')->nullable();
-            $table->string('result_value')->nullable();
-            $table->string('category')->nullable();
-            $table->string('badge_text')->nullable();
-            $table->string('badge_color')->nullable();
             $table->text('excerpt')->nullable();
             $table->longText('description')->nullable();
-            $table->string('client_name')->nullable();
+            $table->foreignId('client_id')->nullable()->index();
             $table->string('project_url')->nullable();
             $table->string('featured_image_path')->nullable();
             $table->json('gallery_images')->nullable();
-            $table->json('technologies')->nullable();
             $table->date('started_at')->nullable();
             $table->date('completed_at')->nullable();
             $table->integer('sort_order')->default(0);

@@ -1,48 +1,89 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowUpRight, ChevronDown } from 'lucide-react';
+import { ArrowUpRightSquare, Building2, Layers3 } from 'lucide-react';
 
 const FolderCard = ({ project }) => {
-  const label = project.label || 'Project';
-  const summary = project.summary || project.excerpt || '';
-  const resultLabel = project.result_label || project.resultLabel;
-  const resultValue = project.result_value || project.resultValue;
-  const badgeText = project.badge_text || project.badgeText || project.title?.[0];
-  const badgeColor = project.badge_color || project.badgeColor || '#ffffff';
+  const summary = project.summary || project.excerpt || project.description || '';
+  const categories = project.categories || [];
+  const client = project.client || null;
+  const primaryCategory = categories[0] || null;
 
   return (
-    <div className="relative group">
-      <div className="absolute -top-4 left-6 flex items-center gap-2 rounded-t-sm rounded-br-sm bg-card border border-border px-4 py-2 text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
-        <span>{label}</span>
-        <ChevronDown className="w-3 h-3" />
-      </div>
-      <div className="relative rounded-sm bg-card border border-border p-6 pt-12 transition-transform duration-300 group-hover:-translate-y-1">
-        <div className="mt-4">
-          <div className="flex items-center gap-3">
-            <span
-              className="h-10 w-10 rounded-full flex items-center justify-center text-xs font-semibold text-black"
-              style={{ backgroundColor: badgeColor }}
-            >
-              {badgeText}
-            </span>
-            <h3 className="text-2xl font-semibold text-foreground">{project.title}</h3>
+    <article className="next-card group relative flex h-full cursor-pointer flex-col overflow-hidden p-0">
+      <Link
+        to={`/portfolio/${project.slug}`}
+        aria-label={`Open ${project.title}`}
+        className="absolute inset-0 z-10 rounded-[inherit]"
+      />
+
+      <div className="relative aspect-[16/10] overflow-hidden border-b border-border/70 bg-muted/30">
+        {project.featured_image_url ? (
+          <img
+            src={project.featured_image_url}
+            alt={project.title}
+            className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+          />
+        ) : (
+          <div className="flex h-full items-center justify-center bg-gradient-to-br from-muted via-muted/60 to-background">
+            <Layers3 className="h-10 w-10 text-muted-foreground/60" />
           </div>
-          <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground mt-4">{project.category}</p>
-          <p className="text-sm text-muted-foreground mt-4">{summary}</p>
-        </div>
-        <div className="mt-8">
-          <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">{resultLabel}</p>
-          <p className="text-xl font-semibold text-foreground mt-2">{resultValue}</p>
-        </div>
-        <Link
-          to={`/portfolio/${project.slug}`}
-          className="absolute bottom-4 right-4 flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-muted-foreground transition hover:text-foreground hover:border-white/40"
-          aria-label="Open project details"
-        >
-          <ArrowUpRight className="w-4 h-4" />
-        </Link>
+        )}
+
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/85 via-background/15 to-transparent" />
       </div>
-    </div>
+
+      <div className="flex flex-1 flex-col space-y-5 p-6">
+        <div className="flex items-center justify-between gap-4">
+          <span className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
+            {project.type || 'Project'}
+          </span>
+          {client && (
+            <div className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
+              <span className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full border border-border/70 bg-muted/40">
+                {client.logo_url ? (
+                  <img
+                    src={client.logo_url}
+                    alt={client.name}
+                    className="h-full w-full object-contain p-1.5"
+                  />
+                ) : (
+                  <Building2 className="h-3.5 w-3.5" />
+                )}
+              </span>
+              <span className="max-w-[12rem] truncate">{client.name}</span>
+            </div>
+          )}
+        </div>
+
+        <div className="space-y-3">
+          <h3 className="text-2xl font-semibold text-foreground transition group-hover:text-primary">
+            {project.title}
+          </h3>
+          <p className="flex-1 text-sm text-muted-foreground">
+            {summary}
+          </p>
+        </div>
+
+        <div className="mt-auto flex items-end justify-between gap-4">
+          {primaryCategory ? (
+            <div className="relative z-20 flex flex-wrap gap-2">
+              <Link
+                to={`/portfolio/category/${primaryCategory.slug}`}
+                onClick={(event) => event.stopPropagation()}
+                className="rounded-full border border-border/70 px-3 py-1 text-xs text-muted-foreground transition hover:border-primary/40 hover:text-foreground"
+              >
+                {primaryCategory.name}
+              </Link>
+            </div>
+          ) : (
+            <span />
+          )}
+          <span className="pointer-events-none inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-border/70 bg-muted/30 text-muted-foreground transition group-hover:border-primary/40 group-hover:text-primary">
+            <ArrowUpRightSquare className="h-4 w-4" />
+          </span>
+        </div>
+      </div>
+    </article>
   );
 };
 

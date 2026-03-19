@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Category;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -9,12 +10,10 @@ use Illuminate\Support\Str;
 
 class PostSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $admin = User::query()->where('email', 'admin@techtower.ug')->first();
+        $categories = Category::query()->get()->keyBy('name');
 
         if (! $admin) {
             $admin = User::factory()->create([
@@ -95,14 +94,31 @@ class PostSeeder extends Seeder
 
         foreach ($posts as $post) {
             $slug = Str::slug($post['title']);
-            Post::query()->updateOrCreate(
+            $categoryIds = collect($post['categories'])
+                ->map(fn (string $name) => $categories->get($name)?->id)
+                ->filter()
+                ->values()
+                ->all();
+
+            $entry = Post::query()->updateOrCreate(
                 ['slug' => $slug],
                 [
-                    ...$post,
                     'slug' => $slug,
+                    'title' => $post['title'],
+                    'excerpt' => $post['excerpt'],
+                    'content' => $post['content'],
+                    'status' => $post['status'],
+                    'published_at' => $post['published_at'],
+                    'reading_time' => $post['reading_time'],
+                    'tags' => $post['tags'],
+                    'seo_title' => $post['seo_title'],
+                    'seo_description' => $post['seo_description'],
+                    'seo_keywords' => $post['seo_keywords'],
                     'author_id' => $admin->id,
                 ],
             );
+
+            $entry->categories()->sync($categoryIds);
         }
     }
 }

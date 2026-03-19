@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import React, { useEffect, useCallback } from 'react';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Toaster } from '@/components/ui/toaster';
 import Navbar from '@/components/layout/Navbar';
@@ -10,6 +10,7 @@ import AboutPage from '@/pages/AboutPage';
 import ContactPage from '@/pages/ContactPage';
 import PortfolioPage from '@/pages/PortfolioPage';
 import PortfolioShowPage from '@/pages/PortfolioShowPage';
+import ClientShowPage from '@/pages/ClientShowPage';
 import BlogPage from '@/pages/BlogPage';
 import ProductsPage from '@/pages/ProductsPage';
 import ProductShowPage from '@/pages/ProductShowPage';
@@ -19,6 +20,17 @@ import PrivacyPolicyPage from '@/pages/PrivacyPolicyPage';
 import ScrollToTop from '@/components/ScrollToTop';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import NotFound from '@/pages/NotFound';
+
+const LegacyBlogRedirect = () => {
+  const location = useLocation();
+
+  return (
+    <Navigate
+      to={`${location.pathname.replace(/^\/blog/, '/news')}${location.search}${location.hash}`}
+      replace
+    />
+  );
+};
 
 const App = () => {
   const location = useLocation();
@@ -138,6 +150,17 @@ const App = () => {
                   <PortfolioPage />
                 </motion.div>
               } />
+              <Route path="/portfolio/category/:categorySlug" element={
+                <motion.div
+                  initial="initial"
+                  animate="in"
+                  exit="out"
+                  variants={pageVariants}
+                  transition={pageTransition}
+                >
+                  <PortfolioPage />
+                </motion.div>
+              } />
               <Route path="/portfolio/:slug" element={
                 <motion.div
                   initial="initial"
@@ -147,6 +170,17 @@ const App = () => {
                   transition={pageTransition}
                 >
                   <PortfolioShowPage />
+                </motion.div>
+              } />
+              <Route path="/clients/:slug" element={
+                <motion.div
+                  initial="initial"
+                  animate="in"
+                  exit="out"
+                  variants={pageVariants}
+                  transition={pageTransition}
+                >
+                  <ClientShowPage />
                 </motion.div>
               } />
               <Route path="/products" element={
@@ -171,7 +205,7 @@ const App = () => {
                   <ProductShowPage />
                 </motion.div>
               } />
-              <Route path="/blog" element={
+              <Route path="/news" element={
                 <motion.div
                   initial="initial"
                   animate="in"
@@ -182,7 +216,18 @@ const App = () => {
                   <BlogPage />
                 </motion.div>
               } />
-              <Route path="/blog/:slug" element={
+              <Route path="/news/category/:categorySlug" element={
+                <motion.div
+                  initial="initial"
+                  animate="in"
+                  exit="out"
+                  variants={pageVariants}
+                  transition={pageTransition}
+                >
+                  <BlogPage />
+                </motion.div>
+              } />
+              <Route path="/news/:slug" element={
                 <motion.div
                   initial="initial"
                   animate="in"
@@ -193,6 +238,9 @@ const App = () => {
                   <SinglePostPage />
                 </motion.div>
               } />
+              <Route path="/blog" element={<LegacyBlogRedirect />} />
+              <Route path="/blog/category/:categorySlug" element={<LegacyBlogRedirect />} />
+              <Route path="/blog/:slug" element={<LegacyBlogRedirect />} />
               <Route path="/contact" element={
                 <motion.div
                   initial="initial"

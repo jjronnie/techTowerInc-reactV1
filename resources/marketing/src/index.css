@@ -258,6 +258,33 @@
   padding: 0 28px;
   white-space: nowrap;
 }
+
+.portfolio-slider {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 0.75rem;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.portfolio-slider-track {
+  display: flex;
+  align-items: stretch;
+  width: max-content;
+  will-change: transform;
+}
+
+.portfolio-slider-card {
+  display: flex;
+  width: clamp(18rem, 34vw, 26rem);
+  flex: 0 0 clamp(18rem, 34vw, 26rem);
+  padding-right: 1.5rem;
+  scroll-snap-align: start;
+}
+
+.portfolio-slider-card > * {
+  width: 100%;
+}
 @keyframes marquee {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }

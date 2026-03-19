@@ -9,9 +9,17 @@ import { create, destroy, edit, index } from '@/routes/admin/portfolios';
 type Portfolio = {
     id: number;
     title: string;
+    type: string;
     slug: string;
     is_featured: boolean;
     is_active: boolean;
+    client?: {
+        name: string;
+    } | null;
+    categories?: Array<{
+        id: number;
+        name: string;
+    }>;
 };
 
 type PortfoliosIndexProps = {
@@ -41,7 +49,7 @@ export default function PortfoliosIndex({ portfolios }: PortfoliosIndexProps) {
                 <div className="flex items-center justify-between">
                     <Heading
                         title="Portfolio"
-                        description="Manage portfolio projects."
+                        description="Manage portfolio projects, clients, and linked categories."
                     />
                     <Button asChild>
                         <Link href={create()}>Add Portfolio</Link>
@@ -49,11 +57,13 @@ export default function PortfoliosIndex({ portfolios }: PortfoliosIndexProps) {
                 </div>
 
                 <div className="overflow-x-auto rounded-xl border border-sidebar-border/70 bg-card">
-                    <table className="min-w-[640px] w-full text-sm">
+                    <table className="min-w-[880px] w-full text-sm">
                         <thead className="bg-muted/50 text-xs uppercase text-muted-foreground">
                             <tr>
                                 <th className="px-4 py-3 text-left">Title</th>
-                                <th className="px-4 py-3 text-left">Slug</th>
+                                <th className="px-4 py-3 text-left">Type</th>
+                                <th className="px-4 py-3 text-left">Client</th>
+                                <th className="px-4 py-3 text-left">Categories</th>
                                 <th className="px-4 py-3 text-left">Featured</th>
                                 <th className="px-4 py-3 text-left">Active</th>
                                 <th className="px-4 py-3 text-right">Actions</th>
@@ -65,11 +75,28 @@ export default function PortfoliosIndex({ portfolios }: PortfoliosIndexProps) {
                                     key={portfolio.id}
                                     className="border-t border-sidebar-border/70"
                                 >
-                                    <td className="px-4 py-3 font-medium">
-                                        {portfolio.title}
+                                    <td className="px-4 py-3">
+                                        <div className="grid gap-1">
+                                            <span className="font-medium">
+                                                {portfolio.title}
+                                            </span>
+                                            <span className="text-xs text-muted-foreground">
+                                                {portfolio.slug}
+                                            </span>
+                                        </div>
                                     </td>
                                     <td className="px-4 py-3 text-muted-foreground">
-                                        {portfolio.slug}
+                                        {portfolio.type}
+                                    </td>
+                                    <td className="px-4 py-3 text-muted-foreground">
+                                        {portfolio.client?.name ?? 'No client'}
+                                    </td>
+                                    <td className="px-4 py-3 text-muted-foreground">
+                                        {portfolio.categories?.length
+                                            ? portfolio.categories
+                                                  .map((category) => category.name)
+                                                  .join(', ')
+                                            : 'Uncategorized'}
                                     </td>
                                     <td className="px-4 py-3">
                                         {portfolio.is_featured ? 'Yes' : 'No'}
@@ -79,14 +106,8 @@ export default function PortfoliosIndex({ portfolios }: PortfoliosIndexProps) {
                                     </td>
                                     <td className="px-4 py-3 text-right">
                                         <div className="flex justify-end gap-2">
-                                            <Button
-                                                asChild
-                                                size="sm"
-                                                variant="outline"
-                                            >
-                                                <Link
-                                                    href={edit(portfolio.id)}
-                                                >
+                                            <Button asChild size="sm" variant="outline">
+                                                <Link href={edit(portfolio.id)}>
                                                     Edit
                                                 </Link>
                                             </Button>
@@ -106,7 +127,7 @@ export default function PortfoliosIndex({ portfolios }: PortfoliosIndexProps) {
                             {!portfolios.length && (
                                 <tr>
                                     <td
-                                        colSpan={5}
+                                        colSpan={7}
                                         className="px-4 py-8 text-center text-muted-foreground"
                                     >
                                         No portfolio entries yet.

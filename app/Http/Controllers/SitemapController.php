@@ -17,7 +17,7 @@ class SitemapController extends Controller
             ['loc' => url('/services'), 'lastmod' => null],
             ['loc' => url('/portfolio'), 'lastmod' => null],
             ['loc' => url('/products'), 'lastmod' => null],
-            ['loc' => url('/blog'), 'lastmod' => null],
+            ['loc' => url('/news'), 'lastmod' => null],
             ['loc' => url('/about'), 'lastmod' => null],
             ['loc' => url('/contact'), 'lastmod' => null],
             ['loc' => url('/privacy-policy'), 'lastmod' => null],
@@ -57,7 +57,7 @@ class SitemapController extends Controller
             ->orderByDesc('published_at')
             ->get()
             ->map(fn (Post $post) => [
-                'loc' => url("/blog/{$post->slug}"),
+                'loc' => url("/news/{$post->slug}"),
                 'lastmod' => $post->updated_at?->toAtomString(),
             ]);
 

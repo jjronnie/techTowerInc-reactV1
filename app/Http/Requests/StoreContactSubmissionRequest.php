@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Rules\NoLinks;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreContactSubmissionRequest extends FormRequest
@@ -18,19 +19,19 @@ class StoreContactSubmissionRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
-            'first_name' => ['required', 'string', 'max:100', new NoLinks],
-            'last_name' => ['required', 'string', 'max:100', new NoLinks],
+            'name' => ['required', 'string', 'max:150', new NoLinks],
+            'company_name' => ['nullable', 'string', 'max:150', new NoLinks],
             'email' => ['required', 'email', 'max:255'],
             'phone' => ['required', 'string', 'regex:/^\\+\\d{7,15}$/', new NoLinks],
             'service_id' => ['nullable', 'integer', 'exists:services,id', 'required_without:other_service_details'],
             'other_service_details' => ['nullable', 'string', 'max:2000', new NoLinks, 'required_without:service_id'],
             'message' => ['required', 'string', 'max:5000', new NoLinks],
-            'company_website' => ['nullable', 'string'],
+            'company_website' => ['nullable', 'string', 'max:255'],
             'contact_time' => ['nullable', 'string'],
         ];
     }
@@ -38,8 +39,7 @@ class StoreContactSubmissionRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'first_name.required' => 'Please provide your first name.',
-            'last_name.required' => 'Please provide your last name.',
+            'name.required' => 'Please provide your name.',
             'email.required' => 'Please provide your email address.',
             'email.email' => 'Please provide a valid email address.',
             'phone.required' => 'Please provide a phone or WhatsApp number.',

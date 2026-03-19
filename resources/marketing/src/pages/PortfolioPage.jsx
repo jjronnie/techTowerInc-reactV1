@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { Layers } from 'lucide-react';
 import FolderCard from '@/components/shared/FolderCard';
 import { useApi } from '@/hooks/useApi';
@@ -9,10 +9,21 @@ import { useSiteSettings } from '@/context/SiteSettingsContext';
 import Seo from '@/components/Seo';
 
 const PortfolioPage = () => {
+  const { categorySlug } = useParams();
   const { settings } = useSiteSettings();
-  const { data, loading, error } = useApi('/portfolio');
+  const activeCategory = categorySlug || null;
+  const apiPath = activeCategory
+    ? `/portfolio?category=${encodeURIComponent(activeCategory)}`
+    : '/portfolio';
+  const { data, loading, error } = useApi(apiPath);
   const portfolioProjects = data?.data || [];
   const pageCopy = settings?.portfolio_page || {};
+  const activeCategoryLabel = activeCategory
+    ? activeCategory
+        .split('-')
+        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(' ')
+    : null;
   const fadeInProps = (delay = 0) => ({
     initial: { opacity: 0, y: 20 },
     whileInView: { opacity: 1, y: 0 },
@@ -28,9 +39,20 @@ const PortfolioPage = () => {
       />
       <header className="next-container next-section-padding text-center">
         <motion.div {...fadeInProps()} className="max-w-3xl mx-auto">
-          <span className="inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground border border-border/60 rounded-full mb-4">
-            {pageCopy.header_label || 'Portfolio vault'}
-          </span>
+          <div className="mb-4 flex flex-wrap justify-center gap-3">
+            <span className="inline-flex items-center gap-2 rounded-full border border-border/60 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+              {pageCopy.header_label || 'Portfolio vault'}
+            </span>
+            {activeCategoryLabel && (
+              <Link
+                to="/portfolio"
+                className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/8 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-primary transition hover:bg-primary/12"
+              >
+                {activeCategoryLabel}
+                <span className="text-[10px] text-primary/70">Clear</span>
+              </Link>
+            )}
+          </div>
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-semibold tracking-tight mb-6 text-balance">
             {pageCopy.header_title || 'Projects that show how we deliver outcomes.'}
           </h1>
@@ -63,11 +85,20 @@ const PortfolioPage = () => {
               {portfolioProjects.map((project, index) => (
                 <motion.div
                   key={project.id}
+                  className="h-full"
                   {...fadeInProps(index * 0.1)}
                 >
                   <FolderCard project={project} />
                 </motion.div>
               ))}
+            </div>
+          )}
+          {!loading && !error && portfolioProjects.length === 0 && (
+            <div className="next-card text-center">
+              <p className="text-lg text-foreground">No projects match this filter yet.</p>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Try another category or explore the full portfolio.
+              </p>
             </div>
           )}
         </div>

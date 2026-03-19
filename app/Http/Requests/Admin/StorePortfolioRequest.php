@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StorePortfolioRequest extends FormRequest
@@ -17,31 +18,28 @@ class StorePortfolioRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
             'title' => ['required', 'string', 'max:255'],
+            'type' => ['required', 'string', 'max:255'],
             'slug' => ['nullable', 'string', 'max:255', 'unique:portfolios,slug'],
-            'label' => ['nullable', 'string', 'max:255'],
             'summary' => ['nullable', 'string'],
-            'result_label' => ['nullable', 'string', 'max:255'],
-            'result_value' => ['nullable', 'string', 'max:255'],
-            'category' => ['nullable', 'string', 'max:255'],
-            'badge_text' => ['nullable', 'string', 'max:10'],
-            'badge_color' => ['nullable', 'string', 'max:255'],
             'excerpt' => ['nullable', 'string'],
             'description' => ['nullable', 'string'],
-            'client_name' => ['nullable', 'string', 'max:255'],
+            'client_id' => ['nullable', 'integer', 'exists:clients,id'],
             'project_url' => ['nullable', 'url', 'max:255'],
+            'category_ids' => ['required', 'array', 'min:1'],
+            'category_ids.*' => ['integer', 'exists:categories,id'],
+            'technology_ids' => ['required', 'array', 'min:1'],
+            'technology_ids.*' => ['integer', 'exists:technologies,id'],
             'featured_image' => ['nullable', 'image', 'max:4096'],
             'gallery_images' => ['nullable', 'array'],
             'gallery_images.*' => ['image', 'max:4096'],
-            'technologies' => ['nullable', 'array'],
-            'technologies.*' => ['nullable', 'string', 'max:255'],
             'started_at' => ['nullable', 'date'],
-            'completed_at' => ['nullable', 'date'],
+            'completed_at' => ['nullable', 'date', 'after_or_equal:started_at'],
             'sort_order' => ['nullable', 'integer'],
             'is_featured' => ['nullable', 'boolean'],
             'is_active' => ['nullable', 'boolean'],
@@ -56,7 +54,12 @@ class StorePortfolioRequest extends FormRequest
     {
         return [
             'title.required' => 'A portfolio title is required.',
+            'type.required' => 'Add a project type such as website or mobile app.',
             'slug.unique' => 'This slug is already in use.',
+            'category_ids.required' => 'Choose at least one category.',
+            'category_ids.min' => 'Choose at least one category.',
+            'technology_ids.required' => 'Choose at least one technology.',
+            'technology_ids.min' => 'Choose at least one technology.',
             'featured_image.image' => 'The featured image must be a valid image file.',
             'gallery_images.*.image' => 'Gallery uploads must be images.',
             'og_image.image' => 'The SEO image must be a valid image file.',

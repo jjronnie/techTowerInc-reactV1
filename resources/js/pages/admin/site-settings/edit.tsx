@@ -1,4 +1,5 @@
 import { Head, useForm } from '@inertiajs/react';
+import type { FormEvent } from 'react';
 import Heading from '@/components/heading';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
@@ -36,11 +37,6 @@ type HomeStat = {
     label: string;
     suffix: string;
     decimals: number | string;
-};
-
-type HomeTechnology = {
-    name: string;
-    icon_key: string;
 };
 
 type SectionIntro = {
@@ -225,7 +221,6 @@ type SiteSettings = {
     default_seo_description: string | null;
     home_hero: Partial<HomeHero> | null;
     home_stats: HomeStat[] | null;
-    home_technologies: HomeTechnology[] | null;
     home_portfolio_intro: Partial<SectionIntro> | null;
     home_services_intro: Partial<SectionIntro> | null;
     home_features: Partial<HomeFeatures> | null;
@@ -278,16 +273,6 @@ const normalizeHomeStats = (stats: HomeStat[] | null): HomeStat[] =>
               label: stat?.label ?? '',
               suffix: stat?.suffix ?? '',
               decimals: stat?.decimals ?? '',
-          }))
-        : [];
-
-const normalizeHomeTechnologies = (
-    technologies: HomeTechnology[] | null,
-): HomeTechnology[] =>
-    Array.isArray(technologies)
-        ? technologies.map((tech) => ({
-              name: tech?.name ?? '',
-              icon_key: tech?.icon_key ?? '',
           }))
         : [];
 
@@ -411,6 +396,109 @@ const normalizeContactSocial = (
         : [],
 });
 
+const buildCurrentValues = (settings: SiteSettings): SiteSettingsFormData => ({
+    site_name: settings.site_name ?? '',
+    tagline: settings.tagline ?? '',
+    company_email: settings.company_email ?? '',
+    company_phone: settings.company_phone ?? '',
+    company_address: settings.company_address ?? '',
+    footer_text: settings.footer_text ?? '',
+    social_links: normalizeSocialLinks(settings.social_links),
+    verification_meta: normalizeVerificationMeta(settings.verification_meta),
+    logo: null,
+    favicon: null,
+    default_og_image: null,
+    remove_logo: false,
+    remove_favicon: false,
+    remove_default_og_image: false,
+    default_seo_title: settings.default_seo_title ?? '',
+    default_seo_description: settings.default_seo_description ?? '',
+    home_hero: {
+        badge_text: settings.home_hero?.badge_text ?? '',
+        headline: settings.home_hero?.headline ?? '',
+        headline_emphasis: settings.home_hero?.headline_emphasis ?? '',
+        subheadline: settings.home_hero?.subheadline ?? '',
+        primary_cta_label: settings.home_hero?.primary_cta_label ?? '',
+        primary_cta_href: settings.home_hero?.primary_cta_href ?? '',
+        secondary_cta_label: settings.home_hero?.secondary_cta_label ?? '',
+        secondary_cta_href: settings.home_hero?.secondary_cta_href ?? '',
+    },
+    home_stats: normalizeHomeStats(settings.home_stats),
+    home_portfolio_intro: {
+        label: settings.home_portfolio_intro?.label ?? '',
+        heading: settings.home_portfolio_intro?.heading ?? '',
+        subheading: settings.home_portfolio_intro?.subheading ?? '',
+    },
+    home_services_intro: {
+        label: settings.home_services_intro?.label ?? '',
+        heading: settings.home_services_intro?.heading ?? '',
+        subheading: settings.home_services_intro?.subheading ?? '',
+    },
+    home_features: normalizeHomeFeatures(settings.home_features),
+    home_testimonials: normalizeHomeTestimonials(settings.home_testimonials),
+    home_faqs: normalizeHomeFaqs(settings.home_faqs),
+    home_cta: {
+        icon_key: settings.home_cta?.icon_key ?? '',
+        heading: settings.home_cta?.heading ?? '',
+        body: settings.home_cta?.body ?? '',
+        primary_cta_label: settings.home_cta?.primary_cta_label ?? '',
+        primary_cta_href: settings.home_cta?.primary_cta_href ?? '',
+        secondary_cta_label: settings.home_cta?.secondary_cta_label ?? '',
+        secondary_cta_href: settings.home_cta?.secondary_cta_href ?? '',
+    },
+    about_header: {
+        badge_text: settings.about_header?.badge_text ?? '',
+        headline: settings.about_header?.headline ?? '',
+        subheadline: settings.about_header?.subheadline ?? '',
+    },
+    about_story: normalizeAboutStory(settings.about_story),
+    about_principles: normalizeAboutPrinciples(settings.about_principles),
+    about_cards: normalizeAboutCards(settings.about_cards),
+    about_team: normalizeAboutTeam(settings.about_team),
+    about_cta: {
+        icon_key: settings.about_cta?.icon_key ?? '',
+        heading: settings.about_cta?.heading ?? '',
+        body: settings.about_cta?.body ?? '',
+        cta_label: settings.about_cta?.cta_label ?? '',
+        cta_href: settings.about_cta?.cta_href ?? '',
+    },
+    services_page: {
+        header_label: settings.services_page?.header_label ?? '',
+        header_title: settings.services_page?.header_title ?? '',
+        header_subtitle: settings.services_page?.header_subtitle ?? '',
+        cta_heading: settings.services_page?.cta_heading ?? '',
+        cta_body: settings.services_page?.cta_body ?? '',
+        cta_button_label: settings.services_page?.cta_button_label ?? '',
+        cta_button_href: settings.services_page?.cta_button_href ?? '',
+    },
+    portfolio_page: {
+        header_label: settings.portfolio_page?.header_label ?? '',
+        header_title: settings.portfolio_page?.header_title ?? '',
+        header_subtitle: settings.portfolio_page?.header_subtitle ?? '',
+        cta_heading: settings.portfolio_page?.cta_heading ?? '',
+        cta_body: settings.portfolio_page?.cta_body ?? '',
+        cta_button_label: settings.portfolio_page?.cta_button_label ?? '',
+        cta_button_href: settings.portfolio_page?.cta_button_href ?? '',
+    },
+    products_page: {
+        header_label: settings.products_page?.header_label ?? '',
+        header_title: settings.products_page?.header_title ?? '',
+        header_subtitle: settings.products_page?.header_subtitle ?? '',
+    },
+    blog_page: {
+        header_label: settings.blog_page?.header_label ?? '',
+        header_title: settings.blog_page?.header_title ?? '',
+        header_subtitle: settings.blog_page?.header_subtitle ?? '',
+    },
+    contact_header: {
+        badge_text: settings.contact_header?.badge_text ?? '',
+        headline: settings.contact_header?.headline ?? '',
+        subheadline: settings.contact_header?.subheadline ?? '',
+    },
+    contact_details: normalizeContactDetails(settings.contact_details),
+    contact_social: normalizeContactSocial(settings.contact_social),
+});
+
 export default function EditSiteSettings({ settings }: EditSiteSettingsProps) {
     const media = {
         logo_url: settings.logo_url ?? null,
@@ -418,118 +506,7 @@ export default function EditSiteSettings({ settings }: EditSiteSettingsProps) {
         default_og_image_url: settings.default_og_image_url ?? null,
     };
 
-    const currentValues: SiteSettingsFormData = {
-        site_name: settings.site_name ?? '',
-        tagline: settings.tagline ?? '',
-        company_email: settings.company_email ?? '',
-        company_phone: settings.company_phone ?? '',
-        company_address: settings.company_address ?? '',
-        footer_text: settings.footer_text ?? '',
-        social_links: normalizeSocialLinks(settings.social_links),
-        verification_meta: normalizeVerificationMeta(settings.verification_meta),
-        logo: null,
-        favicon: null,
-        default_og_image: null,
-        remove_logo: false,
-        remove_favicon: false,
-        remove_default_og_image: false,
-        default_seo_title: settings.default_seo_title ?? '',
-        default_seo_description: settings.default_seo_description ?? '',
-        home_hero: {
-            badge_text: settings.home_hero?.badge_text ?? '',
-            headline: settings.home_hero?.headline ?? '',
-            headline_emphasis: settings.home_hero?.headline_emphasis ?? '',
-            subheadline: settings.home_hero?.subheadline ?? '',
-            primary_cta_label: settings.home_hero?.primary_cta_label ?? '',
-            primary_cta_href: settings.home_hero?.primary_cta_href ?? '',
-            secondary_cta_label: settings.home_hero?.secondary_cta_label ?? '',
-            secondary_cta_href: settings.home_hero?.secondary_cta_href ?? '',
-        },
-        home_stats: normalizeHomeStats(settings.home_stats),
-        home_technologies: normalizeHomeTechnologies(settings.home_technologies),
-        home_portfolio_intro: {
-            label: settings.home_portfolio_intro?.label ?? '',
-            heading: settings.home_portfolio_intro?.heading ?? '',
-            subheading: settings.home_portfolio_intro?.subheading ?? '',
-        },
-        home_services_intro: {
-            label: settings.home_services_intro?.label ?? '',
-            heading: settings.home_services_intro?.heading ?? '',
-            subheading: settings.home_services_intro?.subheading ?? '',
-        },
-        home_features: normalizeHomeFeatures(settings.home_features),
-        home_testimonials: normalizeHomeTestimonials(settings.home_testimonials),
-        home_faqs: normalizeHomeFaqs(settings.home_faqs),
-        home_cta: {
-            icon_key: settings.home_cta?.icon_key ?? '',
-            heading: settings.home_cta?.heading ?? '',
-            body: settings.home_cta?.body ?? '',
-            primary_cta_label: settings.home_cta?.primary_cta_label ?? '',
-            primary_cta_href: settings.home_cta?.primary_cta_href ?? '',
-            secondary_cta_label: settings.home_cta?.secondary_cta_label ?? '',
-            secondary_cta_href: settings.home_cta?.secondary_cta_href ?? '',
-        },
-        about_header: {
-            badge_text: settings.about_header?.badge_text ?? '',
-            headline: settings.about_header?.headline ?? '',
-            subheadline: settings.about_header?.subheadline ?? '',
-        },
-        about_story: normalizeAboutStory(settings.about_story),
-        about_principles: normalizeAboutPrinciples(settings.about_principles),
-        about_cards: normalizeAboutCards(settings.about_cards),
-        about_team: normalizeAboutTeam(settings.about_team),
-        about_cta: {
-            icon_key: settings.about_cta?.icon_key ?? '',
-            heading: settings.about_cta?.heading ?? '',
-            body: settings.about_cta?.body ?? '',
-            cta_label: settings.about_cta?.cta_label ?? '',
-            cta_href: settings.about_cta?.cta_href ?? '',
-        },
-        services_page: {
-            header_label: settings.services_page?.header_label ?? '',
-            header_title: settings.services_page?.header_title ?? '',
-            header_subtitle: settings.services_page?.header_subtitle ?? '',
-            cta_heading: settings.services_page?.cta_heading ?? '',
-            cta_body: settings.services_page?.cta_body ?? '',
-            cta_button_label: settings.services_page?.cta_button_label ?? '',
-            cta_button_href: settings.services_page?.cta_button_href ?? '',
-        },
-        portfolio_page: {
-            header_label: settings.portfolio_page?.header_label ?? '',
-            header_title: settings.portfolio_page?.header_title ?? '',
-            header_subtitle: settings.portfolio_page?.header_subtitle ?? '',
-            cta_heading: settings.portfolio_page?.cta_heading ?? '',
-            cta_body: settings.portfolio_page?.cta_body ?? '',
-            cta_button_label: settings.portfolio_page?.cta_button_label ?? '',
-            cta_button_href: settings.portfolio_page?.cta_button_href ?? '',
-        },
-        products_page: {
-            header_label: settings.products_page?.header_label ?? '',
-            header_title: settings.products_page?.header_title ?? '',
-            header_subtitle: settings.products_page?.header_subtitle ?? '',
-        },
-        blog_page: {
-            header_label: settings.blog_page?.header_label ?? '',
-            header_title: settings.blog_page?.header_title ?? '',
-            header_subtitle: settings.blog_page?.header_subtitle ?? '',
-        },
-        contact_header: {
-            badge_text: settings.contact_header?.badge_text ?? '',
-            headline: settings.contact_header?.headline ?? '',
-            subheadline: settings.contact_header?.subheadline ?? '',
-        },
-        contact_details: normalizeContactDetails(settings.contact_details),
-        contact_social: normalizeContactSocial(settings.contact_social),
-    };
-
-    const form = useForm<SiteSettingsFormData>(currentValues);
-
-    const submit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        form.put(update().url, {
-            forceFormData: true,
-        });
-    };
+    const currentValues = buildCurrentValues(settings);
 
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Dashboard', href: dashboard().url },
@@ -544,17 +521,48 @@ export default function EditSiteSettings({ settings }: EditSiteSettingsProps) {
                     title="Site Settings"
                     description="Manage global content and page sections."
                 />
-                <SiteSettingsForm
-                    data={form.data}
-                    current={currentValues}
-                    errors={form.errors}
-                    processing={form.processing}
+                <SiteSettingsEditor
+                    key={JSON.stringify(settings)}
+                    currentValues={currentValues}
                     media={media}
-                    onChange={form.setData}
-                    onSubmit={submit}
-                    submitLabel="Save Settings"
                 />
             </div>
         </AppLayout>
+    );
+}
+
+type SiteSettingsEditorProps = {
+    currentValues: SiteSettingsFormData;
+    media: {
+        logo_url: string | null;
+        favicon_url: string | null;
+        default_og_image_url: string | null;
+    };
+};
+
+function SiteSettingsEditor({
+    currentValues,
+    media,
+}: SiteSettingsEditorProps) {
+    const form = useForm<SiteSettingsFormData>(currentValues);
+
+    const submit = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        form.put(update().url, {
+            forceFormData: true,
+        });
+    };
+
+    return (
+        <SiteSettingsForm
+            data={form.data}
+            current={currentValues}
+            errors={form.errors}
+            processing={form.processing}
+            media={media}
+            onChange={form.setData}
+            onSubmit={submit}
+            submitLabel="Save Settings"
+        />
     );
 }

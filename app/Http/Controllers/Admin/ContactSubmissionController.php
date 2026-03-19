@@ -17,8 +17,8 @@ class ContactSubmissionController extends Controller
             ->latest()
             ->get([
                 'id',
-                'first_name',
-                'last_name',
+                'name',
+                'company_name',
                 'email',
                 'phone',
                 'service_id',

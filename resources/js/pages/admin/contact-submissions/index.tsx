@@ -13,8 +13,8 @@ type Service = {
 
 type ContactSubmission = {
     id: number;
-    first_name: string;
-    last_name: string;
+    name: string;
+    company_name: string | null;
     email: string;
     phone: string;
     service: Service | null;
@@ -91,8 +91,12 @@ export default function ContactSubmissionsIndex({
                                     className="border-t border-sidebar-border/70"
                                 >
                                     <td className="px-4 py-3 font-medium">
-                                        {submission.first_name}{' '}
-                                        {submission.last_name}
+                                        <div>{submission.name}</div>
+                                        {submission.company_name && (
+                                            <div className="text-xs font-normal text-muted-foreground">
+                                                {submission.company_name}
+                                            </div>
+                                        )}
                                     </td>
                                     <td className="px-4 py-3 text-muted-foreground">
                                         {submission.email}

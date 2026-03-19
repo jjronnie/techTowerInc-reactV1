@@ -11,16 +11,17 @@ import Seo from '@/components/Seo';
 
 const linkPattern = /(https?:\/\/|www\.)\S+|\b[a-z0-9.-]+\.[a-z]{2,}(?:\/\S*)?/i;
 
-const initialFormState = {
-  first_name: '',
-  last_name: '',
+const createInitialFormState = () => ({
+  name: '',
+  company_name: '',
   email: '',
   phone: '',
   service_id: '',
   other_service_details: '',
   message: '',
-  contact_time: '',
-};
+  company_website: '',
+  contact_time: `${Date.now()}`,
+});
 
 const ContactPage = () => {
   const location = useLocation();
@@ -28,7 +29,7 @@ const ContactPage = () => {
   const header = settings?.contact_header || {};
   const { data: servicesData, loading: servicesLoading } = useApi('/services');
   const services = useMemo(() => servicesData?.data ?? [], [servicesData]);
-  const [formData, setFormData] = useState(initialFormState);
+  const [formData, setFormData] = useState(() => createInitialFormState());
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
@@ -54,16 +55,14 @@ const ContactPage = () => {
   const validateForm = () => {
     const nextErrors = {};
 
-    if (!formData.first_name.trim()) {
-      nextErrors.first_name = 'Please provide your first name.';
-    } else if (containsLink(formData.first_name)) {
-      nextErrors.first_name = 'Links are not allowed in this field.';
+    if (!formData.name.trim()) {
+      nextErrors.name = 'Please provide your name.';
+    } else if (containsLink(formData.name)) {
+      nextErrors.name = 'Links are not allowed in this field.';
     }
 
-    if (!formData.last_name.trim()) {
-      nextErrors.last_name = 'Please provide your last name.';
-    } else if (containsLink(formData.last_name)) {
-      nextErrors.last_name = 'Links are not allowed in this field.';
+    if (formData.company_name.trim() && containsLink(formData.company_name)) {
+      nextErrors.company_name = 'Links are not allowed in this field.';
     }
 
     if (!formData.email.trim()) {
@@ -154,13 +153,14 @@ const ContactPage = () => {
     const isOther = formData.service_id === 'other';
 
     const payload = {
-      first_name: formData.first_name.trim(),
-      last_name: formData.last_name.trim(),
+      name: formData.name.trim(),
+      company_name: formData.company_name.trim() || null,
       email: formData.email.trim(),
       phone: normalizedPhone,
       service_id: isOther ? null : Number(formData.service_id),
       other_service_details: isOther ? formData.other_service_details.trim() : null,
       message: formData.message.trim(),
+      company_website: formData.company_website.trim(),
       contact_time: formData.contact_time,
     };
 
@@ -214,10 +214,10 @@ const ContactPage = () => {
       toast({
         title: 'Message Sent!',
         description:
-          "Thank you for reaching out. We'll get back to you within 24 business hours.",
+          "Thank you for reaching out. Our Team will review your message and get back to you as soon as possible.",
         className: 'bg-primary text-primary-foreground border-primary',
       });
-      setFormData(initialFormState);
+      setFormData(createInitialFormState());
       setErrors({});
       setSubmitError('');
     } catch (error) {
@@ -312,7 +312,7 @@ const ContactPage = () => {
       <section id="contact-form-section" className="next-section-padding pt-0">
         <div className="next-container">
           <div className="grid lg:grid-cols-5 gap-8 md:gap-12 items-start">
-            <motion.div 
+            <motion.div
               className="lg:col-span-2 space-y-6"
               {...fadeInProps(0.2, -20, 0)}
             >
@@ -338,7 +338,7 @@ const ContactPage = () => {
               )})}
             </motion.div>
 
-            <motion.div 
+            <motion.div
               className="lg:col-span-3"
               {...fadeInProps(0.4, 20, 0)}
             >
@@ -354,9 +354,9 @@ const ContactPage = () => {
                 )}
                 <input
                   type="text"
-                  name="contact_time"
-                  value={formData.contact_time}
-                  onChange={handleChange('contact_time')}
+                  name="company_website"
+                  value={formData.company_website}
+                  onChange={handleChange('company_website')}
                   autoComplete="off"
                   inputMode="none"
                   data-1p-ignore="true"
@@ -365,44 +365,44 @@ const ContactPage = () => {
                   aria-hidden="true"
                   className="sr-only"
                 />
-                <div className="grid sm:grid-cols-2 gap-x-6 gap-y-5 mb-5">
+                <div className="grid sm:grid-cols-1 gap-x-6 gap-y-5 mb-5">
                   <div>
-                    <label htmlFor="firstName" className="block text-sm font-medium text-muted-foreground mb-1.5">First Name</label>
+                    <label htmlFor="name" className="block text-sm font-medium text-muted-foreground mb-1.5">Name</label>
                     <input
                       type="text"
-                      id="firstName"
-                      name="first_name"
+                      id="name"
+                      name="name"
                       className="next-input"
-                      placeholder="e.g. Jjuuko"
-                      value={formData.first_name}
-                      onChange={handleChange('first_name')}
+                      placeholder="Your full name"
+                      value={formData.name}
+                      onChange={handleChange('name')}
                       required
-                      aria-label="First Name"
-                      aria-invalid={!!errors.first_name}
+                      aria-label="Name"
+                      aria-invalid={!!errors.name}
                     />
-                    {errors.first_name && (
-                      <p className="mt-1 text-xs text-destructive">{errors.first_name}</p>
+                    {errors.name && (
+                      <p className="mt-1 text-xs text-destructive">{errors.name}</p>
                     )}
                   </div>
                   <div>
-                    <label htmlFor="lastName" className="block text-sm font-medium text-muted-foreground mb-1.5">Last Name</label>
+                    <label htmlFor="companyName" className="block text-sm font-medium text-muted-foreground mb-1.5">Company Name <span className="text-muted-foreground/70">(Optional)</span></label>
                     <input
                       type="text"
-                      id="lastName"
-                      name="last_name"
+                      id="companyName"
+                      name="company_name"
                       className="next-input"
-                      placeholder="e.g. Ronald"
-                      value={formData.last_name}
-                      onChange={handleChange('last_name')}
-                      required
-                      aria-label="Last Name"
-                      aria-invalid={!!errors.last_name}
+                      placeholder="e.g. TechTower Innovations"
+                      value={formData.company_name}
+                      onChange={handleChange('company_name')}
+                      aria-label="Company Name"
+                      aria-invalid={!!errors.company_name}
                     />
-                    {errors.last_name && (
-                      <p className="mt-1 text-xs text-destructive">{errors.last_name}</p>
+                    {errors.company_name && (
+                      <p className="mt-1 text-xs text-destructive">{errors.company_name}</p>
                     )}
                   </div>
                 </div>
+
                 <div className="mb-5">
                   <label htmlFor="email" className="block text-sm font-medium text-muted-foreground mb-1.5">Email Address</label>
                   <input
@@ -410,7 +410,7 @@ const ContactPage = () => {
                     id="email"
                     name="email"
                     className="next-input"
-                    placeholder="you@example.com"
+                    placeholder="Your email address"
                     value={formData.email}
                     onChange={handleChange('email')}
                     required
@@ -422,13 +422,13 @@ const ContactPage = () => {
                   )}
                 </div>
                 <div className="mb-5">
-                  <label htmlFor="phone" className="block text-sm font-medium text-muted-foreground mb-1.5">Phone / WhatsApp</label>
+                  <label htmlFor="phone" className="block text-sm font-medium text-muted-foreground mb-1.5">Phone Number / WhatsApp</label>
                   <input
                     type="tel"
                     id="phone"
                     name="phone"
                     className="next-input"
-                    placeholder="e.g. +256703283529"
+                    placeholder="Include country code, e.g. +256 for Uganda"
                     value={formData.phone}
                     onChange={handleChange('phone')}
                     required

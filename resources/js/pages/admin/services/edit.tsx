@@ -18,6 +18,7 @@ type Service = {
     deliverables: string[] | null;
     sort_order: number | null;
     is_active: boolean;
+    og_image_url: string | null;
     seo_title: string | null;
     seo_description: string | null;
     seo_keywords: string | null;
@@ -71,7 +72,7 @@ export default function EditService({ service }: EditServiceProps) {
                     onChange={form.setData}
                     onSubmit={submit}
                     submitLabel="Save Changes"
-                    showRemoveImage
+                    currentOgImageUrl={service.og_image_url}
                 />
             </div>
         </AppLayout>

@@ -3,12 +3,15 @@
 namespace App\Models;
 
 use App\Models\Concerns\HasSlug;
+use Database\Factories\PortfolioFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Portfolio extends Model
 {
-    /** @use HasFactory<\Database\Factories\PortfolioFactory> */
+    /** @use HasFactory<PortfolioFactory> */
     use HasFactory;
 
     use HasSlug;
@@ -18,21 +21,15 @@ class Portfolio extends Model
      */
     protected $fillable = [
         'title',
+        'type',
         'slug',
-        'label',
         'summary',
-        'result_label',
-        'result_value',
-        'category',
-        'badge_text',
-        'badge_color',
         'excerpt',
         'description',
-        'client_name',
+        'client_id',
         'project_url',
         'featured_image_path',
         'gallery_images',
-        'technologies',
         'started_at',
         'completed_at',
         'sort_order',
@@ -51,11 +48,25 @@ class Portfolio extends Model
     {
         return [
             'gallery_images' => 'array',
-            'technologies' => 'array',
             'started_at' => 'date',
             'completed_at' => 'date',
             'is_featured' => 'boolean',
             'is_active' => 'boolean',
         ];
+    }
+
+    public function client(): BelongsTo
+    {
+        return $this->belongsTo(Client::class);
+    }
+
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(Category::class)->orderBy('name');
+    }
+
+    public function technologies(): BelongsToMany
+    {
+        return $this->belongsToMany(Technology::class)->orderBy('name');
     }
 }

@@ -1,5 +1,7 @@
 import { Link, usePage } from '@inertiajs/react';
 import {
+    Cpu,
+    FolderGit2,
     Folder,
     Inbox,
     LayoutGrid,
@@ -7,6 +9,7 @@ import {
     Package,
     PenSquare,
     Settings,
+    Tags,
     Users,
 } from 'lucide-react';
 import { NavMain } from '@/components/nav-main';
@@ -23,10 +26,13 @@ import {
 import type { NavItem } from '@/types';
 import AppLogo from './app-logo';
 import { dashboard as userDashboard } from '@/routes';
+import { index as categoriesIndex } from '@/routes/admin/categories';
+import { index as clientsIndex } from '@/routes/admin/clients';
 import { index as servicesIndex } from '@/routes/admin/services';
 import { index as portfoliosIndex } from '@/routes/admin/portfolios';
 import { index as productsIndex } from '@/routes/admin/products';
 import { index as postsIndex } from '@/routes/admin/posts';
+import { index as technologiesIndex } from '@/routes/admin/technologies';
 import { index as contactSubmissionsIndex } from '@/routes/admin/contact-submissions';
 import { index as usersIndex } from '@/routes/admin/users';
 import { edit as siteSettingsEdit } from '@/routes/admin/site-settings';
@@ -46,6 +52,21 @@ export function AppSidebar() {
             title: 'Services',
             href: servicesIndex(),
             icon: ListChecks,
+        },
+        {
+            title: 'Categories',
+            href: categoriesIndex(),
+            icon: Tags,
+        },
+        {
+            title: 'Clients',
+            href: clientsIndex(),
+            icon: FolderGit2,
+        },
+        {
+            title: 'Technologies',
+            href: technologiesIndex(),
+            icon: Cpu,
         },
         {
             title: 'Portfolio',

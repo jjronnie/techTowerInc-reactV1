@@ -14,11 +14,19 @@ class PostController extends Controller
     {
         $perPage = max(1, min((int) $request->query('per_page', 6), 50));
 
-        $posts = Post::query()
+        $query = Post::query()
             ->where('status', 'published')
             ->whereNotNull('published_at')
             ->where('published_at', '<=', now())
-            ->with('author')
+            ->with(['author', 'categories']);
+
+        if ($request->filled('category')) {
+            $query->whereHas('categories', function ($categoryQuery) use ($request): void {
+                $categoryQuery->where('slug', $request->string('category')->toString());
+            });
+        }
+
+        $posts = $query
             ->orderByDesc('published_at')
             ->paginate($perPage);
 
@@ -31,7 +39,7 @@ class PostController extends Controller
             abort(404);
         }
 
-        $post->loadMissing('author');
+        $post->loadMissing(['author', 'categories']);
 
         return new PostResource($post);
     }

@@ -72,6 +72,15 @@ class ProductController extends Controller
      */
     public function edit(Product $product): Response
     {
+        $product->setAttribute(
+            'image_url',
+            $product->image_path ? Storage::url($product->image_path) : null,
+        );
+        $product->setAttribute(
+            'og_image_url',
+            $product->og_image_path ? Storage::url($product->og_image_path) : null,
+        );
+
         return Inertia::render('admin/products/edit', [
             'product' => $product,
         ]);

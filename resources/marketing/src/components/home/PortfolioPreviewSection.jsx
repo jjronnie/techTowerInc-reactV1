@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
@@ -9,31 +9,163 @@ import { useSiteSettings } from '@/context/SiteSettingsContext';
 
 const PortfolioPreviewSection = () => {
   const { settings } = useSiteSettings();
-  const { data, loading, error } = useApi('/portfolio');
+  const { data, loading, error } = useApi('/portfolio?featured=1&sort=latest');
   const portfolioProjects = data?.data || [];
-  const scrollerRef = useRef(null);
+  const sectionRef = useRef(null);
+  const sliderViewportRef = useRef(null);
+  const [isSliderActive, setIsSliderActive] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const [slideDistance, setSlideDistance] = useState(0);
+  const hasPortfolioProjects = portfolioProjects.length > 0;
+  const shouldAnimate = portfolioProjects.length > 1;
+  const sliderProjects = useMemo(() => {
+    if (!shouldAnimate) {
+      return portfolioProjects;
+    }
+
+    return [...portfolioProjects, ...portfolioProjects, ...portfolioProjects];
+  }, [portfolioProjects, shouldAnimate]);
 
   useEffect(() => {
-    const scroller = scrollerRef.current;
-    if (!scroller) return;
-    let timeout;
-    const handleScroll = () => {
-      scroller.classList.add('is-scrolling');
-      window.clearTimeout(timeout);
-      timeout = window.setTimeout(() => scroller.classList.remove('is-scrolling'), 700);
-    };
-    scroller.addEventListener('scroll', handleScroll, { passive: true });
+    const sectionElement = sectionRef.current;
+
+    if (!sectionElement) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsSliderActive(entry.isIntersecting);
+      },
+      {
+        threshold: 0.2,
+      }
+    );
+
+    observer.observe(sectionElement);
+
     return () => {
-      scroller.removeEventListener('scroll', handleScroll);
-      window.clearTimeout(timeout);
+      observer.disconnect();
     };
   }, []);
 
-  const featured = portfolioProjects.slice(0, 2);
+  useEffect(() => {
+    const viewportElement = sliderViewportRef.current;
+
+    if (!viewportElement) {
+      return;
+    }
+
+    const updateSlideDistance = () => {
+      const firstCard = viewportElement.querySelector('[data-portfolio-slide]');
+
+      if (!firstCard) {
+        setSlideDistance(0);
+        return;
+      }
+
+      setSlideDistance(firstCard.getBoundingClientRect().width);
+    };
+
+    updateSlideDistance();
+
+    const resizeObserver =
+      typeof ResizeObserver === 'undefined'
+        ? null
+        : new ResizeObserver(() => {
+            updateSlideDistance();
+          });
+
+    resizeObserver?.observe(viewportElement);
+
+    const firstCard = viewportElement.querySelector('[data-portfolio-slide]');
+    if (firstCard) {
+      resizeObserver?.observe(firstCard);
+    }
+
+    window.addEventListener('resize', updateSlideDistance);
+
+    return () => {
+      resizeObserver?.disconnect();
+      window.removeEventListener('resize', updateSlideDistance);
+    };
+  }, [sliderProjects.length]);
+
+  useEffect(() => {
+    const viewportElement = sliderViewportRef.current;
+
+    if (!viewportElement || !shouldAnimate || slideDistance === 0) {
+      return;
+    }
+
+    viewportElement.scrollLeft = slideDistance * portfolioProjects.length;
+  }, [portfolioProjects.length, shouldAnimate, slideDistance]);
+
+  useEffect(() => {
+    const viewportElement = sliderViewportRef.current;
+
+    if (!viewportElement || !shouldAnimate || slideDistance === 0) {
+      return;
+    }
+
+    const duplicateWidth = slideDistance * portfolioProjects.length;
+
+    const normalizeScrollPosition = () => {
+      if (viewportElement.scrollLeft < duplicateWidth * 0.5) {
+        viewportElement.scrollLeft += duplicateWidth;
+      } else if (viewportElement.scrollLeft > duplicateWidth * 1.5) {
+        viewportElement.scrollLeft -= duplicateWidth;
+      }
+    };
+
+    let settleTimeout;
+
+    const handleScroll = () => {
+      window.clearTimeout(settleTimeout);
+      settleTimeout = window.setTimeout(() => {
+        normalizeScrollPosition();
+      }, 140);
+    };
+
+    viewportElement.addEventListener('scroll', handleScroll, {
+      passive: true,
+    });
+
+    return () => {
+      window.clearTimeout(settleTimeout);
+      viewportElement.removeEventListener('scroll', handleScroll);
+    };
+  }, [portfolioProjects.length, shouldAnimate, slideDistance]);
+
+  useEffect(() => {
+    const viewportElement = sliderViewportRef.current;
+
+    if (
+      !viewportElement ||
+      !shouldAnimate ||
+      !isSliderActive ||
+      isHovered ||
+      slideDistance === 0
+    ) {
+      return;
+    }
+
+    const slideInterval = window.setInterval(() => {
+      viewportElement.scrollTo({
+        left: viewportElement.scrollLeft + slideDistance,
+        behavior: 'smooth',
+      });
+    }, 2800);
+
+    return () => {
+      window.clearInterval(slideInterval);
+    };
+  }, [isHovered, isSliderActive, portfolioProjects.length, shouldAnimate, slideDistance]);
+
   const intro = settings?.home_portfolio_intro || {};
 
   return (
-    <section className="next-section-padding bg-background">
+    <section ref={sectionRef} className="next-section-padding bg-background">
       <div className="next-container">
         <motion.div
           className="text-left mb-12 max-w-2xl"
@@ -50,15 +182,18 @@ const PortfolioPreviewSection = () => {
           </h2>
           <p className="text-lg text-muted-foreground text-balance">
             {intro.subheading ||
-              'Two of our most recent projects, built with performance, clarity, and long-term scale in mind.'}
+              'Our most recent projects, built with performance, clarity, and long-term scale in mind.'}
           </p>
         </motion.div>
 
         {loading && (
-          <div className="flex flex-nowrap gap-6 overflow-x-auto pb-6">
-            {Array.from({ length: 2 }).map((_, index) => (
-              <div key={`portfolio-preview-skeleton-${index}`} className="min-w-[320px] sm:min-w-[420px] lg:flex-1">
-                <div className="next-card space-y-4">
+          <div className="flex flex-nowrap items-stretch gap-6 overflow-hidden pb-6">
+            {Array.from({ length: 5 }).map((_, index) => (
+              <div
+                key={`portfolio-preview-skeleton-${index}`}
+                className="w-[min(86vw,26rem)] shrink-0 self-stretch"
+              >
+                <div className="next-card h-full space-y-4">
                   <div className="shimmer h-44 w-full rounded" />
                   <div className="shimmer h-5 w-1/2 rounded" />
                   <div className="shimmer h-4 w-5/6 rounded" />
@@ -71,16 +206,29 @@ const PortfolioPreviewSection = () => {
         {error && (
           <div className="text-sm text-red-400">Unable to load portfolio right now.</div>
         )}
-        {!loading && !error && (
+        {!loading && !error && hasPortfolioProjects && (
           <div
-            ref={scrollerRef}
-            className="flex flex-nowrap gap-6 overflow-x-auto pb-6 scrollbar-soft"
+            ref={sliderViewportRef}
+            className="portfolio-slider scrollbar-soft"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
           >
-            {featured.map((project) => (
-              <div key={project.id} className="min-w-[320px] sm:min-w-[420px] lg:flex-1">
-                <FolderCard project={project} />
-              </div>
-            ))}
+            <div className="portfolio-slider-track">
+              {sliderProjects.map((project, index) => (
+                <div
+                  key={`${project.id}-${index}`}
+                  data-portfolio-slide
+                  className="portfolio-slider-card"
+                >
+                  <FolderCard project={project} />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        {!loading && !error && !hasPortfolioProjects && (
+          <div className="next-card flex min-h-40 items-center justify-center text-sm text-muted-foreground">
+            Featured projects will appear here soon.
           </div>
         )}
 

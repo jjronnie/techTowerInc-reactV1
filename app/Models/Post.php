@@ -4,14 +4,16 @@ namespace App\Models;
 
 use App\Models\Concerns\HasSlug;
 use App\Support\HtmlSanitizer;
+use Database\Factories\PostFactory;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Post extends Model
 {
-    /** @use HasFactory<\Database\Factories\PostFactory> */
+    /** @use HasFactory<PostFactory> */
     use HasFactory;
 
     use HasSlug;
@@ -30,7 +32,6 @@ class Post extends Model
         'published_at',
         'status',
         'reading_time',
-        'categories',
         'tags',
         'seo_title',
         'seo_description',
@@ -47,7 +48,6 @@ class Post extends Model
     {
         return [
             'published_at' => 'datetime',
-            'categories' => 'array',
             'tags' => 'array',
         ];
     }
@@ -62,5 +62,10 @@ class Post extends Model
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'author_id');
+    }
+
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(Category::class)->orderBy('name');
     }
 }

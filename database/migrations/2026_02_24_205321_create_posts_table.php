@@ -23,7 +23,6 @@ return new class extends Migration
             $table->timestamp('published_at')->nullable();
             $table->string('status')->default('draft');
             $table->unsignedInteger('reading_time')->nullable();
-            $table->json('categories')->nullable();
             $table->json('tags')->nullable();
             $table->string('seo_title')->nullable();
             $table->text('seo_description')->nullable();

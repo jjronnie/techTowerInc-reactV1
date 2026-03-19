@@ -4,7 +4,14 @@ import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 import { dashboard } from '@/routes';
 import { index, store } from '@/routes/admin/posts';
-import PostForm, { type PostFormData } from './post-form';
+import PostForm, {
+    type PostCategoryOption,
+    type PostFormData,
+} from './post-form';
+
+type CreatePostProps = {
+    categories: PostCategoryOption[];
+};
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: dashboard().url },
@@ -12,7 +19,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Create', href: index().url },
 ];
 
-export default function CreatePost() {
+export default function CreatePost({ categories }: CreatePostProps) {
     const form = useForm<PostFormData>({
         title: '',
         slug: '',
@@ -21,7 +28,7 @@ export default function CreatePost() {
         status: 'draft',
         published_at: '',
         reading_time: '',
-        categories: [],
+        category_ids: [],
         tags: [],
         featured_image: null,
         remove_featured_image: false,
@@ -51,6 +58,7 @@ export default function CreatePost() {
                     data={form.data}
                     errors={form.errors}
                     processing={form.processing}
+                    categories={categories}
                     onChange={form.setData}
                     onSubmit={submit}
                     submitLabel="Create Post"

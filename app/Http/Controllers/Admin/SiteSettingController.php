@@ -18,7 +18,7 @@ class SiteSettingController extends Controller
         $settings = SiteSetting::query()->firstOrFail();
 
         return Inertia::render('admin/site-settings/edit', [
-            'settings' => SiteSettingResource::make($settings),
+            'settings' => SiteSettingResource::make($settings)->resolve(),
         ]);
     }
 

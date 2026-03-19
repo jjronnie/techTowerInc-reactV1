@@ -22,7 +22,9 @@ const Seo = ({ title, description, image, canonical, noIndex = false, robots, ke
   const defaultTitle = settings?.default_seo_title || siteName;
   const defaultDescription = settings?.default_seo_description || '';
   const defaultImage = settings?.default_og_image_url || null;
-  const verificationMeta = settings?.verification_meta || {};
+  const verificationMeta = Array.isArray(settings?.verification_meta)
+    ? settings.verification_meta
+    : [];
 
   const metaTitle = buildTitle(title, siteName, defaultTitle);
   const metaDescription = description || defaultDescription;
@@ -32,24 +34,27 @@ const Seo = ({ title, description, image, canonical, noIndex = false, robots, ke
   const robotsContent = robots || (noIndex ? 'noindex, nofollow' : null);
   const metaKeywords = keywords || null;
 
-  const verificationTags = Object.entries(verificationMeta).map(([key, value]) => {
-    if (!value) {
+  const verificationTags = verificationMeta.map((meta, index) => {
+    const key = meta?.name;
+    const value = meta?.content;
+
+    if (!key || !value) {
       return null;
     }
 
     if (key.startsWith('property:')) {
       return (
-        <meta key={key} property={key.replace('property:', '')} content={value} />
+        <meta key={`${key}-${index}`} property={key.replace('property:', '')} content={value} />
       );
     }
 
     if (key.startsWith('http-equiv:')) {
       return (
-        <meta key={key} httpEquiv={key.replace('http-equiv:', '')} content={value} />
+        <meta key={`${key}-${index}`} httpEquiv={key.replace('http-equiv:', '')} content={value} />
       );
     }
 
-    return <meta key={key} name={key} content={value} />;
+    return <meta key={`${key}-${index}`} name={key} content={value} />;
   });
 
   return (

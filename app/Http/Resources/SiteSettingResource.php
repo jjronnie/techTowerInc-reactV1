@@ -31,7 +31,6 @@ class SiteSettingResource extends JsonResource
             'verification_meta' => $this->verification_meta ?? [],
             'home_hero' => $this->home_hero ?? [],
             'home_stats' => $this->home_stats ?? [],
-            'home_technologies' => $this->home_technologies ?? [],
             'home_portfolio_intro' => $this->home_portfolio_intro ?? [],
             'home_services_intro' => $this->home_services_intro ?? [],
             'home_features' => $this->home_features ?? [],

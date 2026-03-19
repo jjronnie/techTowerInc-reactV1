@@ -13,8 +13,8 @@ type Service = {
 
 type ContactSubmission = {
     id: number;
-    first_name: string;
-    last_name: string;
+    name: string;
+    company_name: string | null;
     email: string;
     phone: string;
     service: Service | null;
@@ -77,9 +77,19 @@ export default function ContactSubmissionShow({
                                 Name
                             </dt>
                             <dd className="mt-1 text-sm font-medium">
-                                {submission.first_name} {submission.last_name}
+                                {submission.name}
                             </dd>
                         </div>
+                        {submission.company_name && (
+                            <div>
+                                <dt className="text-xs font-semibold uppercase text-muted-foreground">
+                                    Company
+                                </dt>
+                                <dd className="mt-1 text-sm">
+                                    {submission.company_name}
+                                </dd>
+                            </div>
+                        )}
                         <div>
                             <dt className="text-xs font-semibold uppercase text-muted-foreground">
                                 Submitted

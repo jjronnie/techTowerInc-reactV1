@@ -2,21 +2,22 @@
 
 namespace App\Models;
 
+use Database\Factories\ContactSubmissionFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ContactSubmission extends Model
 {
-    /** @use HasFactory<\Database\Factories\ContactSubmissionFactory> */
+    /** @use HasFactory<ContactSubmissionFactory> */
     use HasFactory;
 
     /**
      * @var list<string>
      */
     protected $fillable = [
-        'first_name',
-        'last_name',
+        'name',
+        'company_name',
         'email',
         'phone',
         'service_id',

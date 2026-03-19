@@ -1,11 +1,14 @@
 <?php
 
+use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
+use App\Http\Controllers\Admin\ClientController as AdminClientController;
 use App\Http\Controllers\Admin\ContactSubmissionController as AdminContactSubmissionController;
 use App\Http\Controllers\Admin\PortfolioController as AdminPortfolioController;
 use App\Http\Controllers\Admin\PostController as AdminPostController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\ServiceController as AdminServiceController;
 use App\Http\Controllers\Admin\SiteSettingController as AdminSiteSettingController;
+use App\Http\Controllers\Admin\TechnologyController as AdminTechnologyController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SitemapController;
@@ -36,6 +39,9 @@ Route::middleware(['auth', 'verified', EnsureAdmin::class])
         })->name('home');
 
         Route::resource('services', AdminServiceController::class);
+        Route::resource('categories', AdminCategoryController::class);
+        Route::resource('clients', AdminClientController::class);
+        Route::resource('technologies', AdminTechnologyController::class);
         Route::resource('portfolios', AdminPortfolioController::class);
         Route::resource('products', AdminProductController::class);
         Route::resource('posts', AdminPostController::class);

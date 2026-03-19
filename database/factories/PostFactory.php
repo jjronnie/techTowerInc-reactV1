@@ -2,10 +2,12 @@
 
 namespace Database\Factories;
 
+use App\Models\Category;
+use App\Models\Post;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Post>
+ * @extends Factory<Post>
  */
 class PostFactory extends Factory
 {
@@ -23,8 +25,16 @@ class PostFactory extends Factory
             'status' => 'published',
             'published_at' => now(),
             'reading_time' => fake()->numberBetween(3, 9),
-            'categories' => [fake()->randomElement(['Engineering', 'Product', 'Growth'])],
             'tags' => fake()->randomElements(['Laravel', 'React', 'APIs', 'Cloud', 'Security'], 3),
         ];
+    }
+
+    public function configure(): static
+    {
+        return $this->afterCreating(function (Post $post): void {
+            $post->categories()->sync(
+                Category::factory()->count(1)->create()->pluck('id'),
+            );
+        });
     }
 }

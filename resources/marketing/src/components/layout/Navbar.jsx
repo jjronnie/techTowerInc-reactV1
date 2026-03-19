@@ -20,11 +20,12 @@ const Navbar = () => {
   const navLinks = [
     { to: "/", text: "Home", icon: HomeIcon }, // Added Home link
     { to: "/services", text: "Services" },
-    { to: "/products", text: "Products" },
+    // { to: "/products", text: "Products" },
     { to: "/portfolio", text: "Portfolio" },
-    { to: "/blog", text: "Blog" },
     { to: "/about", text: "About" },
     { to: "/contact", text: "Contact" },
+    { to: "/news", text: "Updates" },
+
   ];
 
   useEffect(() => {
@@ -74,12 +75,12 @@ const Navbar = () => {
                 className={({ isActive }) => cn("text-sm font-medium flex items-center", isActive ? activeLinkClass : inactiveLinkClass)}
                 onClick={() => setIsMenuOpen(false)}
               >
-                {link.icon && <link.icon className="mr-1.5 h-4 w-4" />} 
+                {link.icon && <link.icon className="mr-1.5 h-4 w-4" />}
                 {link.text}
               </NavLink>
             ))}
-            <Button 
-              asChild 
+            <Button
+              asChild
               variant="default"
               size="sm"
               className="rounded-full text-sm next-button px-5"
@@ -119,8 +120,8 @@ const Navbar = () => {
                 {link.text}
               </NavLink>
             ))}
-            <Button 
-              asChild 
+            <Button
+              asChild
               className="w-full next-button mt-4"
             >
               <Link to="/contact#get-quote" onClick={() => setIsMenuOpen(false)}>Get a Quote <FileText className="ml-2 w-4 h-4" /></Link>

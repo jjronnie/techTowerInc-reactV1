@@ -28,7 +28,6 @@ return new class extends Migration
             $table->json('verification_meta')->nullable();
             $table->json('home_hero')->nullable();
             $table->json('home_stats')->nullable();
-            $table->json('home_technologies')->nullable();
             $table->json('home_portfolio_intro')->nullable();
             $table->json('home_services_intro')->nullable();
             $table->json('home_features')->nullable();

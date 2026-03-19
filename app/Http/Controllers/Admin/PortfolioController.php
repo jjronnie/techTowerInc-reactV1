@@ -5,7 +5,13 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StorePortfolioRequest;
 use App\Http\Requests\Admin\UpdatePortfolioRequest;
+use App\Http\Resources\CategoryResource;
+use App\Http\Resources\ClientResource;
+use App\Http\Resources\TechnologyResource;
+use App\Models\Category;
+use App\Models\Client;
 use App\Models\Portfolio;
+use App\Models\Technology;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -19,6 +25,7 @@ class PortfolioController extends Controller
     public function index(): Response
     {
         $portfolios = Portfolio::query()
+            ->with(['client:id,name,slug', 'categories:id,name,slug'])
             ->orderByDesc('is_featured')
             ->orderBy('sort_order')
             ->orderBy('title')
@@ -34,7 +41,7 @@ class PortfolioController extends Controller
      */
     public function create(): Response
     {
-        return Inertia::render('admin/portfolios/create');
+        return Inertia::render('admin/portfolios/create', $this->formOptions());
     }
 
     /**
@@ -43,6 +50,8 @@ class PortfolioController extends Controller
     public function store(StorePortfolioRequest $request): RedirectResponse
     {
         $data = $request->validated();
+        $categoryIds = $data['category_ids'];
+        $technologyIds = $data['technology_ids'];
         $data['is_featured'] = $request->boolean('is_featured');
         $data['is_active'] = $request->boolean('is_active');
 
@@ -54,15 +63,24 @@ class PortfolioController extends Controller
             $data['gallery_images'] = collect($request->file('gallery_images'))
                 ->map(fn ($file) => $file->store('portfolios/gallery', 'public'))
                 ->all();
+        } else {
+            unset($data['gallery_images']);
         }
 
         if ($request->hasFile('og_image')) {
             $data['og_image_path'] = $request->file('og_image')->store('portfolios/og-images', 'public');
         }
 
-        unset($data['featured_image'], $data['gallery_images'], $data['og_image']);
+        unset(
+            $data['category_ids'],
+            $data['technology_ids'],
+            $data['featured_image'],
+            $data['og_image'],
+        );
 
         $portfolio = Portfolio::query()->create($data);
+        $portfolio->categories()->sync($categoryIds);
+        $portfolio->technologies()->sync($technologyIds);
 
         return redirect()
             ->route('admin.portfolios.edit', $portfolio)
@@ -86,6 +104,8 @@ class PortfolioController extends Controller
      */
     public function edit(Portfolio $portfolio): Response
     {
+        $portfolio->loadMissing(['categories', 'client', 'technologies']);
+
         $portfolio->setAttribute(
             'featured_image_url',
             $portfolio->featured_image_path ? Storage::url($portfolio->featured_image_path) : null,
@@ -103,9 +123,13 @@ class PortfolioController extends Controller
                 ])
                 ->all(),
         );
+        $portfolio->setAttribute('category_ids', $portfolio->categories->pluck('id')->all());
+        $portfolio->setAttribute('technology_ids', $portfolio->technologies->pluck('id')->all());
+        $portfolio->setAttribute('client_id', $portfolio->client?->id);
 
         return Inertia::render('admin/portfolios/edit', [
             'portfolio' => $portfolio,
+            ...$this->formOptions(),
         ]);
     }
 
@@ -115,6 +139,8 @@ class PortfolioController extends Controller
     public function update(UpdatePortfolioRequest $request, Portfolio $portfolio): RedirectResponse
     {
         $data = $request->validated();
+        $categoryIds = $data['category_ids'];
+        $technologyIds = $data['technology_ids'];
         $data['is_featured'] = $request->boolean('is_featured');
         $data['is_active'] = $request->boolean('is_active');
 
@@ -132,6 +158,7 @@ class PortfolioController extends Controller
             $data['featured_image_path'] = $request->file('featured_image')->store('portfolios/featured', 'public');
         }
 
+        $currentGallery = collect($portfolio->gallery_images ?? []);
         $existingGallery = collect($request->input('existing_gallery_images', []))
             ->filter()
             ->values();
@@ -154,6 +181,12 @@ class PortfolioController extends Controller
             foreach ($portfolio->gallery_images ?? [] as $path) {
                 Storage::disk('public')->delete($path);
             }
+        } else {
+            $removedGallery = $currentGallery->diff($existingGallery);
+
+            foreach ($removedGallery as $path) {
+                Storage::disk('public')->delete($path);
+            }
         }
 
         $gallery = $existingGallery->merge($newGallery)->values()->all();
@@ -174,8 +207,9 @@ class PortfolioController extends Controller
         }
 
         unset(
+            $data['category_ids'],
+            $data['technology_ids'],
             $data['featured_image'],
-            $data['gallery_images'],
             $data['og_image'],
             $data['existing_gallery_images'],
             $data['clear_gallery_images'],
@@ -185,6 +219,8 @@ class PortfolioController extends Controller
         );
 
         $portfolio->update($data);
+        $portfolio->categories()->sync($categoryIds);
+        $portfolio->technologies()->sync($technologyIds);
 
         return redirect()
             ->route('admin.portfolios.edit', $portfolio)
@@ -221,5 +257,23 @@ class PortfolioController extends Controller
                 'title' => 'Portfolio deleted',
                 'message' => 'The portfolio item has been removed.',
             ]);
+    }
+
+    /**
+     * @return array<string, array<int, array<string, mixed>>>
+     */
+    private function formOptions(): array
+    {
+        return [
+            'categories' => CategoryResource::collection(
+                Category::query()->orderBy('name')->get(),
+            )->resolve(),
+            'clients' => ClientResource::collection(
+                Client::query()->orderBy('name')->get(),
+            )->resolve(),
+            'technologies' => TechnologyResource::collection(
+                Technology::query()->orderBy('name')->get(),
+            )->resolve(),
+        ];
     }
 }

@@ -2,10 +2,14 @@
 
 namespace Database\Factories;
 
+use App\Models\Category;
+use App\Models\Client;
+use App\Models\Portfolio;
+use App\Models\Technology;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Portfolio>
+ * @extends Factory<Portfolio>
  */
 class PortfolioFactory extends Factory
 {
@@ -18,21 +22,27 @@ class PortfolioFactory extends Factory
     {
         return [
             'title' => fake()->unique()->sentence(2),
-            'label' => fake()->randomElement(['Case File', 'Delivery Log', 'Project Brief']),
+            'type' => fake()->randomElement(['Website', 'Mobile App', 'Web App', 'Dashboard']),
             'summary' => fake()->sentence(16),
-            'result_label' => fake()->randomElement(['Impact', 'Outcome', 'Result']),
-            'result_value' => fake()->randomElement(['+140% Growth', '3x Faster Launch', '98% Uptime']),
-            'category' => fake()->randomElement(['Web Platform', 'Mobile App', 'Enterprise System']),
-            'badge_text' => fake()->randomElement(['TT', 'UI', 'AI', 'DX']),
-            'badge_color' => fake()->safeHexColor(),
             'excerpt' => fake()->paragraph(),
             'description' => fake()->paragraphs(4, true),
-            'client_name' => fake()->company(),
+            'client_id' => Client::factory(),
             'project_url' => fake()->url(),
-            'technologies' => fake()->randomElements(['Laravel', 'React', 'Vue', 'Node', 'Postgres', 'AWS'], 3),
             'sort_order' => fake()->numberBetween(0, 10),
             'is_featured' => fake()->boolean(30),
             'is_active' => true,
         ];
+    }
+
+    public function configure(): static
+    {
+        return $this->afterCreating(function (Portfolio $portfolio): void {
+            $portfolio->categories()->sync(
+                Category::factory()->count(2)->create()->pluck('id'),
+            );
+            $portfolio->technologies()->sync(
+                Technology::factory()->count(3)->create()->pluck('id'),
+            );
+        });
     }
 }

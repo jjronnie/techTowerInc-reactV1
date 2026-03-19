@@ -17,6 +17,8 @@ type Product = {
     purchase_url: string | null;
     sort_order: number | null;
     is_active: boolean;
+    image_url: string | null;
+    og_image_url: string | null;
     seo_title: string | null;
     seo_description: string | null;
     seo_keywords: string | null;
@@ -69,7 +71,8 @@ export default function EditProduct({ product }: EditProductProps) {
                     onChange={form.setData}
                     onSubmit={submit}
                     submitLabel="Save Changes"
-                    showRemoveImage
+                    currentImageUrl={product.image_url}
+                    currentOgImageUrl={product.og_image_url}
                 />
             </div>
         </AppLayout>

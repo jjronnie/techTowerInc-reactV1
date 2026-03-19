@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, CalendarDays, Tag, UserCircle, Facebook, Linkedin, Mail, Twitter, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { toast } from '@/components/ui/use-toast';
 import { useApi } from '@/hooks/useApi';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
 import Seo from '@/components/Seo';
@@ -45,9 +46,9 @@ const SinglePostPage = () => {
     return (
       <div className="next-container next-section-padding text-center">
         <h1 className="text-3xl font-bold">Post not found</h1>
-        <p className="text-muted-foreground mt-4">The blog post you are looking for does not exist.</p>
+        <p className="text-muted-foreground mt-4">The news post you are looking for does not exist.</p>
         <Button asChild className="mt-8">
-          <Link to="/blog">Back to Blog</Link>
+          <Link to="/news">Back to News</Link>
         </Button>
       </div>
     );
@@ -89,15 +90,21 @@ const SinglePostPage = () => {
 
     try {
       await navigator.clipboard.writeText(shareUrl);
-      alert('Link copied to clipboard.');
+      toast({
+        title: 'Link copied',
+        description: 'The article link is ready to share.',
+      });
     } catch (error) {
       console.error('Error copying link:', error);
-      alert('Unable to copy link. Please copy it manually.');
+      toast({
+        title: 'Copy failed',
+        description: 'We could not copy the link automatically. Please copy it manually.',
+      });
     }
   };
 
-  const categories = post.categories?.length ? post.categories : (post.category ? [post.category] : []);
-  const primaryCategory = categories[0] || null;
+  const categories = post.categories || [];
+  const primaryCategory = post.primary_category || categories[0] || null;
   const ogImage = post.seo?.og_image_url || post.featured_image_url;
   const metaDescription = post.seo?.description || post.excerpt || '';
 
@@ -115,7 +122,7 @@ const SinglePostPage = () => {
         />
         <motion.div {...fadeInProps()} className="mb-8">
           <Button variant="ghost" asChild className="text-sm text-muted-foreground hover:text-primary">
-            <Link to="/blog"><ArrowLeft className="w-4 h-4 mr-2" /> Back to Blog</Link>
+            <Link to="/news"><ArrowLeft className="w-4 h-4 mr-2" /> Back to News</Link>
           </Button>
         </motion.div>
 
@@ -123,9 +130,17 @@ const SinglePostPage = () => {
           <header className="mb-12 text-center">
             <motion.div {...fadeInProps(0.1)}>
               {primaryCategory && (
-                <Link to={`/blog?category=${primaryCategory.toLowerCase().replace(/\s+/g, '-')}`} className="inline-block px-3 py-1 text-xs font-semibold text-primary bg-primary/10 rounded-full mb-4 uppercase tracking-wider">
-                  {primaryCategory}
-                </Link>
+                <div className="mb-4 flex flex-wrap justify-center gap-2">
+                  {categories.map((category) => (
+                    <Link
+                      key={category.id}
+                      to={`/news/category/${category.slug}`}
+                      className="inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary"
+                    >
+                      {category.name}
+                    </Link>
+                  ))}
+                </div>
               )}
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-6 text-foreground text-balance">{post.title}</h1>
               <div className="flex flex-wrap justify-center items-center text-sm text-muted-foreground space-x-4">
@@ -159,16 +174,19 @@ const SinglePostPage = () => {
           <motion.footer {...fadeInProps(0.4)} className="mt-12 pt-8 border-t border-border">
             <div className="flex flex-wrap items-center mb-6">
               <Tag className="w-5 h-5 mr-2 text-muted-foreground"/> 
-              <span className="text-sm font-semibold mr-2 text-muted-foreground">Tags:</span>
-              {(post.tags || []).map(tag => (
-                <Link 
-                  key={tag} 
-                  to={`/blog?tag=${tag.toLowerCase().replace(/\s+/g, '-')}`} 
-                  className="mr-2 mb-2 text-xs bg-secondary text-secondary-foreground px-3 py-1 rounded-full hover:bg-secondary/80 transition-colors"
-                >
-                  {tag}
-                </Link>
-              ))}
+              <span className="mr-2 text-sm font-semibold text-muted-foreground">Tags:</span>
+              {(post.tags || []).length > 0 ? (
+                (post.tags || []).map(tag => (
+                  <span
+                    key={tag}
+                    className="mr-2 mb-2 rounded-full bg-secondary px-3 py-1 text-xs text-secondary-foreground"
+                  >
+                    {tag}
+                  </span>
+                ))
+              ) : (
+                <span className="text-sm text-muted-foreground">No tags added yet.</span>
+              )}
             </div>
             <div className="flex flex-wrap items-center gap-3">
                 <span className="text-sm font-semibold text-muted-foreground">Share:</span>

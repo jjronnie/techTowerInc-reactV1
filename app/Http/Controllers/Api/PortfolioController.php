@@ -5,18 +5,45 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PortfolioResource;
 use App\Models\Portfolio;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class PortfolioController extends Controller
 {
-    public function index(): AnonymousResourceCollection
+    public function index(Request $request): AnonymousResourceCollection
     {
-        $portfolios = Portfolio::query()
+        $query = Portfolio::query()
             ->where('is_active', true)
-            ->orderByDesc('is_featured')
-            ->orderBy('sort_order')
-            ->orderBy('title')
-            ->get();
+            ->with(['client', 'categories', 'technologies']);
+
+        if ($request->has('featured')) {
+            $query->where('is_featured', $request->boolean('featured'));
+        }
+
+        if ($request->filled('client')) {
+            $query->whereHas('client', function ($clientQuery) use ($request): void {
+                $clientQuery->where('slug', $request->string('client')->toString());
+            });
+        }
+
+        if ($request->filled('category')) {
+            $query->whereHas('categories', function ($categoryQuery) use ($request): void {
+                $categoryQuery->where('slug', $request->string('category')->toString());
+            });
+        }
+
+        if ($request->string('sort')->toString() === 'latest') {
+            $query
+                ->orderByRaw('coalesce(completed_at, started_at, created_at) desc')
+                ->orderByDesc('id');
+        } else {
+            $query
+                ->orderByDesc('is_featured')
+                ->orderBy('sort_order')
+                ->orderBy('title');
+        }
+
+        $portfolios = $query->get();
 
         return PortfolioResource::collection($portfolios);
     }
@@ -26,6 +53,8 @@ class PortfolioController extends Controller
         if (! $portfolio->is_active) {
             abort(404);
         }
+
+        $portfolio->loadMissing(['client', 'categories', 'technologies']);
 
         return new PortfolioResource($portfolio);
     }

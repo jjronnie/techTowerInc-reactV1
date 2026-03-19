@@ -35,25 +35,26 @@ const Footer = () => {
 
   const footerNav = [
     {
-      title: "Company",
+      title: "Quick Links",
       links: [
         { text: "Home", to: "/" },
         { text: "About Us", to: "/about" },
         { text: "Services", to: "/services" },
-        { text: "Products", to: "/products" },
         { text: "Portfolio", to: "/portfolio" },
-        { text: "Blog", to: "/blog" },
         { text: "Contact", to: "/contact" },
       ]
     },
     {
-      title: "Legal",
+      title: "More",
       links: [
         { text: "Privacy Policy", to: "/privacy-policy" },
+        { text: "Inventory MGT & POS Software", to: "https://getnovas.com?utm_source=TechTowerIncfooter" },
+        { text: "Tech News & Guides", to: "https://thetechtower.com?utm_source=TechTowerIncfooter" },
+        { text: "FPL Galaxy", to: "https://fantasy.thetechtower.com?utm_source=TechTowerIncfooter" },
       ]
     },
     {
-      title: "Connect",
+      title: "Get in Touch",
       links: [
         { text: settings?.company_email || "info@techtowerinc.com", href: `mailto:${settings?.company_email || "info@techtowerinc.com"}`, isExternal: true },
         { text: settings?.company_phone || "+256 703 283 529", href: `tel:${(settings?.company_phone || "+256 703 283 529").replace(/\\s+/g, '')}`, isExternal: true },
@@ -65,7 +66,7 @@ const Footer = () => {
 
   return (
     <footer className="border-t border-border bg-background">
-      <div className="next-container py-12">
+      <div className="next-container py-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           <div className="col-span-1 md:col-span-2 lg:col-span-1">
             <Link to="/" className="flex items-center space-x-2 mb-4 group" aria-label="TechTower Innovations Homepage">
@@ -118,7 +119,7 @@ const Footer = () => {
                   <social.icon className="w-5 h-5" />
                 </a>
               ))}
-               <Link to="/blog" aria-label="Blog" className="text-muted-foreground hover:text-primary transition-colors">
+               <Link to="/news" aria-label="news" className="text-muted-foreground hover:text-primary transition-colors">
                   <Rss className="w-5 h-5" />
                 </Link>
             </div>

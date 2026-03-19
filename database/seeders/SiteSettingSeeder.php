@@ -15,13 +15,13 @@ class SiteSettingSeeder extends Seeder
         SiteSetting::query()->updateOrCreate(
             ['id' => 1],
             [
-                'site_name' => 'TechTower Inc',
-                'tagline' => 'Product studio for ambitious teams',
+                'site_name' => 'TechTower Innovations Inc',
+                'tagline' => 'Your Digital Transformation Partner',
                 'logo_path' => null,
                 'favicon_path' => null,
                 'company_email' => 'info@techtowerinc.com',
                 'company_phone' => '+256 703 283 529',
-                'company_address' => 'Kireka Namugongo Road, Kampala, Uganda. P.O BOX 118290',
+                'company_address' => 'Kireka Namugongo Road, Kampala, Uganda. ',
                 'social_links' => [
                     [
                         'name' => 'GitHub',
@@ -31,7 +31,7 @@ class SiteSettingSeeder extends Seeder
                     ],
                     [
                         'name' => 'LinkedIn',
-                        'href' => 'https://linkedin.com/company/techtowerug',
+                        'href' => 'https://linkedin.com/company/techtower-inc',
                         'icon_key' => 'linkedin',
                         'label' => 'TechTower on LinkedIn',
                     ],
@@ -60,14 +60,14 @@ class SiteSettingSeeder extends Seeder
                         'label' => 'TechTower on YouTube',
                     ],
                 ],
-                'footer_text' => 'Crafting innovative software solutions for a digital-first world. Based in Kireka Namugongo Road, Kampala, Uganda. P.O BOX 118290.',
+                'footer_text' => 'Crafting innovative software solutions for a digital-first world. Based in Kireka Namugongo Road, Kampala, Uganda. .',
                 'default_seo_title' => 'TechTower Innovations Inc',
                 'default_seo_description' => 'TechTower Inc delivers premium software, product strategy, and automation to help teams launch faster, engage users, and stay ahead of change.',
                 'default_og_image_path' => null,
                 'verification_meta' => [],
                 'home_hero' => [
                     'badge_text' => 'Product studio for ambitious teams',
-                    'headline' => 'Build standout digital products with meaningful experiences that scale.',
+                    'headline' => 'Empowering Digital Transformation Through Intelligent Systems.',
                     'headline_emphasis' => 'meaningful',
                     'subheadline' => 'TechTower Inc delivers premium software, product strategy, and automation to help teams launch faster, engage users, and stay ahead of change.',
                     'primary_cta_label' => 'Plan a Project',
@@ -80,19 +80,6 @@ class SiteSettingSeeder extends Seeder
                     ['number' => 475, 'label' => 'Satisfied Clients', 'suffix' => '+', 'decimals' => 0],
                     ['number' => 15, 'label' => 'Expert Engineers', 'suffix' => '+', 'decimals' => 0],
                     ['number' => 99.5, 'label' => 'Client Retention', 'suffix' => '%', 'decimals' => 1],
-                ],
-                'home_technologies' => [
-                    ['name' => 'React', 'icon_key' => 'react'],
-                    ['name' => 'Next.js', 'icon_key' => 'nextjs'],
-                    ['name' => 'Vue', 'icon_key' => 'vue'],
-                    ['name' => 'Bootstrap', 'icon_key' => 'bootstrap'],
-                    ['name' => 'Node.js', 'icon_key' => 'nodejs'],
-                    ['name' => 'Python', 'icon_key' => 'python'],
-                    ['name' => 'AWS', 'icon_key' => 'aws'],
-                    ['name' => 'Docker', 'icon_key' => 'docker'],
-                    ['name' => 'PostgreSQL', 'icon_key' => 'postgresql'],
-                    ['name' => 'MongoDB', 'icon_key' => 'mongodb'],
-                    ['name' => 'Figma', 'icon_key' => 'figma'],
                 ],
                 'home_portfolio_intro' => [
                     'label' => 'Portfolio',
@@ -363,7 +350,7 @@ class SiteSettingSeeder extends Seeder
                     [
                         'icon_key' => 'building',
                         'title' => 'Our Office',
-                        'content' => 'Kireka Namugongo Road, Kampala, Uganda (P.O BOX 118290)',
+                        'content' => 'Kireka Namugongo Road, Kampala, Uganda ()',
                         'href' => 'https://maps.google.com/?q=Kireka+Namugongo+Road,+Kampala,+Uganda',
                         'aria_label' => 'View TechTower office location',
                     ],

@@ -68,6 +68,11 @@ class ServiceController extends Controller
      */
     public function edit(Service $service): Response
     {
+        $service->setAttribute(
+            'og_image_url',
+            $service->og_image_path ? Storage::url($service->og_image_path) : null,
+        );
+
         return Inertia::render('admin/services/edit', [
             'service' => $service,
         ]);

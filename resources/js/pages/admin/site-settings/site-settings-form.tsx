@@ -1,10 +1,11 @@
-import { ChangeEvent, FormEvent } from 'react';
+import { type FormEvent, useState } from 'react';
 import InputError from '@/components/input-error';
+import { ImageUploadField } from '@/components/ui/image-upload-field';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Menu, X } from 'lucide-react';
 
 type SocialLink = {
     name: string;
@@ -34,11 +35,6 @@ type HomeStat = {
     label: string;
     suffix: string;
     decimals: number | string;
-};
-
-type HomeTechnology = {
-    name: string;
-    icon_key: string;
 };
 
 type SectionIntro = {
@@ -226,7 +222,6 @@ export type SiteSettingsFormData = {
     default_seo_description: string;
     home_hero: HomeHero;
     home_stats: HomeStat[];
-    home_technologies: HomeTechnology[];
     home_portfolio_intro: SectionIntro;
     home_services_intro: SectionIntro;
     home_features: HomeFeatures;
@@ -265,7 +260,74 @@ type SiteSettingsFormProps = {
     submitLabel: string;
 };
 
+type SiteSettingsSectionLink = {
+    id: string;
+    label: string;
+    description: string;
+};
+
 const ICONS_URL = 'https://lucide.dev/icons/';
+const SECTION_CARD_CLASS_NAME =
+    'scroll-mt-24 space-y-6 rounded-xl border border-sidebar-border/70 bg-card p-6 md:p-8';
+const DETAILED_SECTION_CARD_CLASS_NAME =
+    'scroll-mt-24 space-y-8 rounded-xl border border-sidebar-border/70 bg-card p-6 md:p-8';
+const SITE_SETTINGS_SECTIONS: SiteSettingsSectionLink[] = [
+    {
+        id: 'branding',
+        label: 'Branding',
+        description: 'Company identity, contact details, and logos.',
+    },
+    {
+        id: 'social-links',
+        label: 'Social Links',
+        description: 'Global social profiles used across the site.',
+    },
+    {
+        id: 'seo-defaults',
+        label: 'SEO Defaults',
+        description: 'Fallback metadata and default sharing image.',
+    },
+    {
+        id: 'verification-meta',
+        label: 'Verification Meta',
+        description: 'Search engine and platform verification tags.',
+    },
+    {
+        id: 'home-page',
+        label: 'Home Page',
+        description: 'Hero, stats, portfolio intro, and homepage sections.',
+    },
+    {
+        id: 'about-page',
+        label: 'About Page',
+        description: 'About header, story, principles, cards, and team.',
+    },
+    {
+        id: 'services-page',
+        label: 'Services Page',
+        description: 'Page header and CTA copy for services.',
+    },
+    {
+        id: 'portfolio-page',
+        label: 'Portfolio Page',
+        description: 'Page header and CTA copy for portfolio.',
+    },
+    {
+        id: 'products-page',
+        label: 'Products Page',
+        description: 'Products page heading content.',
+    },
+    {
+        id: 'blog-page',
+        label: 'Blog Page',
+        description: 'Blog page heading content.',
+    },
+    {
+        id: 'contact-page',
+        label: 'Contact Page',
+        description: 'Contact header, details, and social section.',
+    },
+];
 
 const IconHelperLink = () => (
     <a
@@ -298,6 +360,72 @@ const CurrentValue = ({
     </p>
 );
 
+const SectionJumpMenu = ({
+    isOpen,
+    onToggle,
+    onSelect,
+}: {
+    isOpen: boolean;
+    onToggle: () => void;
+    onSelect: (sectionId: string) => void;
+}) => (
+    <div className="fixed right-6 top-1/2 z-50 flex -translate-y-1/2 flex-col items-end gap-3">
+        {isOpen && (
+            <div
+                id="site-settings-section-menu"
+                className="max-h-[70vh] w-80 max-w-[calc(100vw-2rem)] overflow-y-auto rounded-2xl border border-sidebar-border/80 bg-background/95 p-3 shadow-2xl backdrop-blur"
+            >
+                <div className="space-y-1 px-2 pb-3">
+                    <p className="text-sm font-semibold text-foreground">
+                        Jump to section
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                        Choose any section and we will scroll there smoothly.
+                    </p>
+                </div>
+
+                <div className="space-y-1">
+                    {SITE_SETTINGS_SECTIONS.map((section) => (
+                        <button
+                            key={section.id}
+                            type="button"
+                            onClick={() => onSelect(section.id)}
+                            className="flex w-full items-start justify-between gap-4 rounded-xl px-3 py-3 text-left transition-colors hover:bg-accent"
+                        >
+                            <span className="space-y-1">
+                                <span className="block text-sm font-medium text-foreground">
+                                    {section.label}
+                                </span>
+                                <span className="block text-xs text-muted-foreground">
+                                    {section.description}
+                                </span>
+                            </span>
+                            <span className="rounded-full border border-sidebar-border/70 bg-muted/60 px-2 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                                {section.id}
+                            </span>
+                        </button>
+                    ))}
+                </div>
+            </div>
+        )}
+
+        <div className="flex flex-col items-end gap-3 sm:flex-row sm:items-center">
+            <Button
+                type="button"
+                size="lg"
+                variant={isOpen ? 'secondary' : 'outline'}
+                onClick={onToggle}
+                aria-expanded={isOpen}
+                aria-controls="site-settings-section-menu"
+                className="rounded-full shadow-lg"
+            >
+                {isOpen ? <X /> : <Menu />}
+                <span>{isOpen ? 'Close sections' : 'Sections'}</span>
+            </Button>
+        </div>
+    </div>
+);
+
 export default function SiteSettingsForm({
     data,
     current,
@@ -308,6 +436,8 @@ export default function SiteSettingsForm({
     onSubmit,
     submitLabel,
 }: SiteSettingsFormProps) {
+    const [isSectionMenuOpen, setIsSectionMenuOpen] = useState(false);
+
     const updateSocialLink = (
         index: number,
         field: keyof SocialLink,
@@ -377,30 +507,6 @@ export default function SiteSettingsForm({
         onChange(
             'home_stats',
             data.home_stats.filter((_, itemIndex) => itemIndex !== index),
-        );
-    };
-
-    const updateHomeTechnology = (
-        index: number,
-        field: keyof HomeTechnology,
-        value: string,
-    ) => {
-        const updated = [...data.home_technologies];
-        updated[index] = { ...updated[index], [field]: value };
-        onChange('home_technologies', updated);
-    };
-
-    const addHomeTechnology = () => {
-        onChange('home_technologies', [
-            ...data.home_technologies,
-            { name: '', icon_key: '' },
-        ]);
-    };
-
-    const removeHomeTechnology = (index: number) => {
-        onChange(
-            'home_technologies',
-            data.home_technologies.filter((_, itemIndex) => itemIndex !== index),
         );
     };
 
@@ -680,9 +786,24 @@ export default function SiteSettingsForm({
         });
     };
 
+    const scrollToSection = (sectionId: string) => {
+        const sectionElement = document.getElementById(sectionId);
+
+        if (!sectionElement) {
+            return;
+        }
+
+        sectionElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+        });
+        window.history.replaceState(null, '', `#${sectionId}`);
+        setIsSectionMenuOpen(false);
+    };
+
     return (
-        <form onSubmit={onSubmit} className="space-y-12">
-            <section className="space-y-6 rounded-xl border border-sidebar-border/70 bg-card p-6 md:p-8">
+        <form onSubmit={onSubmit} className="space-y-12 pb-32">
+            <section id="branding" className={SECTION_CARD_CLASS_NAME}>
                 <div>
                     <h3 className="text-lg font-semibold">Branding</h3>
                     <p className="text-sm text-muted-foreground">
@@ -789,86 +910,38 @@ export default function SiteSettingsForm({
                     <CurrentValue value={current.footer_text} />
                 </div>
 
-                <div className="grid gap-2">
-                    <Label htmlFor="logo">Logo</Label>
-                    <p className="text-sm text-muted-foreground">
-                        Upload a square or horizontal logo for the header.
-                    </p>
-                    <Input
-                        id="logo"
-                        type="file"
-                        accept="image/*"
-                        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                            onChange('logo', event.target.files?.[0] ?? null)
-                        }
-                    />
-                    <InputError message={errors.logo} />
-                    {media.logo_url && !data.remove_logo && (
-                        <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                            <img
-                                src={media.logo_url}
-                                alt="Current logo"
-                                className="h-12 w-12 rounded-md border border-border/60 bg-background object-contain p-1"
-                                loading="lazy"
-                            />
-                            <span>Current logo</span>
-                        </div>
-                    )}
-                </div>
+                <ImageUploadField
+                    id="logo"
+                    label="Logo"
+                    description="Upload a square or horizontal logo for the header."
+                    file={data.logo}
+                    onChange={(file) => onChange('logo', file)}
+                    currentImageUrl={media.logo_url}
+                    currentImageLabel="Current logo"
+                    error={errors.logo}
+                    removeCurrent={data.remove_logo}
+                    onRemoveCurrentChange={(value) =>
+                        onChange('remove_logo', value)
+                    }
+                />
 
-                <div className="flex items-center gap-2">
-                    <Checkbox
-                        id="remove_logo"
-                        checked={data.remove_logo}
-                        onCheckedChange={(checked) =>
-                            onChange('remove_logo', Boolean(checked))
-                        }
-                    />
-                    <Label htmlFor="remove_logo">Remove current logo</Label>
-                </div>
-
-                <div className="grid gap-2">
-                    <Label htmlFor="favicon">Favicon</Label>
-                    <p className="text-sm text-muted-foreground">
-                        Small icon shown in browser tabs.
-                    </p>
-                    <Input
-                        id="favicon"
-                        type="file"
-                        accept="image/*"
-                        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                            onChange('favicon', event.target.files?.[0] ?? null)
-                        }
-                    />
-                    <InputError message={errors.favicon} />
-                    {media.favicon_url && !data.remove_favicon && (
-                        <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                            <img
-                                src={media.favicon_url}
-                                alt="Current favicon"
-                                className="h-10 w-10 rounded-md border border-border/60 bg-background object-contain p-1"
-                                loading="lazy"
-                            />
-                            <span>Current favicon</span>
-                        </div>
-                    )}
-                </div>
-
-                <div className="flex items-center gap-2">
-                    <Checkbox
-                        id="remove_favicon"
-                        checked={data.remove_favicon}
-                        onCheckedChange={(checked) =>
-                            onChange('remove_favicon', Boolean(checked))
-                        }
-                    />
-                    <Label htmlFor="remove_favicon">
-                        Remove current favicon
-                    </Label>
-                </div>
+                <ImageUploadField
+                    id="favicon"
+                    label="Favicon"
+                    description="Small icon shown in browser tabs."
+                    file={data.favicon}
+                    onChange={(file) => onChange('favicon', file)}
+                    currentImageUrl={media.favicon_url}
+                    currentImageLabel="Current favicon"
+                    error={errors.favicon}
+                    removeCurrent={data.remove_favicon}
+                    onRemoveCurrentChange={(value) =>
+                        onChange('remove_favicon', value)
+                    }
+                />
             </section>
 
-            <section className="space-y-6 rounded-xl border border-sidebar-border/70 bg-card p-6 md:p-8">
+            <section id="social-links" className={SECTION_CARD_CLASS_NAME}>
                 <div>
                     <h3 className="text-lg font-semibold">Social links</h3>
                     <p className="text-sm text-muted-foreground">
@@ -971,7 +1044,7 @@ export default function SiteSettingsForm({
                 <InputError message={errors.social_links} />
             </section>
 
-            <section className="space-y-6 rounded-xl border border-sidebar-border/70 bg-card p-6 md:p-8">
+            <section id="seo-defaults" className={SECTION_CARD_CLASS_NAME}>
                 <div>
                     <h3 className="text-lg font-semibold">SEO defaults</h3>
                     <p className="text-sm text-muted-foreground">
@@ -1014,51 +1087,23 @@ export default function SiteSettingsForm({
                     <CurrentValue value={current.default_seo_description} />
                 </div>
 
-                <div className="grid gap-2">
-                    <Label htmlFor="default_og_image">Default SEO image</Label>
-                    <p className="text-sm text-muted-foreground">
-                        Used for social sharing when no image is set.
-                    </p>
-                    <Input
-                        id="default_og_image"
-                        type="file"
-                        accept="image/*"
-                        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                            onChange(
-                                'default_og_image',
-                                event.target.files?.[0] ?? null,
-                            )
-                        }
-                    />
-                    <InputError message={errors.default_og_image} />
-                    {media.default_og_image_url && !data.remove_default_og_image && (
-                        <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                            <img
-                                src={media.default_og_image_url}
-                                alt="Current SEO image"
-                                className="h-20 w-32 rounded-md border border-border/60 bg-background object-cover"
-                                loading="lazy"
-                            />
-                            <span>Current SEO image</span>
-                        </div>
-                    )}
-                </div>
-
-                <div className="flex items-center gap-2">
-                    <Checkbox
-                        id="remove_default_og_image"
-                        checked={data.remove_default_og_image}
-                        onCheckedChange={(checked) =>
-                            onChange('remove_default_og_image', Boolean(checked))
-                        }
-                    />
-                    <Label htmlFor="remove_default_og_image">
-                        Remove current SEO image
-                    </Label>
-                </div>
+                <ImageUploadField
+                    id="default_og_image"
+                    label="Default SEO image"
+                    description="Used for social sharing when no image is set."
+                    file={data.default_og_image}
+                    onChange={(file) => onChange('default_og_image', file)}
+                    currentImageUrl={media.default_og_image_url}
+                    currentImageLabel="Current SEO image"
+                    error={errors.default_og_image}
+                    removeCurrent={data.remove_default_og_image}
+                    onRemoveCurrentChange={(value) =>
+                        onChange('remove_default_og_image', value)
+                    }
+                />
             </section>
 
-            <section className="space-y-6 rounded-xl border border-sidebar-border/70 bg-card p-6 md:p-8">
+            <section id="verification-meta" className={SECTION_CARD_CLASS_NAME}>
                 <div>
                     <h3 className="text-lg font-semibold">Verification meta</h3>
                     <p className="text-sm text-muted-foreground">
@@ -1130,11 +1175,11 @@ export default function SiteSettingsForm({
                 <InputError message={errors.verification_meta} />
             </section>
 
-            <section className="space-y-8 rounded-xl border border-sidebar-border/70 bg-card p-6 md:p-8">
+            <section id="home-page" className={DETAILED_SECTION_CARD_CLASS_NAME}>
                 <div>
                     <h3 className="text-lg font-semibold">Home page</h3>
                     <p className="text-sm text-muted-foreground">
-                        Hero, stats, technologies, and homepage sections.
+                        Hero, stats, and homepage sections.
                     </p>
                 </div>
 
@@ -1370,75 +1415,6 @@ export default function SiteSettingsForm({
                         </div>
                     ))}
                     <InputError message={errors.home_stats} />
-                </div>
-
-                <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                        <h4 className="text-base font-semibold">Technologies</h4>
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={addHomeTechnology}
-                        >
-                            Add technology
-                        </Button>
-                    </div>
-                    <CurrentValue
-                        value={current.home_technologies.length}
-                        label="Current technologies"
-                    />
-                    {data.home_technologies.map((tech, index) => (
-                        <div
-                            key={`tech-${index}`}
-                            className="grid gap-3 md:grid-cols-2"
-                        >
-                            <div className="grid gap-2">
-                                <Label>Name</Label>
-                                <p className="text-sm text-muted-foreground">
-                                    Technology name shown on the home page.
-                                </p>
-                                <Input
-                                    value={tech.name}
-                                    onChange={(event) =>
-                                        updateHomeTechnology(
-                                            index,
-                                            'name',
-                                            event.target.value,
-                                        )
-                                    }
-                                />
-                                <CurrentValue value={current.home_technologies[index]?.name} />
-                            </div>
-                            <div className="grid gap-2">
-                                <Label>Icon key</Label>
-                                <p className="text-sm text-muted-foreground">
-                                    Lucide icon name for the tech.
-                                </p>
-                                <Input
-                                    value={tech.icon_key}
-                                    onChange={(event) =>
-                                        updateHomeTechnology(
-                                            index,
-                                            'icon_key',
-                                            event.target.value,
-                                        )
-                                    }
-                                />
-                                <IconHelperLink />
-                                <CurrentValue value={current.home_technologies[index]?.icon_key} />
-                            </div>
-                            <div className="flex justify-end md:col-span-2">
-                                <Button
-                                    type="button"
-                                    variant="ghost"
-                                    onClick={() => removeHomeTechnology(index)}
-                                >
-                                    Remove
-                                </Button>
-                            </div>
-                        </div>
-                    ))}
-                    <InputError message={errors.home_technologies} />
                 </div>
 
                 <div className="space-y-4">
@@ -2082,7 +2058,7 @@ export default function SiteSettingsForm({
                 </div>
             </section>
 
-            <section className="space-y-8 rounded-xl border border-sidebar-border/70 bg-card p-6 md:p-8">
+            <section id="about-page" className={DETAILED_SECTION_CARD_CLASS_NAME}>
                 <div>
                     <h3 className="text-lg font-semibold">About page</h3>
                     <p className="text-sm text-muted-foreground">
@@ -2718,7 +2694,7 @@ export default function SiteSettingsForm({
                 </div>
             </section>
 
-            <section className="space-y-6 rounded-xl border border-sidebar-border/70 bg-card p-6 md:p-8">
+            <section id="services-page" className={SECTION_CARD_CLASS_NAME}>
                 <div>
                     <h3 className="text-lg font-semibold">Services page</h3>
                 </div>
@@ -2840,7 +2816,7 @@ export default function SiteSettingsForm({
                 </div>
             </section>
 
-            <section className="space-y-6 rounded-xl border border-sidebar-border/70 bg-card p-6 md:p-8">
+            <section id="portfolio-page" className={SECTION_CARD_CLASS_NAME}>
                 <div>
                     <h3 className="text-lg font-semibold">Portfolio page</h3>
                 </div>
@@ -2962,7 +2938,7 @@ export default function SiteSettingsForm({
                 </div>
             </section>
 
-            <section className="space-y-6 rounded-xl border border-sidebar-border/70 bg-card p-6 md:p-8">
+            <section id="products-page" className={SECTION_CARD_CLASS_NAME}>
                 <div>
                     <h3 className="text-lg font-semibold">Products page</h3>
                 </div>
@@ -3019,7 +2995,7 @@ export default function SiteSettingsForm({
                 </div>
             </section>
 
-            <section className="space-y-6 rounded-xl border border-sidebar-border/70 bg-card p-6 md:p-8">
+            <section id="blog-page" className={SECTION_CARD_CLASS_NAME}>
                 <div>
                     <h3 className="text-lg font-semibold">Blog page</h3>
                 </div>
@@ -3076,7 +3052,7 @@ export default function SiteSettingsForm({
                 </div>
             </section>
 
-            <section className="space-y-6 rounded-xl border border-sidebar-border/70 bg-card p-6 md:p-8">
+            <section id="contact-page" className={SECTION_CARD_CLASS_NAME}>
                 <div>
                     <h3 className="text-lg font-semibold">Contact page</h3>
                 </div>
@@ -3395,8 +3371,19 @@ export default function SiteSettingsForm({
                 </div>
             </section>
 
+            <SectionJumpMenu
+                isOpen={isSectionMenuOpen}
+                onToggle={() => setIsSectionMenuOpen((currentState) => !currentState)}
+                onSelect={scrollToSection}
+            />
+
             <div className="fixed bottom-6 right-6 z-40 flex items-center gap-3">
-                <Button type="submit" size="lg" disabled={processing} className="shadow-lg">
+                <Button
+                    type="submit"
+                    size="lg"
+                    disabled={processing}
+                    className="rounded-full shadow-lg"
+                >
                     {processing ? 'Saving...' : submitLabel}
                 </Button>
             </div>
