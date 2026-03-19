@@ -104,11 +104,11 @@ const App = () => {
         <Navbar />
         <ScrollToTop />
         <main className="flex-grow">
-          <AnimatePresence mode="wait">
+          <AnimatePresence initial={false} mode="sync">
             <Routes location={location} key={location.pathname}>
               <Route path="/" element={
                 <motion.div
-                  initial="initial"
+                  initial={false}
                   animate="in"
                   exit="out"
                   variants={pageVariants}
@@ -119,7 +119,7 @@ const App = () => {
               } />
               <Route path="/services" element={
                 <motion.div
-                  initial="initial"
+                  initial={false}
                   animate="in"
                   exit="out"
                   variants={pageVariants}
@@ -130,7 +130,7 @@ const App = () => {
               } />
               <Route path="/services/:serviceId" element={
                 <motion.div
-                  initial="initial"
+                  initial={false}
                   animate="in"
                   exit="out"
                   variants={pageVariants}
@@ -141,7 +141,7 @@ const App = () => {
               } />
               <Route path="/about" element={
                 <motion.div
-                  initial="initial"
+                  initial={false}
                   animate="in"
                   exit="out"
                   variants={pageVariants}
@@ -152,7 +152,7 @@ const App = () => {
               } />
               <Route path="/portfolio" element={
                 <motion.div
-                  initial="initial"
+                  initial={false}
                   animate="in"
                   exit="out"
                   variants={pageVariants}
@@ -163,7 +163,7 @@ const App = () => {
               } />
               <Route path="/portfolio/category/:categorySlug" element={
                 <motion.div
-                  initial="initial"
+                  initial={false}
                   animate="in"
                   exit="out"
                   variants={pageVariants}
@@ -174,7 +174,7 @@ const App = () => {
               } />
               <Route path="/project/:slug" element={
                 <motion.div
-                  initial="initial"
+                  initial={false}
                   animate="in"
                   exit="out"
                   variants={pageVariants}
@@ -186,7 +186,7 @@ const App = () => {
               <Route path="/portfolio/:slug" element={<LegacyProjectRedirect />} />
               <Route path="/clients/:slug" element={
                 <motion.div
-                  initial="initial"
+                  initial={false}
                   animate="in"
                   exit="out"
                   variants={pageVariants}
@@ -197,7 +197,7 @@ const App = () => {
               } />
               <Route path="/products" element={
                 <motion.div
-                  initial="initial"
+                  initial={false}
                   animate="in"
                   exit="out"
                   variants={pageVariants}
@@ -208,7 +208,7 @@ const App = () => {
               } />
               <Route path="/products/:slug" element={
                 <motion.div
-                  initial="initial"
+                  initial={false}
                   animate="in"
                   exit="out"
                   variants={pageVariants}
@@ -219,7 +219,7 @@ const App = () => {
               } />
               <Route path="/news" element={
                 <motion.div
-                  initial="initial"
+                  initial={false}
                   animate="in"
                   exit="out"
                   variants={pageVariants}
@@ -230,7 +230,7 @@ const App = () => {
               } />
               <Route path="/news/category/:categorySlug" element={
                 <motion.div
-                  initial="initial"
+                  initial={false}
                   animate="in"
                   exit="out"
                   variants={pageVariants}
@@ -241,7 +241,7 @@ const App = () => {
               } />
               <Route path="/news/:slug" element={
                 <motion.div
-                  initial="initial"
+                  initial={false}
                   animate="in"
                   exit="out"
                   variants={pageVariants}
@@ -255,7 +255,7 @@ const App = () => {
               <Route path="/blog/:slug" element={<LegacyBlogRedirect />} />
               <Route path="/contact" element={
                 <motion.div
-                  initial="initial"
+                  initial={false}
                   animate="in"
                   exit="out"
                   variants={pageVariants}
@@ -266,7 +266,7 @@ const App = () => {
               } />
               <Route path="/privacy-policy" element={
                 <motion.div
-                  initial="initial"
+                  initial={false}
                   animate="in"
                   exit="out"
                   variants={pageVariants}

@@ -77,6 +77,23 @@ test('public service pages are rendered through inertia public pages', function 
             ->where('seo.canonical', url("/services/{$service->slug}")));
 });
 
+test('portfolio archive page preloads projects for the legacy marketing shell', function () {
+    $portfolio = Portfolio::factory()->create([
+        'title' => 'Refreshable Portfolio',
+        'slug' => 'refreshable-portfolio',
+        'is_active' => true,
+    ]);
+
+    $response = $this->get('/portfolio');
+
+    $response
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('public/legacy')
+            ->where('legacyPath', '/portfolio')
+            ->where('legacyApiCache./portfolio.data.0.slug', $portfolio->slug));
+});
+
 test('home page uses an exact raw seo title without app name suffix', function () {
     $response = $this->get('/');
 
@@ -158,6 +175,25 @@ test('paginated news archives keep a page-specific canonical and return paginati
             ->where('seo.canonical', url('/news?page=2'))
             ->where('legacyApiCache./posts?page=2.meta.current_page', 2)
             ->where('legacyApiCache./posts?page=2.meta.last_page', 2));
+});
+
+test('news article pages fall back to the route canonical when the post canonical is null', function () {
+    $post = Post::factory()->create([
+        'slug' => 'route-canonical-fallback',
+        'status' => 'published',
+        'published_at' => now()->subDay(),
+        'canonical_url' => null,
+    ]);
+
+    $response = $this->get("/news/{$post->slug}");
+
+    $response
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('public/legacy')
+            ->where('legacyPath', "/news/{$post->slug}")
+            ->where('seo.canonical', url("/news/{$post->slug}"))
+            ->where("legacyApiCache./posts/{$post->slug}.data.slug", $post->slug));
 });
 
 test('empty paginated news archives return a 404', function () {

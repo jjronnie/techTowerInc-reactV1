@@ -98,7 +98,7 @@ const PortfolioShowPage = () => {
         />
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={false}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="mx-auto max-w-4xl text-center"
@@ -138,7 +138,7 @@ const PortfolioShowPage = () => {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={false}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
           className="mt-12 overflow-hidden rounded-xl border border-border/60 bg-muted/20"

@@ -376,6 +376,7 @@ class PublicPageController extends Controller
                 ->limit(6)
                 ->get(),
         )->resolve();
+        $canonicalUrl = data_get($postData, 'seo.canonical_url') ?: url("/news/{$post->slug}");
 
         return $this->renderLegacyPage($request, [
             'legacyApiCache' => [
@@ -386,18 +387,18 @@ class PublicPageController extends Controller
             'seo' => $this->seo($request, [
                 'title' => data_get($postData, 'seo.title', $post->title),
                 'description' => data_get($postData, 'seo.description', $this->cleanText($post->excerpt)),
-                'canonical' => data_get($postData, 'seo.canonical_url', url("/news/{$post->slug}")),
+                'canonical' => $canonicalUrl,
                 'keywords' => data_get($postData, 'seo.keywords'),
                 'image' => $this->absoluteUrl(data_get($postData, 'seo.og_image_url') ?: data_get($postData, 'featured_image_url')),
                 'robots' => data_get($postData, 'seo.robots'),
                 'type' => 'article',
                 'structuredData' => [
                     $this->organizationSchema('Organization'),
-                    $this->articleSchema($post, data_get($postData, 'seo.canonical_url', url("/news/{$post->slug}"))),
+                    $this->articleSchema($post, $canonicalUrl),
                     $this->breadcrumbSchema([
                         ['name' => 'Home', 'url' => url('/')],
                         ['name' => 'News', 'url' => url('/news')],
-                        ['name' => $post->title, 'url' => data_get($postData, 'seo.canonical_url', url("/news/{$post->slug}"))],
+                        ['name' => $post->title, 'url' => $canonicalUrl],
                     ]),
                 ],
             ]),

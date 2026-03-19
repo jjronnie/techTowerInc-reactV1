@@ -54,7 +54,7 @@ const ClientShowPage = () => {
         />
 
         <motion.header
-          initial={{ opacity: 0, y: 20 }}
+          initial={false}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="next-card overflow-hidden"
@@ -121,9 +121,8 @@ const ClientShowPage = () => {
                 <motion.div
                   key={project.id}
                   className="h-full"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.2 }}
+                  initial={false}
+                  animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.08 }}
                 >
                   <FolderCard project={project} />
