@@ -15,7 +15,7 @@ const showcaseFadeClass =
 
 const PortfolioPreviewSection = () => {
   const { settings } = useSiteSettings();
-  const { data, loading, error } = useApi('/portfolio?featured=1&sort=latest&home_showcase=1');
+  const { data, loading, error } = useApi('/portfolio?featured=1&home_showcase=1');
   const showcaseProjects = useMemo(
     () => (data?.data || []).filter((project) => project.home_featured_image_url).slice(0, 8),
     [data?.data]

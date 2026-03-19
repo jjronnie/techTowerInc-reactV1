@@ -46,8 +46,8 @@ class PublicPageController extends Controller
                 ->where('is_featured', true)
                 ->whereNotNull('home_featured_image_path')
                 ->with(['client', 'categories', 'projectTypes', 'technologies'])
-                ->orderByRaw('coalesce(completed_at, started_at, created_at) desc')
-                ->orderByDesc('id')
+                ->orderBy('sort_order')
+                ->orderBy('title')
                 ->limit(8)
                 ->get(),
         )->resolve();
@@ -62,7 +62,7 @@ class PublicPageController extends Controller
         return $this->renderLegacyPage($request, [
             'legacyApiCache' => [
                 '/services' => ['data' => $servicesData],
-                '/portfolio?featured=1&sort=latest&home_showcase=1' => ['data' => $featuredProjectsData],
+                '/portfolio?featured=1&home_showcase=1' => ['data' => $featuredProjectsData],
                 '/technologies' => ['data' => $technologiesData],
             ],
             'seo' => $this->seo($request, [

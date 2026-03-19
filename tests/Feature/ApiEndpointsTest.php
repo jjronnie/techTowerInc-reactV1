@@ -185,15 +185,27 @@ test('portfolio endpoint can return home showcase projects with home featured im
         'slug' => 'website-design',
     ]);
 
-    $showcaseProject = Portfolio::factory()->create([
-        'title' => 'Showcase Project',
-        'slug' => 'showcase-project',
+    $firstShowcaseProject = Portfolio::factory()->create([
+        'title' => 'Showcase Project First',
+        'slug' => 'showcase-project-first',
         'is_active' => true,
         'is_featured' => true,
         'home_featured_image_path' => 'portfolios/home-featured/showcase.jpg',
-        'completed_at' => now()->subWeek(),
+        'sort_order' => 1,
+        'completed_at' => now()->subWeeks(2),
     ]);
-    $showcaseProject->projectTypes()->sync([$projectType->id]);
+    $firstShowcaseProject->projectTypes()->sync([$projectType->id]);
+
+    $secondShowcaseProject = Portfolio::factory()->create([
+        'title' => 'Showcase Project Second',
+        'slug' => 'showcase-project-second',
+        'is_active' => true,
+        'is_featured' => true,
+        'home_featured_image_path' => 'portfolios/home-featured/showcase-second.jpg',
+        'sort_order' => 2,
+        'completed_at' => now(),
+    ]);
+    $secondShowcaseProject->projectTypes()->sync([$projectType->id]);
 
     $missingHomeImageProject = Portfolio::factory()->create([
         'title' => 'Missing Home Image',
@@ -205,17 +217,18 @@ test('portfolio endpoint can return home showcase projects with home featured im
     ]);
     $missingHomeImageProject->projectTypes()->sync([$projectType->id]);
 
-    $response = $this->getJson('/api/portfolio?featured=1&sort=latest&home_showcase=1');
+    $response = $this->getJson('/api/portfolio?featured=1&home_showcase=1');
 
     $response->assertSuccessful()
-        ->assertJsonPath('data.0.slug', $showcaseProject->slug)
+        ->assertJsonPath('data.0.slug', $firstShowcaseProject->slug)
+        ->assertJsonPath('data.1.slug', $secondShowcaseProject->slug)
         ->assertJsonPath(
             'data.0.home_featured_image_url',
             Storage::url('portfolios/home-featured/showcase.jpg'),
         );
 
     expect($response->json('data'))
-        ->toHaveCount(1)
+        ->toHaveCount(2)
         ->and(collect($response->json('data'))->pluck('slug')->all())
         ->not->toContain($missingHomeImageProject->slug);
 });

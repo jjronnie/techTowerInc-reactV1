@@ -216,6 +216,27 @@ it('flashes a notification when creating a portfolio entry', function () {
     ]);
 });
 
+it('shows portfolio sort order in the admin index payload', function () {
+    $admin = User::factory()->create([
+        'is_admin' => true,
+    ]);
+
+    $portfolio = Portfolio::factory()->create([
+        'title' => 'Sorted Portfolio',
+        'slug' => 'sorted-portfolio',
+        'sort_order' => 12,
+    ]);
+
+    $this->actingAs($admin)
+        ->get(route('admin.portfolios.index'))
+        ->assertSuccessful()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('admin/portfolios/index')
+            ->has('portfolios', 1)
+            ->where('portfolios.0.id', $portfolio->id)
+            ->where('portfolios.0.sort_order', 12));
+});
+
 it('requires a home featured image when creating a featured portfolio entry', function () {
     $admin = User::factory()->create([
         'is_admin' => true,

@@ -10,6 +10,7 @@ type Portfolio = {
     id: number;
     title: string;
     slug: string;
+    sort_order: number | null;
     is_featured: boolean;
     is_active: boolean;
     client?: {
@@ -60,10 +61,11 @@ export default function PortfoliosIndex({ portfolios }: PortfoliosIndexProps) {
                 </div>
 
                 <div className="overflow-x-auto rounded-xl border border-sidebar-border/70 bg-card">
-                    <table className="min-w-[880px] w-full text-sm">
+                    <table className="min-w-[980px] w-full text-sm">
                         <thead className="bg-muted/50 text-xs uppercase text-muted-foreground">
                             <tr>
                                 <th className="px-4 py-3 text-left">Title</th>
+                                <th className="px-4 py-3 text-left">Order</th>
                                 <th className="px-4 py-3 text-left">Types</th>
                                 <th className="px-4 py-3 text-left">Client</th>
                                 <th className="px-4 py-3 text-left">Categories</th>
@@ -87,6 +89,9 @@ export default function PortfoliosIndex({ portfolios }: PortfoliosIndexProps) {
                                                 {portfolio.slug}
                                             </span>
                                         </div>
+                                    </td>
+                                    <td className="px-4 py-3 text-muted-foreground">
+                                        {portfolio.sort_order ?? 0}
                                     </td>
                                     <td className="px-4 py-3 text-muted-foreground">
                                         {portfolio.project_types?.length
@@ -136,7 +141,7 @@ export default function PortfoliosIndex({ portfolios }: PortfoliosIndexProps) {
                             {!portfolios.length && (
                                 <tr>
                                     <td
-                                        colSpan={7}
+                                        colSpan={8}
                                         className="px-4 py-8 text-center text-muted-foreground"
                                     >
                                         No portfolio entries yet.
