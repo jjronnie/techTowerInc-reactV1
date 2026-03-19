@@ -2,10 +2,10 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowRight, ExternalLink, FolderKanban } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import FolderCard from '@/components/shared/FolderCard';
-import { useApi } from '@/hooks/useApi';
-import Seo from '@/components/Seo';
+import { Button } from '@marketing/components/ui/button';
+import FolderCard from '@marketing/components/shared/FolderCard';
+import { useApi } from '@marketing/hooks/useApi';
+import Seo from '@marketing/components/Seo';
 
 const ClientShowPage = () => {
   const { slug } = useParams();
@@ -94,8 +94,8 @@ const ClientShowPage = () => {
 
           {client.description && (
             <div
-              className="prose prose-lg mt-8 max-w-none text-foreground prose-headings:text-foreground prose-p:text-muted-foreground prose-strong:text-foreground dark:prose-invert"
-              dangerouslySetInnerHTML={{ __html: client.description }}
+              className="legacy-prose legacy-prose-lg mt-8 max-w-none text-foreground"
+              dangerouslySetInnerHTML={{ __html: client.description }} 
             />
           )}
         </motion.header>

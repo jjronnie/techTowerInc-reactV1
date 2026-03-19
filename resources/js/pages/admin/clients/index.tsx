@@ -1,5 +1,6 @@
 import { Head, Link, router } from '@inertiajs/react';
 import Heading from '@/components/heading';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
@@ -11,6 +12,7 @@ type Client = {
     name: string;
     slug: string;
     website_url: string | null;
+    logo_url: string | null;
     portfolios_count: number;
 };
 
@@ -65,8 +67,28 @@ export default function ClientsIndex({ clients }: ClientsIndexProps) {
                                     key={client.id}
                                     className="border-t border-sidebar-border/70"
                                 >
-                                    <td className="px-4 py-3 font-medium">
-                                        {client.name}
+                                    <td className="px-4 py-3">
+                                        <div className="flex items-center gap-3">
+                                            <Avatar className="h-10 w-10 rounded-xl">
+                                                <AvatarImage
+                                                    src={client.logo_url ?? undefined}
+                                                    alt={client.name}
+                                                />
+                                                <AvatarFallback className="rounded-xl text-xs font-semibold">
+                                                    {client.name
+                                                        .split(' ')
+                                                        .map((part) =>
+                                                            part.charAt(0),
+                                                        )
+                                                        .join('')
+                                                        .slice(0, 2)
+                                                        .toUpperCase()}
+                                                </AvatarFallback>
+                                            </Avatar>
+                                            <span className="font-medium">
+                                                {client.name}
+                                            </span>
+                                        </div>
                                     </td>
                                     <td className="px-4 py-3 text-muted-foreground">
                                         {client.slug}

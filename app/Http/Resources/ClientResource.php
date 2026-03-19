@@ -23,6 +23,7 @@ class ClientResource extends JsonResource
             'description' => $this->description,
             'logo_url' => $this->logo_path ? Storage::url($this->logo_path) : null,
             'projects_count' => $this->whenCounted('portfolios'),
+            'portfolios_count' => $this->whenCounted('portfolios'),
             'projects' => $this->whenLoaded(
                 'portfolios',
                 fn (): array => PortfolioResource::collection($this->portfolios)->resolve(),

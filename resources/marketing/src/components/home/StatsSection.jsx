@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import CountUp from 'react-countup';
-import { useSiteSettings } from '@/context/SiteSettingsContext';
+import { useSiteSettings } from '@marketing/context/SiteSettingsContext';
 
 const initialStats = [
   { number: 220, label: 'Projects Delivered', suffix: '+' },

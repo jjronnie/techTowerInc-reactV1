@@ -251,9 +251,33 @@ class SiteSettingSeeder extends Seeder
                         ],
                     ],
                 ],
+                'about_why_choose_us' => [
+                    'badge_text' => 'Why Choose Us',
+                    'heading' => 'Reasons businesses choose TechTower to build and grow online.',
+                    'body' => 'We combine thoughtful design, dependable engineering, and growth-focused execution so your digital presence does more than look good. It helps your business move.',
+                    'image_url' => 'https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1200&q=80',
+                    'image_alt' => 'TechTower team collaborating in a strategy session',
+                    'items' => [
+                        [
+                            'title' => 'Professional Delivery',
+                            'description' => 'We communicate clearly, ship on time, and keep every project grounded in real business goals.',
+                            'accent_color' => '#6d5dfc',
+                        ],
+                        [
+                            'title' => 'Quality That Performs',
+                            'description' => 'Our websites are fast, responsive, secure, and built to convert across devices.',
+                            'accent_color' => '#ff9f43',
+                        ],
+                        [
+                            'title' => 'Growth-Focused Thinking',
+                            'description' => 'We pair design and engineering with SEO and conversion strategy so your investment keeps working.',
+                            'accent_color' => '#38b86b',
+                        ],
+                    ],
+                ],
                 'about_team' => [
-                    'section_heading' => 'Meet Our Leadership',
-                    'section_subheading' => "The driving force behind TechTower's innovation and success.",
+                    'section_heading' => 'The people behind your digital success',
+                    'section_subheading' => 'Meet the strategists, designers, and engineers shaping every TechTower project with care and clarity.',
                     'members' => [
                         [
                             'name' => 'Jjuuko Ronald',

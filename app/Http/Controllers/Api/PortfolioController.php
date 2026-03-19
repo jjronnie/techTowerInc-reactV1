@@ -14,10 +14,14 @@ class PortfolioController extends Controller
     {
         $query = Portfolio::query()
             ->where('is_active', true)
-            ->with(['client', 'categories', 'technologies']);
+            ->with(['client', 'categories', 'projectTypes', 'technologies']);
 
         if ($request->has('featured')) {
             $query->where('is_featured', $request->boolean('featured'));
+        }
+
+        if ($request->boolean('home_showcase')) {
+            $query->whereNotNull('home_featured_image_path');
         }
 
         if ($request->filled('client')) {
@@ -32,6 +36,12 @@ class PortfolioController extends Controller
             });
         }
 
+        if ($request->filled('type')) {
+            $query->whereHas('projectTypes', function ($typeQuery) use ($request): void {
+                $typeQuery->where('slug', $request->string('type')->toString());
+            });
+        }
+
         if ($request->string('sort')->toString() === 'latest') {
             $query
                 ->orderByRaw('coalesce(completed_at, started_at, created_at) desc')
@@ -41,6 +51,10 @@ class PortfolioController extends Controller
                 ->orderByDesc('is_featured')
                 ->orderBy('sort_order')
                 ->orderBy('title');
+        }
+
+        if ($request->boolean('home_showcase')) {
+            $query->limit(8);
         }
 
         $portfolios = $query->get();
@@ -54,7 +68,7 @@ class PortfolioController extends Controller
             abort(404);
         }
 
-        $portfolio->loadMissing(['client', 'categories', 'technologies']);
+        $portfolio->loadMissing(['client', 'categories', 'projectTypes', 'technologies']);
 
         return new PortfolioResource($portfolio);
     }

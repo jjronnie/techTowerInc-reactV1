@@ -1,6 +1,6 @@
 import React from 'react';
-import { useApi } from '@/hooks/useApi';
-import TechnologyBadge from '@/components/shared/TechnologyBadge';
+import { useApi } from '@marketing/hooks/useApi';
+import TechnologyBadge from '@marketing/components/shared/TechnologyBadge';
 
 const fallbackTechnologies = [
   { name: 'Laravel', icon_name: 'laravel' },

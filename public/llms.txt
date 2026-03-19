@@ -1,0 +1,45 @@
+# TechTower Innovations
+
+> TechTower Innovations is a Uganda-based software development and digital solutions company focused on websites, mobile apps, custom business systems, cloud and DevOps enablement, cybersecurity, and digital transformation for growing organizations.
+
+## Core Pages
+
+- [Home](https://techtowerinc.com/) - Main overview of the company, core services, featured work, technologies, FAQs, and contact calls to action.
+- [About](https://techtowerinc.com/about) - Company background, mission, vision, leadership, testimonials, and reasons clients choose TechTower.
+- [Contact](https://techtowerinc.com/contact) - Inquiry page for project discussions, consultations, and direct contact details.
+- [Privacy Policy](https://techtowerinc.com/privacy-policy) - Privacy, data handling, and site policy information.
+
+## Services
+
+- [Services](https://techtowerinc.com/services) - Overview of the company’s service lines and their business focus.
+- [Website Design, Re-design and Development](https://techtowerinc.com/services/website-design-re-design-and-development) - Website design, redesign, web applications, CMS projects, and performance-focused builds.
+- [Mobile App Development](https://techtowerinc.com/services/mobile-app-development) - Native and cross-platform mobile app design, development, launch, and support.
+- [System Development & Architecture](https://techtowerinc.com/services/system-development-architecture) - Custom software systems, backend platforms, APIs, integrations, and scalable architecture.
+- [Cybersecurity Services](https://techtowerinc.com/services/cybersecurity-services) - Security audits, penetration testing, compliance support, hardening, and incident readiness.
+- [Digital Transformation Consulting](https://techtowerinc.com/services/digital-transformation-consulting) - Business process modernization, roadmap planning, and technology transformation strategy.
+- [Cloud & DevOps Enablement](https://techtowerinc.com/services/cloud-devops-enablement) - Cloud infrastructure, CI/CD, monitoring, deployment workflows, and reliability improvements.
+
+## Portfolio & Projects
+
+- [Portfolio](https://techtowerinc.com/portfolio) - Main case study archive showing featured and active client work across sectors.
+- [Pamoja Chambers Website](https://techtowerinc.com/project/pamoja-chambers-website) - Legal and property services website focused on trust, service clarity, and lead generation.
+- [Bondemala Investments Website](https://techtowerinc.com/project/bondemala-investments-website) - Corporate website for a diversified investment business spanning multiple sectors.
+- [HealingWay Hospital Website](https://techtowerinc.com/project/healingway-hospital-website) - Healthcare website built for patient information access, trust, and service visibility.
+- [Utalii Admissions Website](https://techtowerinc.com/project/utalii-admissions-website) - Education-focused website supporting course discovery, admissions, and institutional communication.
+- [Classyworld Furniture](https://techtowerinc.com/project/classyworld-furniture) - Furniture showcase website centered on product discovery and buyer inquiries.
+- [Taquwa Soccer Academy](https://techtowerinc.com/project/taquwa-soccer-academy) - Academy website for program visibility, community trust, and communication.
+- [Novas 360 POS Platform](https://techtowerinc.com/project/novas-360-pos-platform) - Cloud point-of-sale platform for managing sales, inventory, and business reporting.
+
+## News & Articles
+
+- [News](https://techtowerinc.com/news) - Main article archive focused on software, web, mobile, digital transformation, and cybersecurity topics.
+- [How to Choose the Right Software Development Company in Uganda](https://techtowerinc.com/news/how-to-choose-the-right-software-development-company-in-uganda) - Buyer guide for evaluating software development partners, pricing, process quality, and red flags.
+- [Website Design vs Custom Web Development: What’s Right for Your Business?](https://techtowerinc.com/news/website-design-vs-custom-web-development-whats-right-for-your-business) - Comparison article explaining when to choose website design versus custom web development.
+- [The Real Cost of Building a Mobile App in Uganda](https://techtowerinc.com/news/the-real-cost-of-building-a-mobile-app-in-uganda) - Cost breakdown for mobile app development, including scope, backend work, timelines, and maintenance.
+- [Digital Transformation for Growing Businesses: Where to Start](https://techtowerinc.com/news/digital-transformation-for-growing-businesses-where-to-start) - Roadmap article for businesses starting digital transformation and systems modernization.
+- [Custom Software vs Off-the-Shelf Solutions: Which Saves More Money Long Term?](https://techtowerinc.com/news/custom-software-vs-off-the-shelf-solutions-which-saves-more-money-long-term) - Comparison of build-versus-buy software decisions with focus on ROI, flexibility, and long-term cost.
+- [Cybersecurity Basics Every Business in Uganda Should Know](https://techtowerinc.com/news/cybersecurity-basics-every-business-in-uganda-should-know) - Practical cybersecurity fundamentals for business leaders protecting data, systems, and operations.
+
+## Reference
+
+- [Sitemap](https://techtowerinc.com/sitemap.xml) - Machine-readable index of public URLs intended for search engines and crawlers.

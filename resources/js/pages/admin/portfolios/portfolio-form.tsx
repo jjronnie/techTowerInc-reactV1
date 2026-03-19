@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { TechnologyIconPreview } from '@/components/ui/technology-icon-preview';
 import { index as categoriesIndex } from '@/routes/admin/categories';
 import { index as clientsIndex } from '@/routes/admin/clients';
+import { index as projectTypesIndex } from '@/routes/admin/project-types';
 import { index as technologiesIndex } from '@/routes/admin/technologies';
 
 export type PortfolioOption = {
@@ -25,12 +26,12 @@ export type TechnologyOption = PortfolioOption & {
 
 export type PortfolioFormData = {
     title: string;
-    type: string;
     slug: string;
     summary: string;
     excerpt: string;
     description: string;
     client_id: number | null;
+    type_ids: number[];
     category_ids: number[];
     technology_ids: number[];
     project_url: string;
@@ -41,6 +42,8 @@ export type PortfolioFormData = {
     is_active: boolean;
     featured_image: File | null;
     remove_featured_image: boolean;
+    home_featured_image: File | null;
+    remove_home_featured_image: boolean;
     existing_gallery_images: string[];
     gallery_images: File[] | null;
     clear_gallery_images: boolean;
@@ -60,6 +63,7 @@ type PortfolioFormProps = {
     data: PortfolioFormData;
     errors: Record<string, string>;
     processing: boolean;
+    projectTypes: PortfolioOption[];
     categories: PortfolioOption[];
     clients: PortfolioOption[];
     technologies: TechnologyOption[];
@@ -68,6 +72,7 @@ type PortfolioFormProps = {
     submitLabel: string;
     availableGalleryImages?: GalleryImage[];
     currentFeaturedImageUrl?: string | null;
+    currentHomeFeaturedImageUrl?: string | null;
     currentOgImageUrl?: string | null;
 };
 
@@ -75,6 +80,7 @@ export default function PortfolioForm({
     data,
     errors,
     processing,
+    projectTypes,
     categories,
     clients,
     technologies,
@@ -83,10 +89,11 @@ export default function PortfolioForm({
     submitLabel,
     availableGalleryImages = [],
     currentFeaturedImageUrl = null,
+    currentHomeFeaturedImageUrl = null,
     currentOgImageUrl = null,
 }: PortfolioFormProps) {
     const toggleSelection = (
-        key: 'category_ids' | 'technology_ids',
+        key: 'type_ids' | 'category_ids' | 'technology_ids',
         id: number,
         checked: boolean,
     ) => {
@@ -135,18 +142,6 @@ export default function PortfolioForm({
                         required
                     />
                     <InputError message={errors.title} />
-                </div>
-
-                <div className="grid gap-2">
-                    <Label htmlFor="type">Type</Label>
-                    <Input
-                        id="type"
-                        value={data.type}
-                        onChange={(event) => onChange('type', event.target.value)}
-                        placeholder="Website, mobile app, dashboard..."
-                        required
-                    />
-                    <InputError message={errors.type} />
                 </div>
 
                 <div className="grid gap-2">
@@ -228,6 +223,11 @@ export default function PortfolioForm({
                             <Link href={clientsIndex()}>Manage clients</Link>
                         </Button>
                         <Button asChild variant="outline" size="sm">
+                            <Link href={projectTypesIndex()}>
+                                Manage project types
+                            </Link>
+                        </Button>
+                        <Button asChild variant="outline" size="sm">
                             <Link href={technologiesIndex()}>
                                 Manage technologies
                             </Link>
@@ -258,6 +258,41 @@ export default function PortfolioForm({
                         ))}
                     </select>
                     <InputError message={errors.client_id} />
+                </div>
+
+                <div className="grid gap-3">
+                    <div className="grid gap-2">
+                        <Label>Project types</Label>
+                        <p className="text-sm text-muted-foreground">
+                            Choose one or more types used on cards and the
+                            portfolio filter tabs.
+                        </p>
+                    </div>
+                    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                        {projectTypes.map((projectType) => (
+                            <label
+                                key={projectType.id}
+                                className="flex items-center gap-3 rounded-xl border border-sidebar-border/70 bg-background px-4 py-3"
+                            >
+                                <Checkbox
+                                    checked={data.type_ids.includes(
+                                        projectType.id,
+                                    )}
+                                    onCheckedChange={(checked) =>
+                                        toggleSelection(
+                                            'type_ids',
+                                            projectType.id,
+                                            Boolean(checked),
+                                        )
+                                    }
+                                />
+                                <span className="text-sm font-medium text-foreground">
+                                    {projectType.name}
+                                </span>
+                            </label>
+                        ))}
+                    </div>
+                    <InputError message={errors.type_ids} />
                 </div>
 
                 <div className="grid gap-3">
@@ -394,7 +429,7 @@ export default function PortfolioForm({
                                 Featured project
                             </span>
                             <span className="text-xs text-muted-foreground">
-                                Show this project first in highlighted sections.
+                                Show this project in highlighted sections. A home featured image is required for the homepage showcase.
                             </span>
                         </div>
                     </label>
@@ -436,6 +471,20 @@ export default function PortfolioForm({
                     removeCurrent={data.remove_featured_image}
                     onRemoveCurrentChange={(value) =>
                         onChange('remove_featured_image', value)
+                    }
+                />
+
+                <ImageUploadField
+                    id="home_featured_image"
+                    label="Home featured image"
+                    description="Required for featured projects shown in the homepage showcase wall."
+                    file={data.home_featured_image}
+                    onChange={(file) => onChange('home_featured_image', file)}
+                    currentImageUrl={currentHomeFeaturedImageUrl}
+                    error={errors.home_featured_image}
+                    removeCurrent={data.remove_home_featured_image}
+                    onRemoveCurrentChange={(value) =>
+                        onChange('remove_home_featured_image', value)
                     }
                 />
 

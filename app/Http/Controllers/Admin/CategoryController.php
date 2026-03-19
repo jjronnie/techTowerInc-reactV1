@@ -34,7 +34,7 @@ class CategoryController extends Controller
         $category = Category::query()->create($request->validated());
 
         return redirect()
-            ->route('admin.categories.edit', $category)
+            ->route('admin.categories.index')
             ->with('notification', [
                 'type' => 'success',
                 'title' => 'Category created',
@@ -59,7 +59,7 @@ class CategoryController extends Controller
         $category->update($request->validated());
 
         return redirect()
-            ->route('admin.categories.edit', $category)
+            ->route('admin.categories.index')
             ->with('notification', [
                 'type' => 'success',
                 'title' => 'Category updated',

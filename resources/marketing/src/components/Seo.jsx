@@ -1,7 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useLocation } from 'react-router-dom';
-import { useSiteSettings } from '@/context/SiteSettingsContext';
+import { useSiteSettings } from '@marketing/context/SiteSettingsContext';
 
 const buildTitle = (title, siteName, defaultTitle) => {
   if (!title) {
@@ -15,7 +15,18 @@ const buildTitle = (title, siteName, defaultTitle) => {
   return siteName ? `${title} | ${siteName}` : title;
 };
 
-const Seo = ({ title, description, image, canonical, noIndex = false, robots, keywords, type = 'website' }) => {
+const Seo = ({
+  title,
+  description,
+  image,
+  canonical,
+  noIndex = false,
+  robots,
+  keywords,
+  type = 'website',
+  publishedTime,
+  modifiedTime,
+}) => {
   const { settings } = useSiteSettings();
   const location = useLocation();
   const siteName = settings?.site_name || 'TechTower Inc';
@@ -29,9 +40,14 @@ const Seo = ({ title, description, image, canonical, noIndex = false, robots, ke
   const metaTitle = buildTitle(title, siteName, defaultTitle);
   const metaDescription = description || defaultDescription;
   const metaImage = image || defaultImage;
-  const canonicalUrl =
-    canonical || `${window.location.origin}${location.pathname}`;
-  const robotsContent = robots || (noIndex ? 'noindex, nofollow' : null);
+  const origin = typeof window !== 'undefined' ? window.location.origin : '';
+  const canonicalUrl = canonical
+    ? canonical.startsWith('http')
+      ? canonical
+      : `${origin}${canonical}`
+    : `${origin}${location.pathname}`;
+  const robotsContent =
+    robots || (noIndex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large');
   const metaKeywords = keywords || null;
 
   const verificationTags = verificationMeta.map((meta, index) => {
@@ -66,6 +82,7 @@ const Seo = ({ title, description, image, canonical, noIndex = false, robots, ke
       {metaKeywords && <meta name="keywords" content={metaKeywords} />}
       {robotsContent && <meta name="robots" content={robotsContent} />}
       <link rel="canonical" href={canonicalUrl} />
+      <meta property="og:site_name" content={siteName} />
       <meta property="og:title" content={metaTitle} />
       {metaDescription && (
         <meta property="og:description" content={metaDescription} />
@@ -73,6 +90,8 @@ const Seo = ({ title, description, image, canonical, noIndex = false, robots, ke
       <meta property="og:type" content={type} />
       <meta property="og:url" content={canonicalUrl} />
       {metaImage && <meta property="og:image" content={metaImage} />}
+      {publishedTime && <meta property="article:published_time" content={publishedTime} />}
+      {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={metaTitle} />
       {metaDescription && (

@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { useSiteSettings } from '@/context/SiteSettingsContext';
+import { useSiteSettings } from '@marketing/context/SiteSettingsContext';
 
-const ELFSIGHT_CACHE_KEY = 'techtower-elfsight-reviews';
+const ELFSIGHT_CACHE_KEY = 'techtower-elfsight-reviews-v2';
 const ELFSIGHT_CACHE_TTL = 1000 * 60 * 60 * 5;
 const ELFSIGHT_LOADED_SELECTOR = 'iframe';
 
@@ -105,15 +105,21 @@ const TestimonialsSection = () => {
           </p>
         </motion.div>
 
-        <div className="rounded-xl border border-sidebar-border/70 bg-card p-4 md:p-6 elfsight-white animate-fade-up">
+        <div className="next-card overflow-hidden p-0 animate-fade-up">
           {useCache ? (
-            <div ref={widgetRef} dangerouslySetInnerHTML={{ __html: cachedMarkup }} />
-          ) : (
             <div
               ref={widgetRef}
-              className="elfsight-app-7a915025-6dc3-47d8-983f-4b0ffd89a2b4"
-              data-elfsight-app-lazy
+              className="bg-white p-2 md:p-4"
+              dangerouslySetInnerHTML={{ __html: cachedMarkup }}
             />
+          ) : (
+            <div className="bg-white p-2 md:p-4">
+              <div
+                ref={widgetRef}
+                className="elfsight-app-7a915025-6dc3-47d8-983f-4b0ffd89a2b4 min-h-[22rem]"
+                data-elfsight-app-lazy
+              />
+            </div>
           )}
         </div>
       </div>

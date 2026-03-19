@@ -13,12 +13,12 @@ import PortfolioForm, {
 type Portfolio = {
     id: number;
     title: string;
-    type: string | null;
     slug: string;
     summary: string | null;
     excerpt: string | null;
     description: string | null;
     client_id: number | null;
+    type_ids: number[] | null;
     category_ids: number[] | null;
     technology_ids: number[] | null;
     project_url: string | null;
@@ -28,6 +28,7 @@ type Portfolio = {
     is_featured: boolean;
     is_active: boolean;
     featured_image_url: string | null;
+    home_featured_image_url: string | null;
     og_image_url: string | null;
     gallery_images: string[] | null;
     gallery_image_urls: { path: string; url: string }[] | null;
@@ -38,6 +39,7 @@ type Portfolio = {
 
 type EditPortfolioProps = {
     portfolio: Portfolio;
+    projectTypes: PortfolioOption[];
     categories: PortfolioOption[];
     clients: PortfolioOption[];
     technologies: TechnologyOption[];
@@ -45,18 +47,19 @@ type EditPortfolioProps = {
 
 export default function EditPortfolio({
     portfolio,
+    projectTypes,
     categories,
     clients,
     technologies,
 }: EditPortfolioProps) {
     const form = useForm<PortfolioFormData>({
         title: portfolio.title ?? '',
-        type: portfolio.type ?? '',
         slug: portfolio.slug ?? '',
         summary: portfolio.summary ?? '',
         excerpt: portfolio.excerpt ?? '',
         description: portfolio.description ?? '',
         client_id: portfolio.client_id ?? null,
+        type_ids: portfolio.type_ids ?? [],
         category_ids: portfolio.category_ids ?? [],
         technology_ids: portfolio.technology_ids ?? [],
         project_url: portfolio.project_url ?? '',
@@ -67,6 +70,8 @@ export default function EditPortfolio({
         is_active: portfolio.is_active ?? true,
         featured_image: null,
         remove_featured_image: false,
+        home_featured_image: null,
+        remove_home_featured_image: false,
         existing_gallery_images: portfolio.gallery_images ?? [],
         gallery_images: null,
         clear_gallery_images: false,
@@ -97,6 +102,7 @@ export default function EditPortfolio({
                     data={form.data}
                     errors={form.errors}
                     processing={form.processing}
+                    projectTypes={projectTypes}
                     categories={categories}
                     clients={clients}
                     technologies={technologies}
@@ -105,6 +111,7 @@ export default function EditPortfolio({
                     submitLabel="Save Changes"
                     availableGalleryImages={portfolio.gallery_image_urls ?? []}
                     currentFeaturedImageUrl={portfolio.featured_image_url}
+                    currentHomeFeaturedImageUrl={portfolio.home_featured_image_url}
                     currentOgImageUrl={portfolio.og_image_url}
                 />
             </div>

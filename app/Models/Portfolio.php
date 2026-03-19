@@ -21,7 +21,6 @@ class Portfolio extends Model
      */
     protected $fillable = [
         'title',
-        'type',
         'slug',
         'summary',
         'excerpt',
@@ -29,6 +28,7 @@ class Portfolio extends Model
         'client_id',
         'project_url',
         'featured_image_path',
+        'home_featured_image_path',
         'gallery_images',
         'started_at',
         'completed_at',
@@ -68,5 +68,10 @@ class Portfolio extends Model
     public function technologies(): BelongsToMany
     {
         return $this->belongsToMany(Technology::class)->orderBy('name');
+    }
+
+    public function projectTypes(): BelongsToMany
+    {
+        return $this->belongsToMany(ProjectType::class)->orderBy('name');
     }
 }

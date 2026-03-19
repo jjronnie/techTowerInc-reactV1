@@ -1,25 +1,25 @@
 import React, { useEffect, useCallback } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Toaster } from '@/components/ui/toaster';
-import Navbar from '@/components/layout/Navbar';
-import Footer from '@/components/layout/Footer';
-import HomePage from '@/pages/HomePage';
-import ServicesPage from '@/pages/ServicesPage';
-import AboutPage from '@/pages/AboutPage';
-import ContactPage from '@/pages/ContactPage';
-import PortfolioPage from '@/pages/PortfolioPage';
-import PortfolioShowPage from '@/pages/PortfolioShowPage';
-import ClientShowPage from '@/pages/ClientShowPage';
-import BlogPage from '@/pages/BlogPage';
-import ProductsPage from '@/pages/ProductsPage';
-import ProductShowPage from '@/pages/ProductShowPage';
-import ServiceShowPage from '@/pages/ServiceShowPage';
-import SinglePostPage from '@/pages/SinglePostPage';
-import PrivacyPolicyPage from '@/pages/PrivacyPolicyPage';
-import ScrollToTop from '@/components/ScrollToTop';
-import { ThemeProvider } from '@/components/theme/ThemeProvider';
-import NotFound from '@/pages/NotFound';
+import { Toaster } from '@marketing/components/ui/toaster';
+import Navbar from '@marketing/components/layout/Navbar';
+import Footer from '@marketing/components/layout/Footer';
+import HomePage from '@marketing/pages/HomePage';
+import ServicesPage from '@marketing/pages/ServicesPage';
+import AboutPage from '@marketing/pages/AboutPage';
+import ContactPage from '@marketing/pages/ContactPage';
+import PortfolioPage from '@marketing/pages/PortfolioPage';
+import PortfolioShowPage from '@marketing/pages/PortfolioShowPage';
+import ClientShowPage from '@marketing/pages/ClientShowPage';
+import BlogPage from '@marketing/pages/BlogPage';
+import ProductsPage from '@marketing/pages/ProductsPage';
+import ProductShowPage from '@marketing/pages/ProductShowPage';
+import ServiceShowPage from '@marketing/pages/ServiceShowPage';
+import SinglePostPage from '@marketing/pages/SinglePostPage';
+import PrivacyPolicyPage from '@marketing/pages/PrivacyPolicyPage';
+import ScrollToTop from '@marketing/components/ScrollToTop';
+import { ThemeProvider } from '@marketing/components/theme/ThemeProvider';
+import NotFound from '@marketing/pages/NotFound';
 
 const LegacyBlogRedirect = () => {
   const location = useLocation();
@@ -27,6 +27,17 @@ const LegacyBlogRedirect = () => {
   return (
     <Navigate
       to={`${location.pathname.replace(/^\/blog/, '/news')}${location.search}${location.hash}`}
+      replace
+    />
+  );
+};
+
+const LegacyProjectRedirect = () => {
+  const location = useLocation();
+
+  return (
+    <Navigate
+      to={`${location.pathname.replace(/^\/portfolio\//, '/project/')}${location.search}${location.hash}`}
       replace
     />
   );
@@ -161,7 +172,7 @@ const App = () => {
                   <PortfolioPage />
                 </motion.div>
               } />
-              <Route path="/portfolio/:slug" element={
+              <Route path="/project/:slug" element={
                 <motion.div
                   initial="initial"
                   animate="in"
@@ -172,6 +183,7 @@ const App = () => {
                   <PortfolioShowPage />
                 </motion.div>
               } />
+              <Route path="/portfolio/:slug" element={<LegacyProjectRedirect />} />
               <Route path="/clients/:slug" element={
                 <motion.div
                   initial="initial"

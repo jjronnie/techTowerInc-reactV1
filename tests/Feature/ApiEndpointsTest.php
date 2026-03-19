@@ -5,8 +5,10 @@ use App\Models\Client;
 use App\Models\Portfolio;
 use App\Models\Post;
 use App\Models\Product;
+use App\Models\ProjectType;
 use App\Models\Service;
 use App\Models\SiteSetting;
+use App\Models\TeamMember;
 use App\Models\Technology;
 use Illuminate\Support\Facades\Storage;
 
@@ -96,20 +98,23 @@ test('portfolio endpoint can filter by client and category and returns relations
         'slug' => 'react',
         'icon_name' => 'react',
     ]);
+    $projectType = ProjectType::factory()->create([
+        'name' => 'Website Design',
+        'slug' => 'website-design',
+    ]);
 
     $matchingPortfolio = Portfolio::factory()->create([
         'title' => 'Acme Portal',
-        'type' => 'Website',
         'slug' => 'acme-portal',
         'client_id' => $client->id,
         'is_active' => true,
     ]);
     $matchingPortfolio->categories()->sync([$category->id]);
+    $matchingPortfolio->projectTypes()->sync([$projectType->id]);
     $matchingPortfolio->technologies()->sync([$technology->id]);
 
     $otherPortfolio = Portfolio::factory()->create([
         'title' => 'Northwind App',
-        'type' => 'Dashboard',
         'slug' => 'northwind-app',
         'client_id' => $otherClient->id,
         'is_active' => true,
@@ -121,7 +126,7 @@ test('portfolio endpoint can filter by client and category and returns relations
 
     $response->assertSuccessful()
         ->assertJsonPath('data.0.slug', $matchingPortfolio->slug)
-        ->assertJsonPath('data.0.type', 'Website')
+        ->assertJsonPath('data.0.primary_type.slug', 'website-design')
         ->assertJsonPath('data.0.client.slug', $client->slug)
         ->assertJsonPath('data.0.categories.0.slug', $category->slug)
         ->assertJsonPath('data.0.technologies.0.icon_name', 'react');
@@ -131,27 +136,31 @@ test('portfolio endpoint can filter by client and category and returns relations
 });
 
 test('portfolio endpoint can return featured projects ordered by latest first', function () {
+    $projectType = ProjectType::factory()->create([
+        'name' => 'Website Design',
+        'slug' => 'website-design',
+    ]);
+
     $olderFeaturedPortfolio = Portfolio::factory()->create([
         'title' => 'Legacy Website',
-        'type' => 'Website',
         'slug' => 'legacy-website',
         'is_active' => true,
         'is_featured' => true,
         'completed_at' => now()->subMonths(5),
     ]);
+    $olderFeaturedPortfolio->projectTypes()->sync([$projectType->id]);
 
     $newerFeaturedPortfolio = Portfolio::factory()->create([
         'title' => 'Modern Platform',
-        'type' => 'Platform',
         'slug' => 'modern-platform',
         'is_active' => true,
         'is_featured' => true,
         'completed_at' => now()->subMonth(),
     ]);
+    $newerFeaturedPortfolio->projectTypes()->sync([$projectType->id]);
 
     Portfolio::factory()->create([
         'title' => 'Internal Tool',
-        'type' => 'Dashboard',
         'slug' => 'internal-tool',
         'is_active' => true,
         'is_featured' => false,
@@ -170,10 +179,50 @@ test('portfolio endpoint can return featured projects ordered by latest first', 
         ->toBe($olderFeaturedPortfolio->slug);
 });
 
+test('portfolio endpoint can return home showcase projects with home featured images only', function () {
+    $projectType = ProjectType::factory()->create([
+        'name' => 'Website Design',
+        'slug' => 'website-design',
+    ]);
+
+    $showcaseProject = Portfolio::factory()->create([
+        'title' => 'Showcase Project',
+        'slug' => 'showcase-project',
+        'is_active' => true,
+        'is_featured' => true,
+        'home_featured_image_path' => 'portfolios/home-featured/showcase.jpg',
+        'completed_at' => now()->subWeek(),
+    ]);
+    $showcaseProject->projectTypes()->sync([$projectType->id]);
+
+    $missingHomeImageProject = Portfolio::factory()->create([
+        'title' => 'Missing Home Image',
+        'slug' => 'missing-home-image',
+        'is_active' => true,
+        'is_featured' => true,
+        'home_featured_image_path' => null,
+        'completed_at' => now(),
+    ]);
+    $missingHomeImageProject->projectTypes()->sync([$projectType->id]);
+
+    $response = $this->getJson('/api/portfolio?featured=1&sort=latest&home_showcase=1');
+
+    $response->assertSuccessful()
+        ->assertJsonPath('data.0.slug', $showcaseProject->slug)
+        ->assertJsonPath(
+            'data.0.home_featured_image_url',
+            Storage::url('portfolios/home-featured/showcase.jpg'),
+        );
+
+    expect($response->json('data'))
+        ->toHaveCount(1)
+        ->and(collect($response->json('data'))->pluck('slug')->all())
+        ->not->toContain($missingHomeImageProject->slug);
+});
+
 test('portfolio show endpoint returns gallery image urls', function () {
     $portfolio = Portfolio::factory()->create([
         'title' => 'Gallery Project',
-        'type' => 'Website',
         'slug' => 'gallery-project',
         'is_active' => true,
         'gallery_images' => [
@@ -196,21 +245,21 @@ test('client endpoint returns only active related projects', function () {
         'slug' => 'orbit-health',
     ]);
     $category = Category::factory()->create();
+    $projectType = ProjectType::factory()->create();
     $technology = Technology::factory()->create();
 
     $activePortfolio = Portfolio::factory()->create([
         'title' => 'Orbit Dashboard',
-        'type' => 'Dashboard',
         'slug' => 'orbit-dashboard',
         'client_id' => $client->id,
         'is_active' => true,
     ]);
     $activePortfolio->categories()->sync([$category->id]);
+    $activePortfolio->projectTypes()->sync([$projectType->id]);
     $activePortfolio->technologies()->sync([$technology->id]);
 
     $inactivePortfolio = Portfolio::factory()->create([
         'title' => 'Orbit Archive',
-        'type' => 'Website',
         'slug' => 'orbit-archive',
         'client_id' => $client->id,
         'is_active' => false,
@@ -227,6 +276,61 @@ test('client endpoint returns only active related projects', function () {
 
     expect(collect($response->json('data.projects'))->pluck('slug')->all())
         ->not->toContain($inactivePortfolio->slug);
+});
+
+test('portfolio endpoint can filter by project type', function () {
+    $websiteType = ProjectType::factory()->create([
+        'name' => 'Website Design',
+        'slug' => 'website-design',
+    ]);
+    $seoType = ProjectType::factory()->create([
+        'name' => 'SEO',
+        'slug' => 'seo',
+    ]);
+
+    $websiteProject = Portfolio::factory()->create([
+        'title' => 'Website Project',
+        'slug' => 'website-project',
+        'is_active' => true,
+    ]);
+    $websiteProject->projectTypes()->sync([$websiteType->id]);
+
+    $seoProject = Portfolio::factory()->create([
+        'title' => 'SEO Project',
+        'slug' => 'seo-project',
+        'is_active' => true,
+    ]);
+    $seoProject->projectTypes()->sync([$seoType->id]);
+
+    $response = $this->getJson('/api/portfolio?type=website-design');
+
+    $response->assertSuccessful()
+        ->assertJsonPath('data.0.slug', 'website-project')
+        ->assertJsonPath('data.0.types.0.slug', 'website-design');
+
+    expect($response->json('data'))->toHaveCount(1);
+});
+
+test('team members endpoint returns only published team members', function () {
+    TeamMember::factory()->create([
+        'name' => 'Published Member',
+        'is_published' => true,
+        'sort_order' => 1,
+    ]);
+    TeamMember::factory()->create([
+        'name' => 'Hidden Member',
+        'is_published' => false,
+        'sort_order' => 2,
+    ]);
+
+    $response = $this->getJson('/api/team-members');
+
+    $response->assertSuccessful()
+        ->assertJsonPath('data.0.name', 'Published Member');
+
+    expect(collect($response->json('data'))->pluck('name')->all())
+        ->toContain('Published Member')
+        ->not->toContain('Hidden Member');
 });
 
 test('technologies endpoint returns available technologies', function () {

@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
+import { Button } from '@marketing/components/ui/button';
 import { Menu, X, FileText, FolderHeart as HomeIcon } from 'lucide-react'; // Added HomeIcon
-import { cn } from '@/lib/utils';
-import logoLight from '@/assets/logo-light.png';
-import logoDark from '@/assets/logo-dark.png';
-import { useSiteSettings } from '@/context/SiteSettingsContext';
-
+import { cn } from '@marketing/lib/utils';
+import logoLight from '@marketing/assets/logo-light.png';
+import logoDark from '@marketing/assets/logo-dark.png';
+import { useSiteSettings } from '@marketing/context/SiteSettingsContext';
 
 const Navbar = () => {
   const { settings } = useSiteSettings();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
   const logoUrl = settings?.logo_url || logoLight;
   const logoDarkUrl = settings?.logo_url || logoDark;
   const siteName = settings?.site_name || 'TechTower Innovations';
@@ -27,14 +25,6 @@ const Navbar = () => {
     { to: "/news", text: "Updates" },
 
   ];
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   const activeLinkClass = "text-primary font-medium";
   const inactiveLinkClass = "text-muted-foreground hover:text-foreground transition-colors";

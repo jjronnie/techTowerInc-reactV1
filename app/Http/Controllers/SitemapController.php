@@ -2,26 +2,38 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
+use App\Models\Client;
 use App\Models\Portfolio;
 use App\Models\Post;
 use App\Models\Product;
 use App\Models\Service;
+use App\Support\PublicIndexability;
 use Illuminate\Http\Response;
 
 class SitemapController extends Controller
 {
     public function index(): Response
     {
+        $indexableProducts = Product::query()
+            ->where('is_active', true)
+            ->orderBy('updated_at', 'desc')
+            ->get()
+            ->filter(fn (Product $product): bool => PublicIndexability::product($product));
+
         $staticPages = [
             ['loc' => url('/'), 'lastmod' => null],
             ['loc' => url('/services'), 'lastmod' => null],
             ['loc' => url('/portfolio'), 'lastmod' => null],
-            ['loc' => url('/products'), 'lastmod' => null],
             ['loc' => url('/news'), 'lastmod' => null],
             ['loc' => url('/about'), 'lastmod' => null],
             ['loc' => url('/contact'), 'lastmod' => null],
             ['loc' => url('/privacy-policy'), 'lastmod' => null],
         ];
+
+        if ($indexableProducts->isNotEmpty()) {
+            $staticPages[] = ['loc' => url('/products'), 'lastmod' => null];
+        }
 
         $services = Service::query()
             ->where('is_active', true)
@@ -37,14 +49,11 @@ class SitemapController extends Controller
             ->orderBy('updated_at', 'desc')
             ->get()
             ->map(fn (Portfolio $portfolio) => [
-                'loc' => url("/portfolio/{$portfolio->slug}"),
+                'loc' => url("/project/{$portfolio->slug}"),
                 'lastmod' => $portfolio->updated_at?->toAtomString(),
             ]);
 
-        $products = Product::query()
-            ->where('is_active', true)
-            ->orderBy('updated_at', 'desc')
-            ->get()
+        $products = $indexableProducts
             ->map(fn (Product $product) => [
                 'loc' => url("/products/{$product->slug}"),
                 'lastmod' => $product->updated_at?->toAtomString(),
@@ -61,10 +70,48 @@ class SitemapController extends Controller
                 'lastmod' => $post->updated_at?->toAtomString(),
             ]);
 
+        $clients = Client::query()
+            ->withCount([
+                'portfolios as projects_count' => fn ($query) => $query->where('is_active', true),
+            ])
+            ->orderBy('updated_at', 'desc')
+            ->get()
+            ->filter(fn (Client $client): bool => PublicIndexability::client($client))
+            ->map(fn (Client $client) => [
+                'loc' => url("/clients/{$client->slug}"),
+                'lastmod' => $client->updated_at?->toAtomString(),
+            ]);
+
+        $portfolioCategories = Category::query()
+            ->whereHas('portfolios', fn ($query) => $query->where('is_active', true))
+            ->orderBy('updated_at', 'desc')
+            ->get()
+            ->map(fn (Category $category) => [
+                'loc' => url("/portfolio/category/{$category->slug}"),
+                'lastmod' => $category->updated_at?->toAtomString(),
+            ]);
+
+        $postCategories = Category::query()
+            ->whereHas('posts', function ($query): void {
+                $query
+                    ->where('status', 'published')
+                    ->whereNotNull('published_at')
+                    ->where('published_at', '<=', now());
+            })
+            ->orderBy('updated_at', 'desc')
+            ->get()
+            ->map(fn (Category $category) => [
+                'loc' => url("/news/category/{$category->slug}"),
+                'lastmod' => $category->updated_at?->toAtomString(),
+            ]);
+
         $entries = collect($staticPages)
             ->merge($services)
             ->merge($portfolios)
             ->merge($products)
+            ->merge($clients)
+            ->merge($portfolioCategories)
+            ->merge($postCategories)
             ->merge($posts);
 
         $xml = '<?xml version="1.0" encoding="UTF-8"?>';

@@ -9,10 +9,10 @@ import {
   ExternalLink,
   Layers3,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useApi } from '@/hooks/useApi';
-import Seo from '@/components/Seo';
-import TechnologyBadge from '@/components/shared/TechnologyBadge';
+import { Button } from '@marketing/components/ui/button';
+import { useApi } from '@marketing/hooks/useApi';
+import Seo from '@marketing/components/Seo';
+import TechnologyBadge from '@marketing/components/shared/TechnologyBadge';
 
 const formatDate = (value) => {
   if (!value) {
@@ -94,6 +94,7 @@ const PortfolioShowPage = () => {
           description={project.seo?.description || project.summary || project.description}
           image={project.seo?.og_image_url || project.featured_image_url}
           keywords={project.seo?.keywords}
+          canonical={`/project/${project.slug}`}
         />
 
         <motion.div
@@ -126,7 +127,7 @@ const PortfolioShowPage = () => {
             {project.project_url && (
               <Button asChild className="next-button rounded-full px-8">
                 <a href={project.project_url} target="_blank" rel="noreferrer">
-                  Visit project <ExternalLink className="ml-2 h-4 w-4" />
+                  View project <ExternalLink className="ml-2 h-4 w-4" />
                 </a>
               </Button>
             )}
@@ -161,7 +162,7 @@ const PortfolioShowPage = () => {
               <h2 className="mb-4 text-xl font-semibold">Project details</h2>
               {project.description ? (
                 <div
-                  className="prose prose-lg max-w-none text-foreground prose-headings:text-foreground prose-p:text-muted-foreground prose-strong:text-foreground dark:prose-invert"
+                  className="legacy-prose legacy-prose-lg max-w-none text-foreground"
                   dangerouslySetInnerHTML={{ __html: project.description }}
                 />
               ) : (
@@ -257,7 +258,7 @@ const PortfolioShowPage = () => {
                     rel="noreferrer"
                     className="inline-flex items-center gap-2 text-sm text-primary transition hover:text-primary/80"
                   >
-                    Open project link <ArrowUpRight className="h-4 w-4" />
+                    View project <ArrowUpRight className="h-4 w-4" />
                   </a>
                 </div>
               )}

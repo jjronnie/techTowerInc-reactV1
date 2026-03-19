@@ -22,6 +22,16 @@ test('admins can access admin routes', function () {
         ->assertSuccessful();
 });
 
+test('admin routes send a no-index header', function () {
+    $admin = User::factory()->create([
+        'is_admin' => true,
+    ]);
+
+    $this->actingAs($admin)
+        ->get('/admin/services')
+        ->assertHeader('X-Robots-Tag', 'noindex, nofollow, noarchive');
+});
+
 test('users with forced password change are redirected to update their password', function () {
     $user = User::factory()->create([
         'force_password_change' => true,

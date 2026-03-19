@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ServiceController;
 use App\Http\Controllers\Api\SiteSettingController;
+use App\Http\Controllers\Api\TeamMemberController;
 use App\Http\Controllers\Api\TechnologyController;
 use Illuminate\Support\Facades\Route;
 
@@ -16,6 +17,7 @@ Route::get('services', [ServiceController::class, 'index'])->name('api.services.
 Route::get('services/{service:slug}', [ServiceController::class, 'show'])->name('api.services.show');
 
 Route::get('technologies', [TechnologyController::class, 'index'])->name('api.technologies.index');
+Route::get('team-members', [TeamMemberController::class, 'index'])->name('api.team-members.index');
 
 Route::get('portfolio', [PortfolioController::class, 'index'])->name('api.portfolio.index');
 Route::get('portfolio/{portfolio:slug}', [PortfolioController::class, 'show'])->name('api.portfolio.show');

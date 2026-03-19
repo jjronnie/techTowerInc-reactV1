@@ -34,7 +34,7 @@ class TechnologyController extends Controller
         $technology = Technology::query()->create($request->validated());
 
         return redirect()
-            ->route('admin.technologies.edit', $technology)
+            ->route('admin.technologies.index')
             ->with('notification', [
                 'type' => 'success',
                 'title' => 'Technology created',
@@ -59,7 +59,7 @@ class TechnologyController extends Controller
         $technology->update($request->validated());
 
         return redirect()
-            ->route('admin.technologies.edit', $technology)
+            ->route('admin.technologies.index')
             ->with('notification', [
                 'type' => 'success',
                 'title' => 'Technology updated',

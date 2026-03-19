@@ -3,18 +3,15 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vite build && npm --prefix resources/marketing run build",
-        "build:ssr": "vite build && vite build --ssr && npm --prefix resources/marketing run build",
+        "build": "vite build && vite build --ssr",
+        "build:ssr": "vite build && vite build --ssr",
         "build:marketing": "npm --prefix resources/marketing run build",
-        "dev": "concurrently \"vite\" \"npm --prefix resources/marketing run build -- --watch\"",
+        "dev": "vite",
         "dev:marketing": "npm --prefix resources/marketing run build -- --watch",
         "format": "prettier --write resources/",
         "format:check": "prettier --check resources/",
         "install:marketing": "npm --prefix resources/marketing install --legacy-peer-deps",
         "lint": "eslint . --fix",
-        "prebuild": "npm --prefix resources/marketing install --legacy-peer-deps",
-        "predev": "npm --prefix resources/marketing install --legacy-peer-deps",
-        "postinstall": "npm --prefix resources/marketing install --legacy-peer-deps",
         "types": "tsc --noEmit"
     },
     "devDependencies": {

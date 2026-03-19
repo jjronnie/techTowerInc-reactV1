@@ -15,9 +15,10 @@ class DemoContentSeeder extends Seeder
             CategorySeeder::class,
             ClientSeeder::class,
             TechnologySeeder::class,
+            ProjectTypeSeeder::class,
+            TeamMemberSeeder::class,
             PortfolioSeeder::class,
             ProductSeeder::class,
-            PostSeeder::class,
         ]);
     }
 }

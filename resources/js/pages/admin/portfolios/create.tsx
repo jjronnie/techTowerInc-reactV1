@@ -11,6 +11,7 @@ import PortfolioForm, {
 } from './portfolio-form';
 
 type CreatePortfolioProps = {
+    projectTypes: PortfolioOption[];
     categories: PortfolioOption[];
     clients: PortfolioOption[];
     technologies: TechnologyOption[];
@@ -23,18 +24,19 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function CreatePortfolio({
+    projectTypes,
     categories,
     clients,
     technologies,
 }: CreatePortfolioProps) {
     const form = useForm<PortfolioFormData>({
         title: '',
-        type: '',
         slug: '',
         summary: '',
         excerpt: '',
         description: '',
         client_id: null,
+        type_ids: [],
         category_ids: [],
         technology_ids: [],
         project_url: '',
@@ -45,6 +47,8 @@ export default function CreatePortfolio({
         is_active: true,
         featured_image: null,
         remove_featured_image: false,
+        home_featured_image: null,
+        remove_home_featured_image: false,
         existing_gallery_images: [],
         gallery_images: null,
         clear_gallery_images: false,
@@ -72,6 +76,7 @@ export default function CreatePortfolio({
                     data={form.data}
                     errors={form.errors}
                     processing={form.processing}
+                    projectTypes={projectTypes}
                     categories={categories}
                     clients={clients}
                     technologies={technologies}

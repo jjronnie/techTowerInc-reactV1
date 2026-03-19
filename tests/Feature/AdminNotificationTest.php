@@ -3,6 +3,7 @@
 use App\Models\Category;
 use App\Models\Portfolio;
 use App\Models\Post;
+use App\Models\ProjectType;
 use App\Models\SiteSetting;
 use App\Models\Technology;
 use App\Models\User;
@@ -93,12 +94,13 @@ it('flashes a notification when creating a portfolio entry', function () {
         'is_admin' => true,
     ]);
     $category = Category::factory()->create();
+    $projectType = ProjectType::factory()->create();
     $technology = Technology::factory()->create();
 
     $payload = [
         'title' => 'Portfolio Entry',
-        'type' => 'Website',
         'slug' => 'portfolio-entry',
+        'type_ids' => [$projectType->id],
         'category_ids' => [$category->id],
         'technology_ids' => [$technology->id],
     ];
@@ -110,7 +112,32 @@ it('flashes a notification when creating a portfolio entry', function () {
     $response->assertSessionHas('notification', [
         'type' => 'success',
         'title' => 'Portfolio created',
-        'message' => '"Portfolio Entry" is ready to edit.',
+        'message' => '"Portfolio Entry" has been added to your portfolio list.',
+    ]);
+});
+
+it('requires a home featured image when creating a featured portfolio entry', function () {
+    $admin = User::factory()->create([
+        'is_admin' => true,
+    ]);
+    $category = Category::factory()->create();
+    $projectType = ProjectType::factory()->create();
+    $technology = Technology::factory()->create();
+
+    $response = $this->actingAs($admin)
+        ->from(route('admin.portfolios.create'))
+        ->post(route('admin.portfolios.store'), [
+            'title' => 'Featured Portfolio Entry',
+            'slug' => 'featured-portfolio-entry',
+            'type_ids' => [$projectType->id],
+            'category_ids' => [$category->id],
+            'technology_ids' => [$technology->id],
+            'is_featured' => true,
+        ]);
+
+    $response->assertRedirect(route('admin.portfolios.create'));
+    $response->assertSessionHasErrors([
+        'home_featured_image' => 'Featured projects need a home featured image for the homepage showcase.',
     ]);
 });
 
@@ -121,13 +148,14 @@ it('stores gallery images when creating a portfolio entry', function () {
         'is_admin' => true,
     ]);
     $category = Category::factory()->create();
+    $projectType = ProjectType::factory()->create();
     $technology = Technology::factory()->create();
 
     $response = $this->actingAs($admin)
         ->post(route('admin.portfolios.store'), [
             'title' => 'Portfolio With Gallery',
-            'type' => 'Website',
             'slug' => 'portfolio-with-gallery',
+            'type_ids' => [$projectType->id],
             'category_ids' => [$category->id],
             'technology_ids' => [$technology->id],
             'gallery_images' => [

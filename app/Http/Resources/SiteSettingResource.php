@@ -41,6 +41,7 @@ class SiteSettingResource extends JsonResource
             'about_story' => $this->about_story ?? [],
             'about_principles' => $this->about_principles ?? [],
             'about_cards' => $this->about_cards ?? [],
+            'about_why_choose_us' => $this->about_why_choose_us ?? [],
             'about_team' => $this->about_team ?? [],
             'about_cta' => $this->about_cta ?? [],
             'services_page' => $this->services_page ?? [],

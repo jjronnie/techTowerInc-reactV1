@@ -52,7 +52,13 @@ class ServiceController extends Controller
 
         $service = Service::query()->create($data);
 
-        return redirect()->route('admin.services.edit', $service);
+        return redirect()
+            ->route('admin.services.index')
+            ->with('notification', [
+                'type' => 'success',
+                'title' => 'Service created',
+                'message' => "\"{$service->title}\" is now available in the service list.",
+            ]);
     }
 
     /**
@@ -104,7 +110,13 @@ class ServiceController extends Controller
 
         $service->update($data);
 
-        return redirect()->route('admin.services.edit', $service);
+        return redirect()
+            ->route('admin.services.index')
+            ->with('notification', [
+                'type' => 'success',
+                'title' => 'Service updated',
+                'message' => "\"{$service->title}\" has been saved.",
+            ]);
     }
 
     /**
@@ -118,6 +130,12 @@ class ServiceController extends Controller
 
         $service->delete();
 
-        return redirect()->route('admin.services.index');
+        return redirect()
+            ->route('admin.services.index')
+            ->with('notification', [
+                'type' => 'success',
+                'title' => 'Service deleted',
+                'message' => 'The service has been removed.',
+            ]);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\SiteSetting;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -35,9 +36,11 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $siteName = SiteSetting::query()->value('site_name') ?? config('app.name');
+
         return [
             ...parent::share($request),
-            'name' => config('app.name'),
+            'name' => $siteName,
             'auth' => [
                 'user' => $request->user(),
             ],
@@ -45,6 +48,10 @@ class HandleInertiaRequests extends Middleware
             'flash' => [
                 'notification' => $request->session()->get('notification'),
                 'status' => $request->session()->get('status'),
+            ],
+            'requestContext' => [
+                'url' => $request->fullUrl(),
+                'path' => $request->path(),
             ],
         ];
     }

@@ -1,174 +1,57 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
+import { Button } from '@marketing/components/ui/button';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-import FolderCard from '@/components/shared/FolderCard';
-import { useApi } from '@/hooks/useApi';
-import { useSiteSettings } from '@/context/SiteSettingsContext';
+import { useApi } from '@marketing/hooks/useApi';
+import { useSiteSettings } from '@marketing/context/SiteSettingsContext';
+import HomePortfolioShowcaseTile from '@marketing/components/home/HomePortfolioShowcaseTile';
+
+const showcaseGridClass =
+  'grid min-w-[62rem] grid-cols-[16rem_12rem_16rem_16rem] gap-3 md:min-w-[90rem] md:grid-cols-[23rem_18rem_23rem_23rem] md:gap-5';
+const showcaseColumnHeightClass = 'h-[26rem] md:h-[40rem]';
+const showcaseFadeClass =
+  'pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent via-black/45 to-background md:h-40';
 
 const PortfolioPreviewSection = () => {
   const { settings } = useSiteSettings();
-  const { data, loading, error } = useApi('/portfolio?featured=1&sort=latest');
-  const portfolioProjects = data?.data || [];
-  const sectionRef = useRef(null);
-  const sliderViewportRef = useRef(null);
-  const [isSliderActive, setIsSliderActive] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
-  const [slideDistance, setSlideDistance] = useState(0);
-  const hasPortfolioProjects = portfolioProjects.length > 0;
-  const shouldAnimate = portfolioProjects.length > 1;
-  const sliderProjects = useMemo(() => {
-    if (!shouldAnimate) {
-      return portfolioProjects;
-    }
-
-    return [...portfolioProjects, ...portfolioProjects, ...portfolioProjects];
-  }, [portfolioProjects, shouldAnimate]);
-
-  useEffect(() => {
-    const sectionElement = sectionRef.current;
-
-    if (!sectionElement) {
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsSliderActive(entry.isIntersecting);
-      },
-      {
-        threshold: 0.2,
-      }
-    );
-
-    observer.observe(sectionElement);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
-
-  useEffect(() => {
-    const viewportElement = sliderViewportRef.current;
-
-    if (!viewportElement) {
-      return;
-    }
-
-    const updateSlideDistance = () => {
-      const firstCard = viewportElement.querySelector('[data-portfolio-slide]');
-
-      if (!firstCard) {
-        setSlideDistance(0);
-        return;
-      }
-
-      setSlideDistance(firstCard.getBoundingClientRect().width);
-    };
-
-    updateSlideDistance();
-
-    const resizeObserver =
-      typeof ResizeObserver === 'undefined'
-        ? null
-        : new ResizeObserver(() => {
-            updateSlideDistance();
-          });
-
-    resizeObserver?.observe(viewportElement);
-
-    const firstCard = viewportElement.querySelector('[data-portfolio-slide]');
-    if (firstCard) {
-      resizeObserver?.observe(firstCard);
-    }
-
-    window.addEventListener('resize', updateSlideDistance);
-
-    return () => {
-      resizeObserver?.disconnect();
-      window.removeEventListener('resize', updateSlideDistance);
-    };
-  }, [sliderProjects.length]);
-
-  useEffect(() => {
-    const viewportElement = sliderViewportRef.current;
-
-    if (!viewportElement || !shouldAnimate || slideDistance === 0) {
-      return;
-    }
-
-    viewportElement.scrollLeft = slideDistance * portfolioProjects.length;
-  }, [portfolioProjects.length, shouldAnimate, slideDistance]);
-
-  useEffect(() => {
-    const viewportElement = sliderViewportRef.current;
-
-    if (!viewportElement || !shouldAnimate || slideDistance === 0) {
-      return;
-    }
-
-    const duplicateWidth = slideDistance * portfolioProjects.length;
-
-    const normalizeScrollPosition = () => {
-      if (viewportElement.scrollLeft < duplicateWidth * 0.5) {
-        viewportElement.scrollLeft += duplicateWidth;
-      } else if (viewportElement.scrollLeft > duplicateWidth * 1.5) {
-        viewportElement.scrollLeft -= duplicateWidth;
-      }
-    };
-
-    let settleTimeout;
-
-    const handleScroll = () => {
-      window.clearTimeout(settleTimeout);
-      settleTimeout = window.setTimeout(() => {
-        normalizeScrollPosition();
-      }, 140);
-    };
-
-    viewportElement.addEventListener('scroll', handleScroll, {
-      passive: true,
-    });
-
-    return () => {
-      window.clearTimeout(settleTimeout);
-      viewportElement.removeEventListener('scroll', handleScroll);
-    };
-  }, [portfolioProjects.length, shouldAnimate, slideDistance]);
-
-  useEffect(() => {
-    const viewportElement = sliderViewportRef.current;
-
-    if (
-      !viewportElement ||
-      !shouldAnimate ||
-      !isSliderActive ||
-      isHovered ||
-      slideDistance === 0
-    ) {
-      return;
-    }
-
-    const slideInterval = window.setInterval(() => {
-      viewportElement.scrollTo({
-        left: viewportElement.scrollLeft + slideDistance,
-        behavior: 'smooth',
-      });
-    }, 2800);
-
-    return () => {
-      window.clearInterval(slideInterval);
-    };
-  }, [isHovered, isSliderActive, portfolioProjects.length, shouldAnimate, slideDistance]);
+  const { data, loading, error } = useApi('/portfolio?featured=1&sort=latest&home_showcase=1');
+  const showcaseProjects = useMemo(
+    () => (data?.data || []).filter((project) => project.home_featured_image_url).slice(0, 8),
+    [data?.data]
+  );
+  const hasPortfolioProjects = showcaseProjects.length > 0;
 
   const intro = settings?.home_portfolio_intro || {};
+  const renderEmptyTile = (key, className = '') => (
+    <div key={key} className={className} />
+  );
+  const renderSkeletonTile = (key, className = '') => (
+    <div key={key} className={className}>
+      <div className="h-full overflow-hidden border border-white/10 bg-card/40 p-0">
+        <div className="shimmer h-full w-full" />
+      </div>
+    </div>
+  );
+  const renderProjectTile = (project, key, className = '') => {
+    if (!project) {
+      return renderEmptyTile(key, className);
+    }
+
+    return (
+      <HomePortfolioShowcaseTile
+        key={project.id}
+        project={project}
+        className={className}
+      />
+    );
+  };
 
   return (
-    <section ref={sectionRef} className="next-section-padding bg-background">
-      <div className="next-container">
+    <section className="next-section-padding bg-background">
+      <div className="mx-auto w-[90vw] max-w-[90vw]">
         <motion.div
-          className="text-left mb-12 max-w-2xl"
+          className="mx-auto mb-12 max-w-3xl text-center"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
@@ -178,64 +61,87 @@ const PortfolioPreviewSection = () => {
             {intro.label || 'Portfolio'}
           </span>
           <h2 className="text-3xl md:text-4xl font-semibold mt-3 mb-4 text-foreground">
-            {intro.heading || 'Latest projects we have delivered.'}
+            {intro.heading || 'A closer look at the products and platforms we have shipped.'}
           </h2>
-          <p className="text-lg text-muted-foreground text-balance">
-            {intro.subheading ||
-              'Our most recent projects, built with performance, clarity, and long-term scale in mind.'}
-          </p>
         </motion.div>
 
         {loading && (
-          <div className="flex flex-nowrap items-stretch gap-6 overflow-hidden pb-6">
-            {Array.from({ length: 5 }).map((_, index) => (
-              <div
-                key={`portfolio-preview-skeleton-${index}`}
-                className="w-[min(86vw,26rem)] shrink-0 self-stretch"
-              >
-                <div className="next-card h-full space-y-4">
-                  <div className="shimmer h-44 w-full rounded" />
-                  <div className="shimmer h-5 w-1/2 rounded" />
-                  <div className="shimmer h-4 w-5/6 rounded" />
-                  <div className="shimmer h-4 w-2/3 rounded" />
+          <div className="relative overflow-hidden">
+            <div className="scrollbar-soft overflow-x-auto pb-8">
+              <div className="mx-auto w-max px-1">
+                <div className={showcaseGridClass}>
+                  <div className={`grid grid-rows-2 gap-3 md:gap-5 ${showcaseColumnHeightClass}`}>
+                    {renderSkeletonTile('portfolio-preview-skeleton-0')}
+                    {renderSkeletonTile('portfolio-preview-skeleton-1')}
+                  </div>
+
+                  <div className={showcaseColumnHeightClass}>
+                    {renderSkeletonTile('portfolio-preview-skeleton-2', 'h-full')}
+                  </div>
+
+                  <div className={`grid grid-cols-2 grid-rows-4 gap-3 md:gap-5 ${showcaseColumnHeightClass}`}>
+                    {renderSkeletonTile('portfolio-preview-skeleton-3', 'col-span-2 row-span-2')}
+                    {renderSkeletonTile('portfolio-preview-skeleton-4', 'row-span-2')}
+                    {renderSkeletonTile('portfolio-preview-skeleton-5', 'row-span-2')}
+                  </div>
+
+                  <div className={`grid grid-rows-2 gap-3 md:gap-5 ${showcaseColumnHeightClass}`}>
+                    {renderSkeletonTile('portfolio-preview-skeleton-6')}
+                    {renderSkeletonTile('portfolio-preview-skeleton-7')}
+                  </div>
                 </div>
               </div>
-            ))}
+              <div className={showcaseFadeClass} />
+            </div>
           </div>
         )}
         {error && (
-          <div className="text-sm text-red-400">Unable to load portfolio right now.</div>
+          <div className="text-center text-sm text-red-400">Unable to load portfolio right now.</div>
         )}
         {!loading && !error && hasPortfolioProjects && (
-          <div
-            ref={sliderViewportRef}
-            className="portfolio-slider scrollbar-soft"
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-          >
-            <div className="portfolio-slider-track">
-              {sliderProjects.map((project, index) => (
-                <div
-                  key={`${project.id}-${index}`}
-                  data-portfolio-slide
-                  className="portfolio-slider-card"
-                >
-                  <FolderCard project={project} />
+          <div className="relative overflow-hidden">
+            <div className="scrollbar-soft overflow-x-auto pb-8">
+              <div className="mx-auto w-max px-1">
+                <div className={showcaseGridClass}>
+                  <div className={`grid grid-rows-2 gap-3 md:gap-5 ${showcaseColumnHeightClass}`}>
+                    {renderProjectTile(showcaseProjects[0], 'portfolio-slot-0')}
+                    {renderProjectTile(showcaseProjects[1], 'portfolio-slot-1')}
+                  </div>
+
+                  <div className={showcaseColumnHeightClass}>
+                    {renderProjectTile(showcaseProjects[2], 'portfolio-slot-2', 'h-full')}
+                  </div>
+
+                  <div className={`grid grid-cols-2 grid-rows-4 gap-3 md:gap-5 ${showcaseColumnHeightClass}`}>
+                    {renderProjectTile(showcaseProjects[3], 'portfolio-slot-3', 'col-span-2 row-span-2')}
+                    {renderProjectTile(showcaseProjects[4], 'portfolio-slot-4', 'row-span-2')}
+                    {renderProjectTile(showcaseProjects[5], 'portfolio-slot-5', 'row-span-2')}
+                  </div>
+
+                  <div className={`grid grid-rows-2 gap-3 md:gap-5 ${showcaseColumnHeightClass}`}>
+                    {renderProjectTile(showcaseProjects[6], 'portfolio-slot-6')}
+                    {renderProjectTile(showcaseProjects[7], 'portfolio-slot-7')}
+                  </div>
                 </div>
-              ))}
+              </div>
+              <div className={showcaseFadeClass} />
             </div>
           </div>
         )}
         {!loading && !error && !hasPortfolioProjects && (
-          <div className="next-card flex min-h-40 items-center justify-center text-sm text-muted-foreground">
-            Featured projects will appear here soon.
+          <div className="next-card flex min-h-40 items-center justify-center text-center text-sm text-muted-foreground">
+            Featured projects with home showcase images will appear here soon.
           </div>
         )}
 
-        <div className="mt-10">
+        <div className="mt-10 text-center">
+          <p className="mx-auto mb-8 max-w-2xl text-lg text-muted-foreground text-balance">
+            {intro.subheading ||
+              'Browse a curated wall of featured work, arranged to spotlight the digital experiences we are most proud of right now.'}
+          </p>
           <Button asChild variant="outline" className="next-button-outline rounded-full px-8">
             <Link to="/portfolio">
-              Explore Full Portfolio <ArrowRight className="ml-2 w-4 h-4" />
+              View All Projects <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>
         </div>

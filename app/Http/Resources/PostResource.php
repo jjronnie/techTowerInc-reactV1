@@ -24,7 +24,7 @@ class PostResource extends JsonResource
             'title' => $this->title,
             'slug' => $this->slug,
             'excerpt' => $this->excerpt,
-            'content' => $this->when($request->routeIs('api.posts.show'), $this->content),
+            'content' => $this->when($request->routeIs('api.posts.show', 'public.news.show'), $this->content),
             'featured_image_url' => $this->featured_image_path ? Storage::url($this->featured_image_path) : null,
             'image_alt' => $this->image_alt,
             'author_name' => $this->author?->name,

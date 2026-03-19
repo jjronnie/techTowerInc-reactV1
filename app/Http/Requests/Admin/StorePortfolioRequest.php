@@ -4,6 +4,7 @@ namespace App\Http\Requests\Admin;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StorePortfolioRequest extends FormRequest
 {
@@ -24,18 +25,25 @@ class StorePortfolioRequest extends FormRequest
     {
         return [
             'title' => ['required', 'string', 'max:255'],
-            'type' => ['required', 'string', 'max:255'],
             'slug' => ['nullable', 'string', 'max:255', 'unique:portfolios,slug'],
             'summary' => ['nullable', 'string'],
             'excerpt' => ['nullable', 'string'],
             'description' => ['nullable', 'string'],
             'client_id' => ['nullable', 'integer', 'exists:clients,id'],
             'project_url' => ['nullable', 'url', 'max:255'],
+            'type_ids' => ['required', 'array', 'min:1'],
+            'type_ids.*' => ['integer', 'exists:project_types,id'],
             'category_ids' => ['required', 'array', 'min:1'],
             'category_ids.*' => ['integer', 'exists:categories,id'],
             'technology_ids' => ['required', 'array', 'min:1'],
             'technology_ids.*' => ['integer', 'exists:technologies,id'],
             'featured_image' => ['nullable', 'image', 'max:4096'],
+            'home_featured_image' => [
+                Rule::requiredIf($this->boolean('is_featured')),
+                'nullable',
+                'image',
+                'max:4096',
+            ],
             'gallery_images' => ['nullable', 'array'],
             'gallery_images.*' => ['image', 'max:4096'],
             'started_at' => ['nullable', 'date'],
@@ -54,13 +62,16 @@ class StorePortfolioRequest extends FormRequest
     {
         return [
             'title.required' => 'A portfolio title is required.',
-            'type.required' => 'Add a project type such as website or mobile app.',
             'slug.unique' => 'This slug is already in use.',
+            'type_ids.required' => 'Choose at least one project type.',
+            'type_ids.min' => 'Choose at least one project type.',
             'category_ids.required' => 'Choose at least one category.',
             'category_ids.min' => 'Choose at least one category.',
             'technology_ids.required' => 'Choose at least one technology.',
             'technology_ids.min' => 'Choose at least one technology.',
             'featured_image.image' => 'The featured image must be a valid image file.',
+            'home_featured_image.required' => 'Featured projects need a home featured image for the homepage showcase.',
+            'home_featured_image.image' => 'The home featured image must be a valid image file.',
             'gallery_images.*.image' => 'Gallery uploads must be images.',
             'og_image.image' => 'The SEO image must be a valid image file.',
         ];

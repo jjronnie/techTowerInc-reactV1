@@ -3,15 +3,17 @@ import { Link } from 'react-router-dom';
 import { ArrowUpRightSquare, Building2, Layers3 } from 'lucide-react';
 
 const FolderCard = ({ project }) => {
-  const summary = project.summary || project.excerpt || project.description || '';
+  const summary = (project.summary || project.excerpt || project.description || '').replace(/<[^>]+>/g, '');
   const categories = project.categories || [];
+  const types = project.types || [];
   const client = project.client || null;
   const primaryCategory = categories[0] || null;
+  const primaryType = project.primary_type || types[0] || null;
 
   return (
     <article className="next-card group relative flex h-full cursor-pointer flex-col overflow-hidden p-0">
       <Link
-        to={`/portfolio/${project.slug}`}
+        to={`/project/${project.slug}`}
         aria-label={`Open ${project.title}`}
         className="absolute inset-0 z-10 rounded-[inherit]"
       />
@@ -35,23 +37,44 @@ const FolderCard = ({ project }) => {
       <div className="flex flex-1 flex-col space-y-5 p-6">
         <div className="flex items-center justify-between gap-4">
           <span className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
-            {project.type || 'Project'}
+            {primaryType?.name || 'Project'}
           </span>
           {client && (
-            <div className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
-              <span className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full border border-border/70 bg-muted/40">
-                {client.logo_url ? (
-                  <img
-                    src={client.logo_url}
-                    alt={client.name}
-                    className="h-full w-full object-contain p-1.5"
-                  />
-                ) : (
-                  <Building2 className="h-3.5 w-3.5" />
-                )}
-              </span>
-              <span className="max-w-[12rem] truncate">{client.name}</span>
-            </div>
+            client.slug ? (
+              <Link
+                to={`/clients/${client.slug}`}
+                onClick={(event) => event.stopPropagation()}
+                className="relative z-20 inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground transition hover:text-foreground"
+              >
+                <span className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full border border-border/70 bg-muted/40">
+                  {client.logo_url ? (
+                    <img
+                      src={client.logo_url}
+                      alt={client.name}
+                      className="h-full w-full object-contain p-1.5"
+                    />
+                  ) : (
+                    <Building2 className="h-3.5 w-3.5" />
+                  )}
+                </span>
+                <span className="max-w-[12rem] truncate">{client.name}</span>
+              </Link>
+            ) : (
+              <div className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
+                <span className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full border border-border/70 bg-muted/40">
+                  {client.logo_url ? (
+                    <img
+                      src={client.logo_url}
+                      alt={client.name}
+                      className="h-full w-full object-contain p-1.5"
+                    />
+                  ) : (
+                    <Building2 className="h-3.5 w-3.5" />
+                  )}
+                </span>
+                <span className="max-w-[12rem] truncate">{client.name}</span>
+              </div>
+            )
           )}
         </div>
 

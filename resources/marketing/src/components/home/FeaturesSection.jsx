@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Code, Cpu, Database, Globe, Layers, Shield, Users, Zap } from 'lucide-react';
-import { useSiteSettings } from '@/context/SiteSettingsContext';
+import { useSiteSettings } from '@marketing/context/SiteSettingsContext';
 
 const FeaturesSection = () => {
   const { settings } = useSiteSettings();

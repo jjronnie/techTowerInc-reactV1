@@ -131,6 +131,21 @@ type AboutCards = {
     items: AboutCard[];
 };
 
+type AboutWhyChooseUsItem = {
+    title: string;
+    description: string;
+    accent_color: string;
+};
+
+type AboutWhyChooseUs = {
+    badge_text: string;
+    heading: string;
+    body: string;
+    image_url: string;
+    image_alt: string;
+    items: AboutWhyChooseUsItem[];
+};
+
 type AboutTeamMember = {
     name: string;
     role: string;
@@ -231,6 +246,7 @@ type SiteSettings = {
     about_story: Partial<AboutStory> | null;
     about_principles: Partial<AboutPrinciples> | null;
     about_cards: Partial<AboutCards> | null;
+    about_why_choose_us: Partial<AboutWhyChooseUs> | null;
     about_team: Partial<AboutTeam> | null;
     about_cta: Partial<AboutCta> | null;
     services_page: Partial<ServicesPage> | null;
@@ -354,6 +370,23 @@ const normalizeAboutCards = (cards: Partial<AboutCards> | null): AboutCards => (
         : [],
 });
 
+const normalizeAboutWhyChooseUs = (
+    whyChooseUs: Partial<AboutWhyChooseUs> | null,
+): AboutWhyChooseUs => ({
+    badge_text: whyChooseUs?.badge_text ?? '',
+    heading: whyChooseUs?.heading ?? '',
+    body: whyChooseUs?.body ?? '',
+    image_url: whyChooseUs?.image_url ?? '',
+    image_alt: whyChooseUs?.image_alt ?? '',
+    items: Array.isArray(whyChooseUs?.items)
+        ? whyChooseUs.items.map((item) => ({
+              title: item?.title ?? '',
+              description: item?.description ?? '',
+              accent_color: item?.accent_color ?? '',
+          }))
+        : [],
+});
+
 const normalizeAboutTeam = (team: Partial<AboutTeam> | null): AboutTeam => ({
     section_heading: team?.section_heading ?? '',
     section_subheading: team?.section_subheading ?? '',
@@ -454,6 +487,9 @@ const buildCurrentValues = (settings: SiteSettings): SiteSettingsFormData => ({
     about_story: normalizeAboutStory(settings.about_story),
     about_principles: normalizeAboutPrinciples(settings.about_principles),
     about_cards: normalizeAboutCards(settings.about_cards),
+    about_why_choose_us: normalizeAboutWhyChooseUs(
+        settings.about_why_choose_us,
+    ),
     about_team: normalizeAboutTeam(settings.about_team),
     about_cta: {
         icon_key: settings.about_cta?.icon_key ?? '',

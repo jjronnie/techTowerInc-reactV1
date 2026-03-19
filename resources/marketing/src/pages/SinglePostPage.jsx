@@ -2,11 +2,11 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, CalendarDays, Tag, UserCircle, Facebook, Linkedin, Mail, Twitter, Copy } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { toast } from '@/components/ui/use-toast';
-import { useApi } from '@/hooks/useApi';
-import { useSiteSettings } from '@/context/SiteSettingsContext';
-import Seo from '@/components/Seo';
+import { Button } from '@marketing/components/ui/button';
+import { toast } from '@marketing/components/ui/use-toast';
+import { useApi } from '@marketing/hooks/useApi';
+import { useSiteSettings } from '@marketing/context/SiteSettingsContext';
+import Seo from '@marketing/components/Seo';
 
 const SinglePostPage = () => {
   const { slug } = useParams();
@@ -167,7 +167,7 @@ const SinglePostPage = () => {
 
           <motion.div 
             {...fadeInProps(0.3)} 
-            className="prose dark:prose-invert prose-lg max-w-none mx-auto text-foreground prose-headings:text-foreground prose-headings:font-semibold prose-a:text-primary hover:prose-a:text-primary/80 prose-strong:text-foreground prose-p:leading-relaxed prose-li:marker:text-muted-foreground prose-blockquote:border-l-primary/40 prose-blockquote:text-muted-foreground"
+            className="legacy-prose legacy-prose-lg mx-auto max-w-none text-foreground"
             dangerouslySetInnerHTML={{ __html: post.content }} 
           />
 

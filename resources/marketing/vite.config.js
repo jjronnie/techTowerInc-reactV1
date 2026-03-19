@@ -176,8 +176,6 @@ const addTransformIndexHtml = {
 	},
 };
 
-console.warn = () => {};
-
 const logger = createLogger()
 const loggerError = logger.error
 
@@ -195,7 +193,7 @@ export default defineConfig({
 	plugins: [
 		...(isDev ? [inlineEditPlugin(), editModeDevPlugin()] : []),
 		react(),
-		addTransformIndexHtml
+		...(isDev ? [addTransformIndexHtml] : []),
 	],
 	server: {
 		cors: true,
@@ -208,6 +206,7 @@ export default defineConfig({
 		extensions: ['.jsx', '.js', '.tsx', '.ts', '.json', ],
 		alias: {
 			'@': path.resolve(__dirname, './src'),
+			'@marketing': path.resolve(__dirname, './src'),
 		},
 	},
 	build: {

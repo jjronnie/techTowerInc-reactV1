@@ -8,6 +8,7 @@ import {
     ListChecks,
     Package,
     PenSquare,
+    SquareStack,
     Settings,
     Tags,
     Users,
@@ -28,10 +29,12 @@ import AppLogo from './app-logo';
 import { dashboard as userDashboard } from '@/routes';
 import { index as categoriesIndex } from '@/routes/admin/categories';
 import { index as clientsIndex } from '@/routes/admin/clients';
+import { index as projectTypesIndex } from '@/routes/admin/project-types';
 import { index as servicesIndex } from '@/routes/admin/services';
 import { index as portfoliosIndex } from '@/routes/admin/portfolios';
 import { index as productsIndex } from '@/routes/admin/products';
 import { index as postsIndex } from '@/routes/admin/posts';
+import { index as teamMembersIndex } from '@/routes/admin/team-members';
 import { index as technologiesIndex } from '@/routes/admin/technologies';
 import { index as contactSubmissionsIndex } from '@/routes/admin/contact-submissions';
 import { index as usersIndex } from '@/routes/admin/users';
@@ -69,9 +72,19 @@ export function AppSidebar() {
             icon: Cpu,
         },
         {
+            title: 'Project Types',
+            href: projectTypesIndex(),
+            icon: SquareStack,
+        },
+        {
             title: 'Portfolio',
             href: portfoliosIndex(),
             icon: Folder,
+        },
+        {
+            title: 'Team Members',
+            href: teamMembersIndex(),
+            icon: Users,
         },
         {
             title: 'Products',

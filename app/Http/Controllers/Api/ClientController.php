@@ -15,7 +15,7 @@ class ClientController extends Controller
         ])->load([
             'portfolios' => fn ($query) => $query
                 ->where('is_active', true)
-                ->with(['client', 'categories', 'technologies'])
+                ->with(['client', 'categories', 'projectTypes', 'technologies'])
                 ->orderByDesc('is_featured')
                 ->orderBy('sort_order')
                 ->orderBy('title'),

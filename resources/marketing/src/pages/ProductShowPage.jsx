@@ -2,9 +2,9 @@ import React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight, ExternalLink } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useApi } from '@/hooks/useApi';
-import Seo from '@/components/Seo';
+import { Button } from '@marketing/components/ui/button';
+import { useApi } from '@marketing/hooks/useApi';
+import Seo from '@marketing/components/Seo';
 
 const ProductShowPage = () => {
   const { slug } = useParams();

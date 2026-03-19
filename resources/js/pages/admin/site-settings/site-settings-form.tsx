@@ -1,3 +1,4 @@
+import { Link } from '@inertiajs/react';
 import { type FormEvent, useState } from 'react';
 import InputError from '@/components/input-error';
 import { ImageUploadField } from '@/components/ui/image-upload-field';
@@ -6,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Menu, X } from 'lucide-react';
+import { index as teamMembersIndex } from '@/routes/admin/team-members';
 
 type SocialLink = {
     name: string;
@@ -129,6 +131,21 @@ type AboutCards = {
     items: AboutCard[];
 };
 
+type AboutWhyChooseUsItem = {
+    title: string;
+    description: string;
+    accent_color: string;
+};
+
+type AboutWhyChooseUs = {
+    badge_text: string;
+    heading: string;
+    body: string;
+    image_url: string;
+    image_alt: string;
+    items: AboutWhyChooseUsItem[];
+};
+
 type AboutTeamMember = {
     name: string;
     role: string;
@@ -232,6 +249,7 @@ export type SiteSettingsFormData = {
     about_story: AboutStory;
     about_principles: AboutPrinciples;
     about_cards: AboutCards;
+    about_why_choose_us: AboutWhyChooseUs;
     about_team: AboutTeam;
     about_cta: AboutCta;
     services_page: ServicesPage;
@@ -300,7 +318,7 @@ const SITE_SETTINGS_SECTIONS: SiteSettingsSectionLink[] = [
     {
         id: 'about-page',
         label: 'About Page',
-        description: 'About header, story, principles, cards, and team.',
+        description: 'About page story, why choose us, team, and CTA content.',
     },
     {
         id: 'services-page',
@@ -684,6 +702,42 @@ export default function SiteSettingsForm({
         onChange('about_cards', {
             ...data.about_cards,
             items: data.about_cards.items.filter(
+                (_, itemIndex) => itemIndex !== index,
+            ),
+        });
+    };
+
+    const updateAboutWhyChooseUsItem = (
+        index: number,
+        field: keyof AboutWhyChooseUsItem,
+        value: string,
+    ) => {
+        const updated = [...data.about_why_choose_us.items];
+        updated[index] = { ...updated[index], [field]: value };
+        onChange('about_why_choose_us', {
+            ...data.about_why_choose_us,
+            items: updated,
+        });
+    };
+
+    const addAboutWhyChooseUsItem = () => {
+        onChange('about_why_choose_us', {
+            ...data.about_why_choose_us,
+            items: [
+                ...data.about_why_choose_us.items,
+                {
+                    title: '',
+                    description: '',
+                    accent_color: '',
+                },
+            ],
+        });
+    };
+
+    const removeAboutWhyChooseUsItem = (index: number) => {
+        onChange('about_why_choose_us', {
+            ...data.about_why_choose_us,
+            items: data.about_why_choose_us.items.filter(
                 (_, itemIndex) => itemIndex !== index,
             ),
         });
@@ -2453,19 +2507,206 @@ export default function SiteSettingsForm({
 
                 <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                        <h4 className="text-base font-semibold">Team</h4>
+                        <h4 className="text-base font-semibold">
+                            Why choose us
+                        </h4>
                         <Button
                             type="button"
                             variant="outline"
-                            onClick={addAboutTeamMember}
+                            onClick={addAboutWhyChooseUsItem}
                         >
-                            Add team member
+                            Add reason
                         </Button>
                     </div>
                     <CurrentValue
-                        value={current.about_team.members.length}
-                        label="Current team members"
+                        value={current.about_why_choose_us.items.length}
+                        label="Current reasons"
                     />
+                    <div className="grid gap-3 md:grid-cols-2">
+                        <div className="grid gap-2">
+                            <Label>Badge text</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Small label above the section heading.
+                            </p>
+                            <Input
+                                value={data.about_why_choose_us.badge_text}
+                                onChange={(event) =>
+                                    onChange('about_why_choose_us', {
+                                        ...data.about_why_choose_us,
+                                        badge_text: event.target.value,
+                                    })
+                                }
+                            />
+                            <CurrentValue
+                                value={current.about_why_choose_us.badge_text}
+                            />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label>Heading</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Main section headline.
+                            </p>
+                            <Input
+                                value={data.about_why_choose_us.heading}
+                                onChange={(event) =>
+                                    onChange('about_why_choose_us', {
+                                        ...data.about_why_choose_us,
+                                        heading: event.target.value,
+                                    })
+                                }
+                            />
+                            <CurrentValue
+                                value={current.about_why_choose_us.heading}
+                            />
+                        </div>
+                        <div className="grid gap-2 md:col-span-2">
+                            <Label>Body</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Supporting text beside the section heading.
+                            </p>
+                            <Textarea
+                                value={data.about_why_choose_us.body}
+                                onChange={(event) =>
+                                    onChange('about_why_choose_us', {
+                                        ...data.about_why_choose_us,
+                                        body: event.target.value,
+                                    })
+                                }
+                                rows={3}
+                            />
+                            <CurrentValue
+                                value={current.about_why_choose_us.body}
+                            />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label>Image URL</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Large image used in the section.
+                            </p>
+                            <Input
+                                value={data.about_why_choose_us.image_url}
+                                onChange={(event) =>
+                                    onChange('about_why_choose_us', {
+                                        ...data.about_why_choose_us,
+                                        image_url: event.target.value,
+                                    })
+                                }
+                            />
+                            <CurrentValue
+                                value={current.about_why_choose_us.image_url}
+                            />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label>Image alt</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Accessibility text for the section image.
+                            </p>
+                            <Input
+                                value={data.about_why_choose_us.image_alt}
+                                onChange={(event) =>
+                                    onChange('about_why_choose_us', {
+                                        ...data.about_why_choose_us,
+                                        image_alt: event.target.value,
+                                    })
+                                }
+                            />
+                            <CurrentValue
+                                value={current.about_why_choose_us.image_alt}
+                            />
+                        </div>
+                    </div>
+
+                    {data.about_why_choose_us.items.map((item, index) => (
+                        <div
+                            key={`why-choose-us-${index}`}
+                            className="grid gap-3 md:grid-cols-3"
+                        >
+                            <div className="grid gap-2">
+                                <Label>Title</Label>
+                                <Input
+                                    value={item.title}
+                                    onChange={(event) =>
+                                        updateAboutWhyChooseUsItem(
+                                            index,
+                                            'title',
+                                            event.target.value,
+                                        )
+                                    }
+                                />
+                                <CurrentValue
+                                    value={
+                                        current.about_why_choose_us.items[index]
+                                            ?.title
+                                    }
+                                />
+                            </div>
+                            <div className="grid gap-2">
+                                <Label>Description</Label>
+                                <Textarea
+                                    value={item.description}
+                                    onChange={(event) =>
+                                        updateAboutWhyChooseUsItem(
+                                            index,
+                                            'description',
+                                            event.target.value,
+                                        )
+                                    }
+                                    rows={2}
+                                />
+                                <CurrentValue
+                                    value={
+                                        current.about_why_choose_us.items[index]
+                                            ?.description
+                                    }
+                                />
+                            </div>
+                            <div className="grid gap-2">
+                                <Label>Accent color</Label>
+                                <p className="text-sm text-muted-foreground">
+                                    Hex or CSS color value for the highlight.
+                                </p>
+                                <Input
+                                    value={item.accent_color}
+                                    onChange={(event) =>
+                                        updateAboutWhyChooseUsItem(
+                                            index,
+                                            'accent_color',
+                                            event.target.value,
+                                        )
+                                    }
+                                    placeholder="#6d5dfc"
+                                />
+                                <CurrentValue
+                                    value={
+                                        current.about_why_choose_us.items[index]
+                                            ?.accent_color
+                                    }
+                                />
+                            </div>
+                            <div className="flex justify-end md:col-span-3">
+                                <Button
+                                    type="button"
+                                    variant="ghost"
+                                    onClick={() =>
+                                        removeAboutWhyChooseUsItem(index)
+                                    }
+                                >
+                                    Remove
+                                </Button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                        <h4 className="text-base font-semibold">Team</h4>
+                        <Button asChild type="button" variant="outline">
+                            <Link href={teamMembersIndex()}>
+                                Manage team members
+                            </Link>
+                        </Button>
+                    </div>
                     <div className="grid gap-3 md:grid-cols-2">
                         <div className="grid gap-2">
                             <Label>Section heading</Label>
@@ -2500,109 +2741,12 @@ export default function SiteSettingsForm({
                             <CurrentValue value={current.about_team.section_subheading} />
                         </div>
                     </div>
-
-                    {data.about_team.members.map((member, index) => (
-                        <div
-                            key={`member-${index}`}
-                            className="grid gap-3 md:grid-cols-2"
-                        >
-                            <div className="grid gap-2">
-                                <Label>Name</Label>
-                                <p className="text-sm text-muted-foreground">
-                                    Team member name.
-                                </p>
-                                <Input
-                                    value={member.name}
-                                    onChange={(event) =>
-                                        updateAboutTeamMember(
-                                            index,
-                                            'name',
-                                            event.target.value,
-                                        )
-                                    }
-                                />
-                                <CurrentValue value={current.about_team.members[index]?.name} />
-                            </div>
-                            <div className="grid gap-2">
-                                <Label>Role</Label>
-                                <p className="text-sm text-muted-foreground">
-                                    Job title or role.
-                                </p>
-                                <Input
-                                    value={member.role}
-                                    onChange={(event) =>
-                                        updateAboutTeamMember(
-                                            index,
-                                            'role',
-                                            event.target.value,
-                                        )
-                                    }
-                                />
-                                <CurrentValue value={current.about_team.members[index]?.role} />
-                            </div>
-                            <div className="grid gap-2 md:col-span-2">
-                                <Label>Description</Label>
-                                <p className="text-sm text-muted-foreground">
-                                    Short bio or highlight.
-                                </p>
-                                <Textarea
-                                    value={member.description}
-                                    onChange={(event) =>
-                                        updateAboutTeamMember(
-                                            index,
-                                            'description',
-                                            event.target.value,
-                                        )
-                                    }
-                                    rows={2}
-                                />
-                                <CurrentValue value={current.about_team.members[index]?.description} />
-                            </div>
-                            <div className="grid gap-2">
-                                <Label>Image URL</Label>
-                                <p className="text-sm text-muted-foreground">
-                                    Headshot or avatar URL.
-                                </p>
-                                <Input
-                                    value={member.image_url}
-                                    onChange={(event) =>
-                                        updateAboutTeamMember(
-                                            index,
-                                            'image_url',
-                                            event.target.value,
-                                        )
-                                    }
-                                />
-                                <CurrentValue value={current.about_team.members[index]?.image_url} />
-                            </div>
-                            <div className="grid gap-2">
-                                <Label>Image alt</Label>
-                                <p className="text-sm text-muted-foreground">
-                                    Accessibility text for the image.
-                                </p>
-                                <Input
-                                    value={member.image_alt}
-                                    onChange={(event) =>
-                                        updateAboutTeamMember(
-                                            index,
-                                            'image_alt',
-                                            event.target.value,
-                                        )
-                                    }
-                                />
-                                <CurrentValue value={current.about_team.members[index]?.image_alt} />
-                            </div>
-                            <div className="flex justify-end md:col-span-2">
-                                <Button
-                                    type="button"
-                                    variant="ghost"
-                                    onClick={() => removeAboutTeamMember(index)}
-                                >
-                                    Remove
-                                </Button>
-                            </div>
-                        </div>
-                    ))}
+                    <p className="rounded-xl border border-dashed border-sidebar-border/70 bg-background px-4 py-4 text-sm text-muted-foreground">
+                        Team member profiles, photos, publishing, and deletion
+                        are now managed from the dedicated Team Members module.
+                        Use this section only for the about page heading and
+                        intro copy.
+                    </p>
                 </div>
 
                 <div className="space-y-4">

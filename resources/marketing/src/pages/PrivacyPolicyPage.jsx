@@ -32,7 +32,7 @@ const PrivacyPolicyPage = () => {
         <div className="next-container max-w-3xl mx-auto">
           <motion.div 
             {...fadeInProps(0.2)} 
-            className="prose dark:prose-invert prose-base max-w-none text-foreground prose-headings:text-foreground prose-headings:font-semibold prose-a:text-primary hover:prose-a:text-primary/80 prose-strong:text-foreground"
+            className="legacy-prose max-w-none text-foreground"
           >
             <h2 className="text-2xl font-semibold mt-8 mb-4">1. Introduction</h2>
             <p>TechTower Innovations Inc. ("we", "us", "our") is committed to protecting the privacy of individuals who visit our website ("Visitors"), who register to use our services ("Customers"), or who apply for a job at TechTower Innovations ("Applicants"). This Privacy Policy describes our privacy practices in relation to the use of our website and the related applications and services offered by us (collectively, the "Services").</p>

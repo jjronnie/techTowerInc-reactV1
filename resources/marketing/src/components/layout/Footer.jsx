@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Github, Linkedin, Twitter, Instagram, Facebook, Youtube, Rss } from 'lucide-react';
-import { useSiteSettings } from '@/context/SiteSettingsContext';
-import logoLight from '@/assets/logo-light.png';
-import logoDark from '@/assets/logo-dark.png';
+import { useSiteSettings } from '@marketing/context/SiteSettingsContext';
+import logoLight from '@marketing/assets/logo-light.png';
+import logoDark from '@marketing/assets/logo-dark.png';
 
 const Footer = () => {
   const { settings } = useSiteSettings();

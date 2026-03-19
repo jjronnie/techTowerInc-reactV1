@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
+import { Button } from '@marketing/components/ui/button';
 import { Link, useParams } from 'react-router-dom';
 import { Layers } from 'lucide-react';
-import FolderCard from '@/components/shared/FolderCard';
-import { useApi } from '@/hooks/useApi';
-import { useSiteSettings } from '@/context/SiteSettingsContext';
-import Seo from '@/components/Seo';
+import FolderCard from '@marketing/components/shared/FolderCard';
+import { useApi } from '@marketing/hooks/useApi';
+import { useSiteSettings } from '@marketing/context/SiteSettingsContext';
+import Seo from '@marketing/components/Seo';
 
 const PortfolioPage = () => {
   const { categorySlug } = useParams();
@@ -18,12 +18,47 @@ const PortfolioPage = () => {
   const { data, loading, error } = useApi(apiPath);
   const portfolioProjects = data?.data || [];
   const pageCopy = settings?.portfolio_page || {};
+  const [activeTypeSlug, setActiveTypeSlug] = useState('all');
   const activeCategoryLabel = activeCategory
     ? activeCategory
         .split('-')
         .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
         .join(' ')
     : null;
+  const availableTypes = useMemo(() => {
+    const typeMap = new Map();
+
+    portfolioProjects.forEach((project) => {
+      (project.types || []).forEach((type) => {
+        if (!type?.slug || typeMap.has(type.slug)) {
+          return;
+        }
+
+        typeMap.set(type.slug, type);
+      });
+    });
+
+    return Array.from(typeMap.values());
+  }, [portfolioProjects]);
+  const filteredProjects = useMemo(() => {
+    if (activeTypeSlug === 'all') {
+      return portfolioProjects;
+    }
+
+    return portfolioProjects.filter((project) =>
+      (project.types || []).some((type) => type.slug === activeTypeSlug)
+    );
+  }, [activeTypeSlug, portfolioProjects]);
+
+  useEffect(() => {
+    if (
+      activeTypeSlug !== 'all' &&
+      !availableTypes.some((type) => type.slug === activeTypeSlug)
+    ) {
+      setActiveTypeSlug('all');
+    }
+  }, [activeTypeSlug, availableTypes]);
+
   const fadeInProps = (delay = 0) => ({
     initial: { opacity: 0, y: 20 },
     whileInView: { opacity: 1, y: 0 },
@@ -60,6 +95,42 @@ const PortfolioPage = () => {
             {pageCopy.header_subtitle || 'A selection of projects crafted with performance, clarity, and long-term scale in mind.'}
           </p>
         </motion.div>
+
+        {!loading && !error && availableTypes.length > 0 && (
+          <motion.div
+            {...fadeInProps(0.1)}
+            className="mt-12 flex flex-wrap items-center justify-center gap-x-5 gap-y-3"
+          >
+            <button
+              type="button"
+              onClick={() => setActiveTypeSlug('all')}
+              className={`rounded-full px-5 py-2 text-sm font-medium transition ${
+                activeTypeSlug === 'all'
+                  ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              All Projects
+            </button>
+            {availableTypes.map((type) => (
+              <button
+                key={type.slug}
+                type="button"
+                onClick={() => setActiveTypeSlug(type.slug)}
+                className={`rounded-full px-5 py-2 text-sm font-medium transition ${
+                  activeTypeSlug === type.slug
+                    ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20'
+                    : 'inline-flex items-center gap-3 text-muted-foreground hover:bg-white/5 hover:text-foreground'
+                }`}
+              >
+                {activeTypeSlug !== type.slug && (
+                  <span className="text-primary/50">+</span>
+                )}
+                <span>{type.name}</span>
+              </button>
+            ))}
+          </motion.div>
+        )}
       </header>
 
       <section className="next-section-padding pt-0">
@@ -82,7 +153,7 @@ const PortfolioPage = () => {
           )}
           {!loading && !error && (
             <div className="grid gap-8 lg:grid-cols-2">
-              {portfolioProjects.map((project, index) => (
+              {filteredProjects.map((project, index) => (
                 <motion.div
                   key={project.id}
                   className="h-full"
@@ -93,11 +164,11 @@ const PortfolioPage = () => {
               ))}
             </div>
           )}
-          {!loading && !error && portfolioProjects.length === 0 && (
+          {!loading && !error && filteredProjects.length === 0 && (
             <div className="next-card text-center">
               <p className="text-lg text-foreground">No projects match this filter yet.</p>
               <p className="mt-2 text-sm text-muted-foreground">
-                Try another category or explore the full portfolio.
+                Try another type or explore the full portfolio.
               </p>
             </div>
           )}

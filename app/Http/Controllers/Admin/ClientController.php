@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreClientRequest;
 use App\Http\Requests\Admin\UpdateClientRequest;
+use App\Http\Resources\ClientResource;
 use App\Models\Client;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
@@ -21,7 +22,7 @@ class ClientController extends Controller
             ->get();
 
         return Inertia::render('admin/clients/index', [
-            'clients' => $clients,
+            'clients' => ClientResource::collection($clients)->resolve(),
         ]);
     }
 

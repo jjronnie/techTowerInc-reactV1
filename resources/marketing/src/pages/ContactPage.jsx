@@ -1,13 +1,27 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
-import { toast } from '@/components/ui/use-toast';
-import { Mail, Phone, MapPin, MessageSquare, Send, Building, Clock } from 'lucide-react';
+import { Button } from '@marketing/components/ui/button';
+import { toast } from '@marketing/components/ui/use-toast';
+import {
+  Mail,
+  Phone,
+  MapPin,
+  MessageSquare,
+  Send,
+  Building,
+  Clock,
+  Facebook,
+  Instagram,
+  Linkedin,
+  MessageCircle,
+  Twitter,
+  Youtube,
+} from 'lucide-react';
 import { useLocation } from 'react-router-dom';
-import { useSiteSettings } from '@/context/SiteSettingsContext';
-import { useApi } from '@/hooks/useApi';
-import { buildApiUrl } from '@/lib/api';
-import Seo from '@/components/Seo';
+import { useSiteSettings } from '@marketing/context/SiteSettingsContext';
+import { useApi } from '@marketing/hooks/useApi';
+import { buildApiUrl } from '@marketing/lib/api';
+import Seo from '@marketing/components/Seo';
 
 const linkPattern = /(https?:\/\/|www\.)\S+|\b[a-z0-9.-]+\.[a-z]{2,}(?:\/\S*)?/i;
 
@@ -273,20 +287,20 @@ const ContactPage = () => {
   ];
 
   const socialIconMap = {
-    whatsapp: 'fa-whatsapp',
-    facebook: 'fa-facebook',
-    twitter: 'fa-x-twitter',
-    instagram: 'fa-instagram',
-    linkedin: 'fa-linkedin',
-    youtube: 'fa-youtube',
+    whatsapp: MessageCircle,
+    facebook: Facebook,
+    twitter: Twitter,
+    instagram: Instagram,
+    linkedin: Linkedin,
+    youtube: Youtube,
   };
   const socialHoverMap = {
-    whatsapp: 'hover:text-green-500',
-    facebook: 'hover:text-blue-600',
-    twitter: 'hover:text-sky-500',
-    instagram: 'hover:text-pink-500',
-    linkedin: 'hover:text-blue-700',
-    youtube: 'hover:text-red-600',
+    whatsapp: 'hover:border-green-500/60 hover:text-green-500',
+    facebook: 'hover:border-blue-600/60 hover:text-blue-600',
+    twitter: 'hover:border-sky-500/60 hover:text-sky-500',
+    instagram: 'hover:border-pink-500/60 hover:text-pink-500',
+    linkedin: 'hover:border-blue-700/60 hover:text-blue-700',
+    youtube: 'hover:border-red-600/60 hover:text-red-600',
   };
 
   return (
@@ -523,18 +537,22 @@ const ContactPage = () => {
             </p>
 
             <div className="flex justify-center space-x-6">
-              {socialLinks.map((link) => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={link.label || link.name}
-                  className={`text-primary ${socialHoverMap[link.icon_key] || 'hover:text-blue-600'} transition`}
-                >
-                  <i className={`fab ${socialIconMap[link.icon_key] || 'fa-link'} fa-2x`}></i>
-                </a>
-              ))}
+              {socialLinks.map((link) => {
+                const Icon = socialIconMap[link.icon_key] || MessageSquare;
+
+                return (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={link.label || link.name}
+                    className={`flex h-14 w-14 items-center justify-center rounded-full border border-border bg-card text-primary transition ${socialHoverMap[link.icon_key] || 'hover:border-primary/60 hover:text-primary'}`}
+                  >
+                    <Icon className="h-6 w-6" />
+                  </a>
+                );
+              })}
             </div>
           </motion.div>
         </div>

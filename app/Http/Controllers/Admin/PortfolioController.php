@@ -7,13 +7,16 @@ use App\Http\Requests\Admin\StorePortfolioRequest;
 use App\Http\Requests\Admin\UpdatePortfolioRequest;
 use App\Http\Resources\CategoryResource;
 use App\Http\Resources\ClientResource;
+use App\Http\Resources\ProjectTypeResource;
 use App\Http\Resources\TechnologyResource;
 use App\Models\Category;
 use App\Models\Client;
 use App\Models\Portfolio;
+use App\Models\ProjectType;
 use App\Models\Technology;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -25,7 +28,11 @@ class PortfolioController extends Controller
     public function index(): Response
     {
         $portfolios = Portfolio::query()
-            ->with(['client:id,name,slug', 'categories:id,name,slug'])
+            ->with([
+                'client:id,name,slug',
+                'categories:id,name,slug',
+                'projectTypes:id,name,slug',
+            ])
             ->orderByDesc('is_featured')
             ->orderBy('sort_order')
             ->orderBy('title')
@@ -50,6 +57,7 @@ class PortfolioController extends Controller
     public function store(StorePortfolioRequest $request): RedirectResponse
     {
         $data = $request->validated();
+        $typeIds = $data['type_ids'];
         $categoryIds = $data['category_ids'];
         $technologyIds = $data['technology_ids'];
         $data['is_featured'] = $request->boolean('is_featured');
@@ -57,6 +65,10 @@ class PortfolioController extends Controller
 
         if ($request->hasFile('featured_image')) {
             $data['featured_image_path'] = $request->file('featured_image')->store('portfolios/featured', 'public');
+        }
+
+        if ($request->hasFile('home_featured_image')) {
+            $data['home_featured_image_path'] = $request->file('home_featured_image')->store('portfolios/home-featured', 'public');
         }
 
         if ($request->hasFile('gallery_images')) {
@@ -72,22 +84,25 @@ class PortfolioController extends Controller
         }
 
         unset(
+            $data['type_ids'],
             $data['category_ids'],
             $data['technology_ids'],
             $data['featured_image'],
+            $data['home_featured_image'],
             $data['og_image'],
         );
 
         $portfolio = Portfolio::query()->create($data);
+        $portfolio->projectTypes()->sync($typeIds);
         $portfolio->categories()->sync($categoryIds);
         $portfolio->technologies()->sync($technologyIds);
 
         return redirect()
-            ->route('admin.portfolios.edit', $portfolio)
+            ->route('admin.portfolios.index')
             ->with('notification', [
                 'type' => 'success',
                 'title' => 'Portfolio created',
-                'message' => "\"{$portfolio->title}\" is ready to edit.",
+                'message' => "\"{$portfolio->title}\" has been added to your portfolio list.",
             ]);
     }
 
@@ -104,15 +119,19 @@ class PortfolioController extends Controller
      */
     public function edit(Portfolio $portfolio): Response
     {
-        $portfolio->loadMissing(['categories', 'client', 'technologies']);
+        $portfolio->loadMissing(['categories', 'client', 'projectTypes', 'technologies']);
 
         $portfolio->setAttribute(
             'featured_image_url',
-            $portfolio->featured_image_path ? Storage::url($portfolio->featured_image_path) : null,
+            $this->fileUrl($portfolio->featured_image_path),
+        );
+        $portfolio->setAttribute(
+            'home_featured_image_url',
+            $this->fileUrl($portfolio->home_featured_image_path),
         );
         $portfolio->setAttribute(
             'og_image_url',
-            $portfolio->og_image_path ? Storage::url($portfolio->og_image_path) : null,
+            $this->fileUrl($portfolio->og_image_path),
         );
         $portfolio->setAttribute(
             'gallery_image_urls',
@@ -123,6 +142,9 @@ class PortfolioController extends Controller
                 ])
                 ->all(),
         );
+        $portfolio->setAttribute('started_at', optional($portfolio->started_at)->toDateString());
+        $portfolio->setAttribute('completed_at', optional($portfolio->completed_at)->toDateString());
+        $portfolio->setAttribute('type_ids', $portfolio->projectTypes->pluck('id')->all());
         $portfolio->setAttribute('category_ids', $portfolio->categories->pluck('id')->all());
         $portfolio->setAttribute('technology_ids', $portfolio->technologies->pluck('id')->all());
         $portfolio->setAttribute('client_id', $portfolio->client?->id);
@@ -139,23 +161,30 @@ class PortfolioController extends Controller
     public function update(UpdatePortfolioRequest $request, Portfolio $portfolio): RedirectResponse
     {
         $data = $request->validated();
+        $typeIds = $data['type_ids'];
         $categoryIds = $data['category_ids'];
         $technologyIds = $data['technology_ids'];
         $data['is_featured'] = $request->boolean('is_featured');
         $data['is_active'] = $request->boolean('is_active');
 
         if ($request->boolean('remove_featured_image')) {
-            if ($portfolio->featured_image_path) {
-                Storage::disk('public')->delete($portfolio->featured_image_path);
-            }
+            $this->deletePublicFile($portfolio->featured_image_path);
             $data['featured_image_path'] = null;
         }
 
         if ($request->hasFile('featured_image')) {
-            if ($portfolio->featured_image_path) {
-                Storage::disk('public')->delete($portfolio->featured_image_path);
-            }
+            $this->deletePublicFile($portfolio->featured_image_path);
             $data['featured_image_path'] = $request->file('featured_image')->store('portfolios/featured', 'public');
+        }
+
+        if ($request->boolean('remove_home_featured_image')) {
+            $this->deletePublicFile($portfolio->home_featured_image_path);
+            $data['home_featured_image_path'] = null;
+        }
+
+        if ($request->hasFile('home_featured_image')) {
+            $this->deletePublicFile($portfolio->home_featured_image_path);
+            $data['home_featured_image_path'] = $request->file('home_featured_image')->store('portfolios/home-featured', 'public');
         }
 
         $currentGallery = collect($portfolio->gallery_images ?? []);
@@ -193,37 +222,37 @@ class PortfolioController extends Controller
         $data['gallery_images'] = $gallery;
 
         if ($request->boolean('remove_og_image')) {
-            if ($portfolio->og_image_path) {
-                Storage::disk('public')->delete($portfolio->og_image_path);
-            }
+            $this->deletePublicFile($portfolio->og_image_path);
             $data['og_image_path'] = null;
         }
 
         if ($request->hasFile('og_image')) {
-            if ($portfolio->og_image_path) {
-                Storage::disk('public')->delete($portfolio->og_image_path);
-            }
+            $this->deletePublicFile($portfolio->og_image_path);
             $data['og_image_path'] = $request->file('og_image')->store('portfolios/og-images', 'public');
         }
 
         unset(
+            $data['type_ids'],
             $data['category_ids'],
             $data['technology_ids'],
             $data['featured_image'],
+            $data['home_featured_image'],
             $data['og_image'],
             $data['existing_gallery_images'],
             $data['clear_gallery_images'],
             $data['remove_featured_image'],
+            $data['remove_home_featured_image'],
             $data['remove_og_image'],
             $data['remove_gallery_images']
         );
 
         $portfolio->update($data);
+        $portfolio->projectTypes()->sync($typeIds);
         $portfolio->categories()->sync($categoryIds);
         $portfolio->technologies()->sync($technologyIds);
 
         return redirect()
-            ->route('admin.portfolios.edit', $portfolio)
+            ->route('admin.portfolios.index')
             ->with('notification', [
                 'type' => 'success',
                 'title' => 'Portfolio updated',
@@ -236,13 +265,9 @@ class PortfolioController extends Controller
      */
     public function destroy(Portfolio $portfolio): RedirectResponse
     {
-        if ($portfolio->featured_image_path) {
-            Storage::disk('public')->delete($portfolio->featured_image_path);
-        }
-
-        if ($portfolio->og_image_path) {
-            Storage::disk('public')->delete($portfolio->og_image_path);
-        }
+        $this->deletePublicFile($portfolio->featured_image_path);
+        $this->deletePublicFile($portfolio->home_featured_image_path);
+        $this->deletePublicFile($portfolio->og_image_path);
 
         foreach ($portfolio->gallery_images ?? [] as $path) {
             Storage::disk('public')->delete($path);
@@ -265,6 +290,9 @@ class PortfolioController extends Controller
     private function formOptions(): array
     {
         return [
+            'projectTypes' => ProjectTypeResource::collection(
+                ProjectType::query()->orderBy('name')->get(),
+            )->resolve(),
             'categories' => CategoryResource::collection(
                 Category::query()->orderBy('name')->get(),
             )->resolve(),
@@ -275,5 +303,27 @@ class PortfolioController extends Controller
                 Technology::query()->orderBy('name')->get(),
             )->resolve(),
         ];
+    }
+
+    private function fileUrl(?string $path): ?string
+    {
+        if (! $path) {
+            return null;
+        }
+
+        if (Str::startsWith($path, ['http://', 'https://'])) {
+            return $path;
+        }
+
+        return Storage::url($path);
+    }
+
+    private function deletePublicFile(?string $path): void
+    {
+        if (! $path || Str::startsWith($path, ['http://', 'https://'])) {
+            return;
+        }
+
+        Storage::disk('public')->delete($path);
     }
 }

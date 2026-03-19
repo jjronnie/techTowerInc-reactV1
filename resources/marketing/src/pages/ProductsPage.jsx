@@ -1,11 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
+import { Button } from '@marketing/components/ui/button';
 import { Link } from 'react-router-dom';
 import { Boxes } from 'lucide-react';
-import { useApi } from '@/hooks/useApi';
-import { useSiteSettings } from '@/context/SiteSettingsContext';
-import Seo from '@/components/Seo';
+import { useApi } from '@marketing/hooks/useApi';
+import { useSiteSettings } from '@marketing/context/SiteSettingsContext';
+import Seo from '@marketing/components/Seo';
 
 const ProductsPage = () => {
   const { settings } = useSiteSettings();

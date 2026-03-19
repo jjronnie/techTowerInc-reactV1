@@ -9,7 +9,6 @@ import { create, destroy, edit, index } from '@/routes/admin/portfolios';
 type Portfolio = {
     id: number;
     title: string;
-    type: string;
     slug: string;
     is_featured: boolean;
     is_active: boolean;
@@ -17,6 +16,10 @@ type Portfolio = {
         name: string;
     } | null;
     categories?: Array<{
+        id: number;
+        name: string;
+    }>;
+    project_types?: Array<{
         id: number;
         name: string;
     }>;
@@ -61,7 +64,7 @@ export default function PortfoliosIndex({ portfolios }: PortfoliosIndexProps) {
                         <thead className="bg-muted/50 text-xs uppercase text-muted-foreground">
                             <tr>
                                 <th className="px-4 py-3 text-left">Title</th>
-                                <th className="px-4 py-3 text-left">Type</th>
+                                <th className="px-4 py-3 text-left">Types</th>
                                 <th className="px-4 py-3 text-left">Client</th>
                                 <th className="px-4 py-3 text-left">Categories</th>
                                 <th className="px-4 py-3 text-left">Featured</th>
@@ -86,7 +89,13 @@ export default function PortfoliosIndex({ portfolios }: PortfoliosIndexProps) {
                                         </div>
                                     </td>
                                     <td className="px-4 py-3 text-muted-foreground">
-                                        {portfolio.type}
+                                        {portfolio.project_types?.length
+                                            ? portfolio.project_types
+                                                  .map((projectType) =>
+                                                      projectType.name,
+                                                  )
+                                                  .join(', ')
+                                            : 'No type'}
                                     </td>
                                     <td className="px-4 py-3 text-muted-foreground">
                                         {portfolio.client?.name ?? 'No client'}
