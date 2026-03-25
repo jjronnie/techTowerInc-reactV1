@@ -38,7 +38,7 @@ const ServiceCard = ({ service, index }) => {
         <div
             ref={ref}
             id={service.slug}
-            className={`reveal reveal-delay-${(index % 6) + 1} next-card card-hover group p-6 md:p-8`}
+            className={`reveal next-card card-hover group p-6 md:p-8`}
         >
             <div className="flex flex-col md:flex-row md:items-start">
                 <div className="mr-0 mb-4 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-white/10 transition-transform duration-300 group-hover:scale-110 md:mr-6 md:mb-0">

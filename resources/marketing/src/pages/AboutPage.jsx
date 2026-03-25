@@ -34,10 +34,7 @@ const FocusCard = ({ card, index }) => {
     const ref = useReveal();
 
     return (
-        <div
-            ref={ref}
-            className={`reveal reveal-delay-${index + 1} next-card card-hover p-8`}
-        >
+        <div ref={ref} className={`reveal next-card card-hover p-8`}>
             <Icon className="mb-4 h-10 w-10 text-primary" />
             <h3 className="mb-3 text-2xl font-semibold text-foreground">
                 {card.title}

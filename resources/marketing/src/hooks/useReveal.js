@@ -1,11 +1,15 @@
 import { useEffect, useRef } from 'react';
 
-export const useReveal = (options = {}) => {
+export const useReveal = () => {
     const ref = useRef(null);
 
     useEffect(() => {
         const el = ref.current;
         if (!el) return;
+
+        // Force reflow so the browser registers the initial hidden state
+        // before we start the transition to visible
+        el.offsetHeight;
 
         const observer = new IntersectionObserver(
             ([entry]) => {
@@ -14,12 +18,12 @@ export const useReveal = (options = {}) => {
                     observer.unobserve(el);
                 }
             },
-            { threshold: options.threshold ?? 0.15 },
+            { threshold: 0.05 },
         );
 
         observer.observe(el);
         return () => observer.disconnect();
-    }, [options.threshold]);
+    }, []);
 
     return ref;
 };

@@ -168,7 +168,7 @@ const PortfolioPage = () => {
                             {filteredProjects.map((project, index) => (
                                 <div
                                     key={project.id}
-                                    className={`reveal reveal-delay-${(index % 6) + 1} h-full min-w-0`}
+                                    className="reveal h-full min-w-0"
                                 >
                                     <FolderCard project={project} />
                                 </div>

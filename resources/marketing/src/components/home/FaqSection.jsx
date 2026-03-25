@@ -51,10 +51,7 @@ const FaqItem = ({ faq, index, isOpen, setOpenIndex }) => {
     const ref = useReveal();
 
     return (
-        <div
-            ref={ref}
-            className={`reveal reveal-delay-${(index % 6) + 1} border-b border-white/10 pb-4`}
-        >
+        <div ref={ref} className="reveal border-b border-white/10 pb-4">
             <button
                 type="button"
                 onClick={() =>

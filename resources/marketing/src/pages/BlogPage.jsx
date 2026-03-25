@@ -145,7 +145,7 @@ const BlogPage = () => {
                                 return (
                                     <article
                                         key={post.slug}
-                                        className={`reveal reveal-delay-${(index % 6) + 1} next-card card-hover group flex flex-col overflow-hidden`}
+                                        className="reveal next-card card-hover group flex flex-col overflow-hidden"
                                     >
                                         <Link
                                             to={`/news/${post.slug}`}
