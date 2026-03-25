@@ -165,7 +165,10 @@
     background: hsl(var(--primary));
     padding: 0.75rem 1.5rem;
     color: hsl(var(--primary-foreground));
-    transition: color 150ms, background-color 150ms, border-color 150ms;
+    transition:
+        color 150ms,
+        background-color 150ms,
+        border-color 150ms;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
@@ -189,7 +192,10 @@
     background: transparent;
     padding: 0.75rem 1.5rem;
     color: hsl(var(--foreground));
-    transition: color 150ms, background-color 150ms, border-color 150ms;
+    transition:
+        color 150ms,
+        background-color 150ms,
+        border-color 150ms;
 }
 
 .next-button-outline:hover {
@@ -216,7 +222,10 @@
     background: hsl(var(--input));
     padding: 0.75rem 1rem;
     color: hsl(var(--foreground));
-    transition: color 150ms, background-color 150ms, border-color 150ms;
+    transition:
+        color 150ms,
+        background-color 150ms,
+        border-color 150ms;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
@@ -257,14 +266,24 @@
 }
 
 .gradient-text-nextjs {
-    background-image: linear-gradient(to bottom right, #ec4899, #ef4444, #eab308);
+    background-image: linear-gradient(
+        to bottom right,
+        #ec4899,
+        #ef4444,
+        #eab308
+    );
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
 }
 
 .gradient-text-hero {
-    background-image: linear-gradient(to right, #fff, #fff, rgba(255, 255, 255, 0.7));
+    background-image: linear-gradient(
+        to right,
+        #fff,
+        #fff,
+        rgba(255, 255, 255, 0.7)
+    );
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -397,6 +416,86 @@
 
 .faq-summary::-webkit-details-marker {
     display: none;
+}
+
+.faq-content {
+    display: grid;
+    grid-template-rows: 0fr;
+    min-height: 0;
+    overflow: hidden;
+    transition: grid-template-rows 0.3s ease;
+}
+
+.faq-content-inner {
+    min-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition:
+        opacity 0.3s ease,
+        transform 0.3s ease;
+}
+
+.faq-item[data-open='true'] .faq-content {
+    grid-template-rows: 1fr;
+}
+
+.faq-item[data-open='true'] .faq-content-inner {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Scroll reveal animations */
+@keyframes fade-up {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.reveal {
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.reveal.is-visible {
+    animation: fade-up 0.6s ease-out forwards;
+}
+
+.reveal-delay-1 {
+    animation-delay: 0.08s;
+}
+.reveal-delay-2 {
+    animation-delay: 0.16s;
+}
+.reveal-delay-3 {
+    animation-delay: 0.24s;
+}
+.reveal-delay-4 {
+    animation-delay: 0.32s;
+}
+.reveal-delay-5 {
+    animation-delay: 0.4s;
+}
+.reveal-delay-6 {
+    animation-delay: 0.48s;
+}
+
+/* Card hover lift */
+.card-hover {
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
 }
 
 .marquee {

@@ -29,6 +29,7 @@ class SiteSettingResource extends JsonResource
             'default_seo_description' => $this->default_seo_description,
             'default_og_image_url' => $this->default_og_image_path ? Storage::url($this->default_og_image_path) : null,
             'verification_meta' => $this->verification_meta ?? [],
+            'ga4_measurement_id' => $this->ga4_measurement_id,
             'home_hero' => $this->home_hero ?? [],
             'home_stats' => $this->home_stats ?? [],
             'home_portfolio_intro' => $this->home_portfolio_intro ?? [],

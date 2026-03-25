@@ -42,6 +42,16 @@
         @viteReactRefresh
         @vite(['resources/js/app.tsx', "resources/js/pages/{$page['component']}.tsx"])
         @inertiaHead
+
+        @if(!empty($page['props']['siteSettings']['ga4_measurement_id']))
+        <script async src="https://www.googletagmanager.com/gtag/js?id={{ $page['props']['siteSettings']['ga4_measurement_id'] }}"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '{{ $page['props']['siteSettings']['ga4_measurement_id'] }}');
+        </script>
+        @endif
     </head>
     <body class="font-sans antialiased">
         @inertia

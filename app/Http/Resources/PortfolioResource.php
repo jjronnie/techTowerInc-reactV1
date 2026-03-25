@@ -25,6 +25,7 @@ class PortfolioResource extends JsonResource
             'description' => $this->description,
             'project_url' => $this->project_url,
             'featured_image_url' => $this->fileUrl($this->featured_image_path),
+            'featured_image_alt' => $this->featured_image_alt,
             'home_featured_image_url' => $this->fileUrl($this->home_featured_image_path),
             'gallery_images' => collect($this->gallery_images ?? [])
                 ->map(fn (string $path) => Storage::url($path))

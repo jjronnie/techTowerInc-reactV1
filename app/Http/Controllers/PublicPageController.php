@@ -66,7 +66,7 @@ class PublicPageController extends Controller
                 '/technologies' => ['data' => $technologiesData],
             ],
             'seo' => $this->seo($request, [
-                'title' => 'Website Design in Uganda | SEO Services in Uganda | Website Development',
+                'title' => 'Website Design & SEO Services in Uganda | TechTower',
                 'description' => data_get(
                     $settings,
                     'default_seo_description',
@@ -392,6 +392,8 @@ class PublicPageController extends Controller
                 'image' => $this->absoluteUrl(data_get($postData, 'seo.og_image_url') ?: data_get($postData, 'featured_image_url')),
                 'robots' => data_get($postData, 'seo.robots'),
                 'type' => 'article',
+                'publishedTime' => optional($post->published_at)->toIso8601String(),
+                'modifiedTime' => optional($post->updated_at)->toIso8601String(),
                 'structuredData' => [
                     $this->organizationSchema('Organization'),
                     $this->articleSchema($post, $canonicalUrl),
@@ -424,6 +426,7 @@ class PublicPageController extends Controller
                 'title' => data_get($settings, 'contact_header.headline', 'Contact'),
                 'description' => data_get($settings, 'contact_header.subheadline'),
                 'canonical' => url('/contact'),
+                'keywords' => 'contact TechTower, software development inquiry Uganda, get a quote',
                 'structuredData' => [
                     $this->organizationSchema('LocalBusiness'),
                     $this->breadcrumbSchema([
@@ -560,8 +563,8 @@ class PublicPageController extends Controller
             ],
             'seo' => $this->seo($request, [
                 'title' => $category
-                    ? "{$category->name} News"
-                    : data_get($settings, 'blog_page.header_title', 'News'),
+                    ? "{$category->name} News & Articles"
+                    : data_get($settings, 'blog_page.header_title', 'Tech News & Insights | TechTower'),
                 'description' => $category
                     ? "Read {$category->name} articles and updates from TechTower."
                     : data_get($settings, 'blog_page.header_subtitle'),
@@ -610,6 +613,8 @@ class PublicPageController extends Controller
             'image' => $this->absoluteUrl(data_get($settings, 'default_og_image_url')),
             'type' => 'website',
             'appendAppName' => true,
+            'publishedTime' => null,
+            'modifiedTime' => null,
             'structuredData' => [],
         ], array_filter($overrides, fn ($value) => $value !== null));
     }

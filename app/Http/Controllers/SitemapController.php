@@ -22,17 +22,17 @@ class SitemapController extends Controller
             ->filter(fn (Product $product): bool => PublicIndexability::product($product));
 
         $staticPages = [
-            ['loc' => url('/'), 'lastmod' => null],
-            ['loc' => url('/services'), 'lastmod' => null],
-            ['loc' => url('/portfolio'), 'lastmod' => null],
-            ['loc' => url('/news'), 'lastmod' => null],
-            ['loc' => url('/about'), 'lastmod' => null],
-            ['loc' => url('/contact'), 'lastmod' => null],
-            ['loc' => url('/privacy-policy'), 'lastmod' => null],
+            ['loc' => url('/'), 'lastmod' => null, 'priority' => '1.0', 'changefreq' => 'weekly'],
+            ['loc' => url('/services'), 'lastmod' => null, 'priority' => '0.8', 'changefreq' => 'monthly'],
+            ['loc' => url('/portfolio'), 'lastmod' => null, 'priority' => '0.8', 'changefreq' => 'weekly'],
+            ['loc' => url('/news'), 'lastmod' => null, 'priority' => '0.7', 'changefreq' => 'weekly'],
+            ['loc' => url('/about'), 'lastmod' => null, 'priority' => '0.6', 'changefreq' => 'monthly'],
+            ['loc' => url('/contact'), 'lastmod' => null, 'priority' => '0.7', 'changefreq' => 'monthly'],
+            ['loc' => url('/privacy-policy'), 'lastmod' => null, 'priority' => '0.3', 'changefreq' => 'yearly'],
         ];
 
         if ($indexableProducts->isNotEmpty()) {
-            $staticPages[] = ['loc' => url('/products'), 'lastmod' => null];
+            $staticPages[] = ['loc' => url('/products'), 'lastmod' => null, 'priority' => '0.6', 'changefreq' => 'monthly'];
         }
 
         $services = Service::query()
@@ -42,6 +42,8 @@ class SitemapController extends Controller
             ->map(fn (Service $service) => [
                 'loc' => url("/services/{$service->slug}"),
                 'lastmod' => $service->updated_at?->toAtomString(),
+                'priority' => '0.7',
+                'changefreq' => 'monthly',
             ]);
 
         $portfolios = Portfolio::query()
@@ -51,12 +53,16 @@ class SitemapController extends Controller
             ->map(fn (Portfolio $portfolio) => [
                 'loc' => url("/project/{$portfolio->slug}"),
                 'lastmod' => $portfolio->updated_at?->toAtomString(),
+                'priority' => '0.7',
+                'changefreq' => 'monthly',
             ]);
 
         $products = $indexableProducts
             ->map(fn (Product $product) => [
                 'loc' => url("/products/{$product->slug}"),
                 'lastmod' => $product->updated_at?->toAtomString(),
+                'priority' => '0.6',
+                'changefreq' => 'monthly',
             ]);
 
         $posts = Post::query()
@@ -68,6 +74,8 @@ class SitemapController extends Controller
             ->map(fn (Post $post) => [
                 'loc' => url("/news/{$post->slug}"),
                 'lastmod' => $post->updated_at?->toAtomString(),
+                'priority' => '0.6',
+                'changefreq' => 'monthly',
             ]);
 
         $clients = Client::query()
@@ -80,6 +88,8 @@ class SitemapController extends Controller
             ->map(fn (Client $client) => [
                 'loc' => url("/clients/{$client->slug}"),
                 'lastmod' => $client->updated_at?->toAtomString(),
+                'priority' => '0.5',
+                'changefreq' => 'monthly',
             ]);
 
         $portfolioCategories = Category::query()
@@ -89,6 +99,8 @@ class SitemapController extends Controller
             ->map(fn (Category $category) => [
                 'loc' => url("/portfolio/category/{$category->slug}"),
                 'lastmod' => $category->updated_at?->toAtomString(),
+                'priority' => '0.5',
+                'changefreq' => 'weekly',
             ]);
 
         $postCategories = Category::query()
@@ -103,6 +115,8 @@ class SitemapController extends Controller
             ->map(fn (Category $category) => [
                 'loc' => url("/news/category/{$category->slug}"),
                 'lastmod' => $category->updated_at?->toAtomString(),
+                'priority' => '0.5',
+                'changefreq' => 'weekly',
             ]);
 
         $entries = collect($staticPages)
@@ -122,6 +136,12 @@ class SitemapController extends Controller
             $xml .= '<loc>'.htmlspecialchars($entry['loc'], ENT_XML1).'</loc>';
             if (! empty($entry['lastmod'])) {
                 $xml .= '<lastmod>'.$entry['lastmod'].'</lastmod>';
+            }
+            if (! empty($entry['changefreq'])) {
+                $xml .= '<changefreq>'.$entry['changefreq'].'</changefreq>';
+            }
+            if (! empty($entry['priority'])) {
+                $xml .= '<priority>'.$entry['priority'].'</priority>';
             }
             $xml .= '</url>';
         }

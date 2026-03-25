@@ -28,6 +28,7 @@ class SiteSetting extends Model
         'default_seo_description',
         'default_og_image_path',
         'verification_meta',
+        'ga4_measurement_id',
         'home_hero',
         'home_stats',
         'home_portfolio_intro',

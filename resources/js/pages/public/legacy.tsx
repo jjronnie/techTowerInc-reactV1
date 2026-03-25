@@ -1,13 +1,14 @@
 import PublicSeo from '@/components/public/public-seo';
 import type { PublicPageProps, SiteSettings } from '@/types';
 import RawLegacyMarketingShell from '@marketing/bridge/LegacyMarketingShell';
-import type { ComponentType } from 'react';
+import { type ComponentType } from 'react';
 
-const LegacyMarketingShell = RawLegacyMarketingShell as unknown as ComponentType<{
-    apiCache?: Record<string, unknown>;
-    path?: string;
-    siteSettings: SiteSettings;
-}>;
+const LegacyMarketingShell =
+    RawLegacyMarketingShell as unknown as ComponentType<{
+        apiCache?: Record<string, unknown>;
+        path?: string;
+        siteSettings: SiteSettings;
+    }>;
 
 type PublicLegacyPageProps = PublicPageProps & {
     legacyApiCache?: Record<string, unknown>;

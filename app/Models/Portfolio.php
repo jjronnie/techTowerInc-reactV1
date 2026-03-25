@@ -28,6 +28,7 @@ class Portfolio extends Model
         'client_id',
         'project_url',
         'featured_image_path',
+        'featured_image_alt',
         'home_featured_image_path',
         'gallery_images',
         'started_at',

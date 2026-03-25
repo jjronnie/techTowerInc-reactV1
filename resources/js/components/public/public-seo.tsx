@@ -19,7 +19,8 @@ export default function PublicSeo({ seo, siteSettings }: PublicSeoProps) {
         siteSettings.default_seo_title ||
         siteSettings.site_name ||
         'TechTower Innovations';
-    const headTitle = seo.appendAppName === false ? `__RAW_TITLE__::${title}` : title;
+    const headTitle =
+        seo.appendAppName === false ? `__RAW_TITLE__::${title}` : title;
     const verificationMeta = Array.isArray(siteSettings.verification_meta)
         ? siteSettings.verification_meta
         : [];
@@ -38,13 +39,29 @@ export default function PublicSeo({ seo, siteSettings }: PublicSeoProps) {
             <meta property="og:title" content={title} />
             <meta property="og:description" content={description} />
             <meta property="og:type" content={seo.type || 'website'} />
-            {seo.canonical && <meta property="og:url" content={seo.canonical} />}
+            {seo.canonical && (
+                <meta property="og:url" content={seo.canonical} />
+            )}
             {image && <meta property="og:image" content={image} />}
+            {seo.publishedTime && (
+                <meta
+                    property="article:published_time"
+                    content={seo.publishedTime}
+                />
+            )}
+            {seo.modifiedTime && (
+                <meta
+                    property="article:modified_time"
+                    content={seo.modifiedTime}
+                />
+            )}
 
             <meta name="twitter:card" content="summary_large_image" />
             <meta name="twitter:title" content={title} />
             <meta name="twitter:description" content={description} />
-            {seo.canonical && <meta name="twitter:url" content={seo.canonical} />}
+            {seo.canonical && (
+                <meta name="twitter:url" content={seo.canonical} />
+            )}
             {image && <meta name="twitter:image" content={image} />}
 
             {verificationMeta.map((meta, index) => {
@@ -75,7 +92,9 @@ export default function PublicSeo({ seo, siteSettings }: PublicSeoProps) {
                     );
                 }
 
-                return <meta key={`${key}-${index}`} name={key} content={value} />;
+                return (
+                    <meta key={`${key}-${index}`} name={key} content={value} />
+                );
             })}
 
             {(seo.structuredData || []).map((entry, index) => (

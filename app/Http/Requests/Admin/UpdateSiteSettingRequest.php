@@ -37,6 +37,7 @@ class UpdateSiteSettingRequest extends FormRequest
             'default_seo_title' => ['nullable', 'string', 'max:255'],
             'default_seo_description' => ['nullable', 'string'],
             'verification_meta' => ['nullable', 'array'],
+            'ga4_measurement_id' => ['nullable', 'string', 'max:255', 'regex:/^G-[A-Z0-9]+$/i'],
             'logo' => ['nullable', 'image', 'max:2048'],
             'favicon' => ['nullable', 'image', 'max:1024'],
             'default_og_image' => ['nullable', 'image', 'max:2048'],

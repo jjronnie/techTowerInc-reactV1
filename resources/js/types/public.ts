@@ -52,6 +52,8 @@ export type SeoData = {
     image?: string | null;
     type?: string | null;
     appendAppName?: boolean | null;
+    publishedTime?: string | null;
+    modifiedTime?: string | null;
     structuredData?: Array<Record<string, unknown>>;
 };
 
@@ -96,6 +98,7 @@ export type Portfolio = {
     description?: string | null;
     project_url?: string | null;
     featured_image_url?: string | null;
+    featured_image_alt?: string | null;
     home_featured_image_url?: string | null;
     gallery_images?: string[];
     primary_type?: ProjectType | null;
