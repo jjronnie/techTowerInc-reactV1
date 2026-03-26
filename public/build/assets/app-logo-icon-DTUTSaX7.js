@@ -1,1 +1,0 @@
-import{t as e}from"./jsx-runtime-C0W9Wf2W.js";var t=e();function n({src:e,alt:n,className:r,...i}){return(0,t.jsx)(`img`,{src:e??`/marketing/favicon.png`,alt:n??`TechTower icon`,className:r,...i})}export{n as t};

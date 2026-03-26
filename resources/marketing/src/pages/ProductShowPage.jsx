@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { ArrowRight, ExternalLink } from 'lucide-react';
 import { Button } from '@marketing/components/ui/button';
 import { useApi } from '@marketing/hooks/useApi';
@@ -77,12 +76,7 @@ const ProductShowPage = () => {
                     keywords={product.seo?.keywords}
                 />
 
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6 }}
-                    className="mx-auto max-w-3xl text-center"
-                >
+                <div className="mx-auto max-w-3xl text-center">
                     <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-border/60 px-3 py-1 text-xs font-semibold tracking-[0.2em] text-muted-foreground uppercase">
                         {categoryLabel}
                     </span>
@@ -116,22 +110,17 @@ const ProductShowPage = () => {
                             <Link to="/products">View All Products</Link>
                         </Button>
                     </div>
-                </motion.div>
+                </div>
 
                 {product.image_url && (
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.1 }}
-                        className="mt-12"
-                    >
+                    <div className="mt-12">
                         <img
                             src={product.image_url}
                             alt={product.name}
                             className="w-full rounded-xl border border-border/60 object-cover shadow-lg"
                             loading="lazy"
                         />
-                    </motion.div>
+                    </div>
                 )}
 
                 <div className="mt-12 grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">

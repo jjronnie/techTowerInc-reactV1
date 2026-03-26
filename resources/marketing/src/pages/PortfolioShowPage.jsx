@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import {
     ArrowRight,
     ArrowUpRight,
@@ -116,12 +115,7 @@ const PortfolioShowPage = () => {
                     canonical={`/project/${project.slug}`}
                 />
 
-                <motion.div
-                    initial={false}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6 }}
-                    className="mx-auto max-w-4xl text-center"
-                >
+                <div className="mx-auto max-w-4xl text-center">
                     <div className="mb-5 flex flex-wrap justify-center gap-2">
                         {categories.map((category) => (
                             <Link
@@ -168,14 +162,9 @@ const PortfolioShowPage = () => {
                             <Link to="/portfolio">View All Projects</Link>
                         </Button>
                     </div>
-                </motion.div>
+                </div>
 
-                <motion.div
-                    initial={false}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.1 }}
-                    className="mt-12 overflow-hidden rounded-xl border border-border/60 bg-muted/20"
-                >
+                <div className="mt-12 overflow-hidden rounded-xl border border-border/60 bg-muted/20">
                     {project.featured_image_url ? (
                         <img
                             src={project.featured_image_url}
@@ -188,7 +177,7 @@ const PortfolioShowPage = () => {
                             <Layers3 className="h-12 w-12 text-muted-foreground/60" />
                         </div>
                     )}
-                </motion.div>
+                </div>
 
                 <div className="mt-12 grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
                     <div className="space-y-8">

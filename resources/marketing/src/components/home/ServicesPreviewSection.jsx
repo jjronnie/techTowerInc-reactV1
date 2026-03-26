@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Button } from '@marketing/components/ui/button';
 import { Link } from 'react-router-dom';
 import {
@@ -33,20 +32,6 @@ const ServicesPreviewSection = () => {
     const { settings } = useSiteSettings();
     const { data, loading, error } = useApi('/services');
     const servicesData = data?.data || [];
-    const containerVariants = {
-        hidden: { opacity: 0 },
-        visible: {
-            opacity: 1,
-            transition: {
-                staggerChildren: 0.15,
-            },
-        },
-    };
-
-    const itemVariants = {
-        hidden: { opacity: 0, y: 20 },
-        visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-    };
 
     const previewServices = servicesData.slice(0, 3).map((service) => ({
         ...service,
@@ -60,13 +45,7 @@ const ServicesPreviewSection = () => {
     return (
         <section className="next-section-padding bg-background">
             <div className="next-container">
-                <motion.div
-                    className="mb-16 max-w-2xl text-left"
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.3 }}
-                    transition={{ duration: 0.6 }}
-                >
+                <div className="mb-16 max-w-2xl text-left">
                     <span className="text-xs font-semibold tracking-[0.2em] text-muted-foreground uppercase">
                         {intro.label || 'Services'}
                     </span>
@@ -77,7 +56,7 @@ const ServicesPreviewSection = () => {
                         {intro.subheading ||
                             'We design, engineer, and launch modern platforms across web, mobile, data, and security.'}
                     </p>
-                </motion.div>
+                </div>
 
                 {loading && (
                     <div className="grid gap-8 md:grid-cols-3">
@@ -111,22 +90,11 @@ const ServicesPreviewSection = () => {
                     </div>
                 )}
                 {!loading && !error && (
-                    <motion.div
-                        className="grid gap-8 md:grid-cols-3"
-                        variants={containerVariants}
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true, amount: 0.2 }}
-                    >
+                    <div className="grid gap-8 md:grid-cols-3">
                         {previewServices.map((service) => (
-                            <motion.div
+                            <div
                                 key={service.id}
                                 className="next-card flex flex-col"
-                                variants={itemVariants}
-                                whileHover={{
-                                    y: -5,
-                                    transition: { duration: 0.2 },
-                                }}
                             >
                                 <div className="mb-5 inline-block self-start rounded-xl bg-white/10 p-3">
                                     <service.icon className="h-6 w-6 text-foreground" />
@@ -161,17 +129,11 @@ const ServicesPreviewSection = () => {
                                         <ArrowRight className="ml-1 h-4 w-4" />
                                     </Link>
                                 </Button>
-                            </motion.div>
+                            </div>
                         ))}
-                    </motion.div>
+                    </div>
                 )}
-                <motion.div
-                    className="mt-16 text-left"
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.3 }}
-                    transition={{ duration: 0.6 }}
-                >
+                <div className="mt-16 text-left">
                     <Button
                         asChild
                         size="lg"
@@ -180,10 +142,10 @@ const ServicesPreviewSection = () => {
                     >
                         <Link to="/services">
                             Explore All Services{' '}
-                            <ArrowRight className="ml-2 h-5 w-5" />
+                            <ArrowRight className="ml-2 h-5" />
                         </Link>
                     </Button>
-                </motion.div>
+                </div>
             </div>
         </section>
     );

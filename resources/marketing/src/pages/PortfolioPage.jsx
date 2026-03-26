@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { motion } from 'framer-motion';
 import { Button } from '@marketing/components/ui/button';
 import { Link, useParams } from 'react-router-dom';
 import { Layers } from 'lucide-react';
@@ -63,12 +62,6 @@ const PortfolioPage = () => {
         }
     }, [activeTypeSlug, availableTypes]);
 
-    const fadeInProps = (delay = 0) => ({
-        initial: false,
-        animate: { opacity: 1, y: 0 },
-        transition: { duration: 0.6, delay },
-    });
-
     return (
         <div className="bg-background pt-24 pb-16 text-foreground md:pt-32">
             <Seo
@@ -76,7 +69,7 @@ const PortfolioPage = () => {
                 description={pageCopy.header_subtitle}
             />
             <header className="next-container next-section-padding text-center">
-                <motion.div {...fadeInProps()} className="mx-auto max-w-3xl">
+                <div className="mx-auto max-w-3xl">
                     <div className="mb-4 flex flex-wrap justify-center gap-3">
                         <span className="inline-flex items-center gap-2 rounded-full border border-border/60 px-3 py-1 text-xs font-semibold tracking-[0.2em] text-muted-foreground uppercase">
                             {pageCopy.header_label || 'Portfolio vault'}
@@ -101,13 +94,10 @@ const PortfolioPage = () => {
                         {pageCopy.header_subtitle ||
                             'A selection of projects crafted with performance, clarity, and long-term scale in mind.'}
                     </p>
-                </motion.div>
+                </div>
 
                 {!loading && !error && availableTypes.length > 0 && (
-                    <motion.div
-                        {...fadeInProps(0.1)}
-                        className="mt-12 flex flex-wrap items-center justify-center gap-x-5 gap-y-3"
-                    >
+                    <div className="mt-12 flex flex-wrap items-center justify-center gap-x-5 gap-y-3">
                         <button
                             type="button"
                             onClick={() => setActiveTypeSlug('all')}
@@ -136,7 +126,7 @@ const PortfolioPage = () => {
                                 <span>{type.name}</span>
                             </button>
                         ))}
-                    </motion.div>
+                    </div>
                 )}
             </header>
 
@@ -168,7 +158,7 @@ const PortfolioPage = () => {
                             {filteredProjects.map((project, index) => (
                                 <div
                                     key={project.id}
-                                    className="reveal h-full min-w-0"
+                                    className="h-full min-w-0"
                                 >
                                     <FolderCard project={project} />
                                 </div>
@@ -190,7 +180,7 @@ const PortfolioPage = () => {
 
             <section className="next-section-padding">
                 <div className="next-container text-center">
-                    <motion.div {...fadeInProps()}>
+                    <div>
                         <Layers className="mx-auto mb-6 h-12 w-12 text-foreground" />
                         <h2 className="mb-6 text-3xl font-semibold text-foreground md:text-4xl">
                             {pageCopy.cta_heading || 'Have a project in mind?'}
@@ -209,7 +199,7 @@ const PortfolioPage = () => {
                                     'Start Your Project'}
                             </Link>
                         </Button>
-                    </motion.div>
+                    </div>
                 </div>
             </section>
         </div>

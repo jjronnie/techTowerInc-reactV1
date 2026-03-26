@@ -445,20 +445,6 @@
     transform: translateY(0);
 }
 
-/* Scroll reveal animations */
-.reveal {
-    opacity: 0;
-    transform: translateY(20px);
-    transition:
-        opacity 0.5s ease,
-        transform 0.5s ease;
-}
-
-.reveal.is-visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
 /* Card hover lift */
 .card-hover {
     transition:
@@ -523,19 +509,6 @@
     to {
         transform: translateX(-50%);
     }
-}
-
-.scroll-reveal {
-    opacity: 0;
-    transform: translateY(14px);
-    transition:
-        opacity 600ms ease,
-        transform 600ms ease;
-}
-
-.scroll-reveal.revealed {
-    opacity: 1;
-    transform: translateY(0);
 }
 
 .legacy-prose {

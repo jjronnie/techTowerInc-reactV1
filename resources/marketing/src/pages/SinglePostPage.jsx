@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import { motion } from 'framer-motion';
 import { Link, useParams } from 'react-router-dom';
 import {
     ArrowLeft,
@@ -39,12 +38,6 @@ const SinglePostPage = () => {
         () => pickRelatedProjectsForPost(post, projectsData?.data || [], 2),
         [post, projectsData?.data],
     );
-
-    const fadeInProps = (delay = 0) => ({
-        initial: false,
-        animate: { opacity: 1, y: 0 },
-        transition: { duration: 0.6, delay },
-    });
 
     if (loading) {
         return (
@@ -150,7 +143,7 @@ const SinglePostPage = () => {
                     publishedTime={post.published_at}
                     modifiedTime={post.updated_at}
                 />
-                <motion.div {...fadeInProps()} className="mb-8">
+                <div className="mb-8">
                     <Button
                         variant="ghost"
                         asChild
@@ -160,11 +153,11 @@ const SinglePostPage = () => {
                             <ArrowLeft className="mr-2 h-4 w-4" /> Back to News
                         </Link>
                     </Button>
-                </motion.div>
+                </div>
 
                 <article>
                     <header className="mb-12 text-center">
-                        <motion.div {...fadeInProps(0.1)}>
+                        <div>
                             {primaryCategory && (
                                 <div className="mb-4 flex flex-wrap justify-center gap-2">
                                     {categories.map((category) => (
@@ -203,13 +196,10 @@ const SinglePostPage = () => {
                                     </div>
                                 )}
                             </div>
-                        </motion.div>
+                        </div>
                     </header>
 
-                    <motion.div
-                        {...fadeInProps(0.2)}
-                        className="mb-12 aspect-[16/9] overflow-hidden rounded-lg shadow-lg md:aspect-[2/1]"
-                    >
+                    <div className="mb-12 aspect-[16/9] overflow-hidden rounded-lg shadow-lg md:aspect-[2/1]">
                         <img
                             alt={post.image_alt || post.title}
                             className="h-full w-full object-cover"
@@ -219,18 +209,14 @@ const SinglePostPage = () => {
                                 'https://images.unsplash.com/photo-1504983875-d3b163aba9e6'
                             }
                         />
-                    </motion.div>
+                    </div>
 
-                    <motion.div
-                        {...fadeInProps(0.3)}
+                    <div
                         className="legacy-prose legacy-prose-lg mx-auto max-w-none text-foreground"
                         dangerouslySetInnerHTML={{ __html: post.content }}
                     />
 
-                    <motion.footer
-                        {...fadeInProps(0.4)}
-                        className="mt-12 border-t border-border pt-8"
-                    >
+                    <footer className="mt-12 border-t border-border pt-8">
                         <div className="mb-6 flex flex-wrap items-center">
                             <Tag className="mr-2 h-5 w-5 text-muted-foreground" />
                             <span className="mr-2 text-sm font-semibold text-muted-foreground">
@@ -287,7 +273,7 @@ const SinglePostPage = () => {
                                 </Button>
                             </div>
                         </div>
-                    </motion.footer>
+                    </footer>
                 </article>
 
                 {(relatedServices.length > 0 || relatedProjects.length > 0) && (

@@ -16,7 +16,6 @@ import { Link } from 'react-router-dom';
 import { useApi } from '@marketing/hooks/useApi';
 import { useSiteSettings } from '@marketing/context/SiteSettingsContext';
 import Seo from '@marketing/components/Seo';
-import { useReveal } from '@marketing/hooks/useReveal';
 
 const iconMap = {
     globe: Globe,
@@ -32,13 +31,11 @@ const iconMap = {
 
 const ServiceCard = ({ service, index }) => {
     const Icon = iconMap[service.icon] || Code;
-    const ref = useReveal();
 
     return (
         <div
-            ref={ref}
             id={service.slug}
-            className={`reveal next-card card-hover group p-6 md:p-8`}
+            className="next-card card-hover group p-6 md:p-8"
         >
             <div className="flex flex-col md:flex-row md:items-start">
                 <div className="mr-0 mb-4 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-white/10 transition-transform duration-300 group-hover:scale-110 md:mr-6 md:mb-0">
@@ -91,8 +88,6 @@ const ServicesPage = () => {
     const { data, loading, error } = useApi('/services');
     const servicesData = data?.data || [];
     const pageCopy = settings?.services_page || {};
-    const headerRef = useReveal();
-    const ctaRef = useReveal();
 
     return (
         <div className="bg-background pt-24 pb-16 text-foreground md:pt-32">
@@ -101,7 +96,7 @@ const ServicesPage = () => {
                 description={pageCopy.header_subtitle}
             />
             <header className="next-container next-section-padding text-center">
-                <div ref={headerRef} className="reveal mx-auto max-w-3xl">
+                <div className="mx-auto max-w-3xl">
                     <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-border/60 px-3 py-1 text-xs font-semibold tracking-[0.2em] text-muted-foreground uppercase">
                         {pageCopy.header_label || 'Service catalog'}
                     </span>
@@ -159,7 +154,7 @@ const ServicesPage = () => {
 
             <section className="next-section-padding">
                 <div className="next-container text-center">
-                    <div ref={ctaRef} className="reveal">
+                    <div>
                         <Code className="mx-auto mb-6 h-12 w-12 text-foreground" />
                         <h2 className="mb-6 text-3xl font-semibold text-foreground md:text-4xl">
                             {pageCopy.cta_heading ||

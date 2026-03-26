@@ -1,23 +1,18 @@
 import React, { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { useSiteSettings } from '@marketing/context/SiteSettingsContext';
-import { useReveal } from '@marketing/hooks/useReveal';
 
 const FaqSection = () => {
     const { settings } = useSiteSettings();
     const faqConfig = settings?.home_faqs || {};
     const faqs = faqConfig.items?.length ? faqConfig.items : [];
     const [openIndex, setOpenIndex] = useState(-1);
-    const headerRef = useReveal();
 
     return (
         <section className="next-section-padding bg-background">
             <div className="next-container">
                 <div className="next-card p-8 md:p-12">
-                    <div
-                        ref={headerRef}
-                        className="reveal mb-10 flex flex-col items-center text-center"
-                    >
+                    <div className="mb-10 flex flex-col items-center text-center">
                         <span className="text-xs font-semibold tracking-[0.3em] text-muted-foreground uppercase">
                             {faqConfig.label || 'Frequently Asked Questions'}
                         </span>
@@ -48,10 +43,8 @@ const FaqSection = () => {
 };
 
 const FaqItem = ({ faq, index, isOpen, setOpenIndex }) => {
-    const ref = useReveal();
-
     return (
-        <div ref={ref} className="reveal border-b border-white/10 pb-4">
+        <div className="border-b border-white/10 pb-4">
             <button
                 type="button"
                 onClick={() =>

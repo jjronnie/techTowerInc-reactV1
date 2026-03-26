@@ -16,7 +16,6 @@ import Seo from '@marketing/components/Seo';
 import WhyChooseUsSection from '@marketing/components/about/WhyChooseUsSection';
 import TeamShowcaseSection from '@marketing/components/about/TeamShowcaseSection';
 import TestimonialsSection from '@marketing/components/home/TestimonialsSection';
-import { useReveal } from '@marketing/hooks/useReveal';
 
 const iconMap = {
     award: Award,
@@ -31,10 +30,9 @@ const iconMap = {
 
 const FocusCard = ({ card, index }) => {
     const Icon = iconMap[card.icon_key] || Code;
-    const ref = useReveal();
 
     return (
-        <div ref={ref} className={`reveal next-card card-hover p-8`}>
+        <div className="next-card card-hover p-8">
             <Icon className="mb-4 h-10 w-10 text-primary" />
             <h3 className="mb-3 text-2xl font-semibold text-foreground">
                 {card.title}
@@ -54,9 +52,6 @@ const AboutPage = () => {
     const whyChooseUs = settings?.about_why_choose_us || {};
     const team = settings?.about_team || {};
     const cta = settings?.about_cta || {};
-    const headerRef = useReveal();
-    const storyRef = useReveal();
-    const ctaRef = useReveal();
 
     const focusCards =
         cards.length > 0
@@ -91,7 +86,7 @@ const AboutPage = () => {
             />
 
             <header className="next-container next-section-padding text-center">
-                <div ref={headerRef} className="reveal mx-auto max-w-3xl">
+                <div className="mx-auto max-w-3xl">
                     <span className="inline-flex items-center gap-2 rounded-full border border-border/60 px-3 py-1 text-xs font-semibold tracking-[0.2em] text-muted-foreground uppercase">
                         {header.badge_text || 'Our Story'}
                     </span>
@@ -108,10 +103,7 @@ const AboutPage = () => {
 
             <section className="next-section-padding">
                 <div className="next-container">
-                    <div
-                        ref={storyRef}
-                        className="reveal grid items-center gap-12 lg:grid-cols-[1fr_0.95fr]"
-                    >
+                    <div className="grid items-center gap-12 lg:grid-cols-[1fr_0.95fr]">
                         <div className="order-2 lg:order-1">
                             <h2 className="mb-6 text-3xl font-semibold text-foreground">
                                 {story.heading || 'From Vision to Reality'}
@@ -192,7 +184,7 @@ const AboutPage = () => {
 
             <section className="next-section-padding">
                 <div className="next-container text-center">
-                    <div ref={ctaRef} className="reveal mx-auto max-w-3xl">
+                    <div className="mx-auto max-w-3xl">
                         <Briefcase className="mx-auto mb-6 h-12 w-12 text-primary" />
                         <h2 className="mb-6 text-3xl font-semibold text-foreground md:text-4xl">
                             {cta.heading || 'Join Us on Our Journey'}

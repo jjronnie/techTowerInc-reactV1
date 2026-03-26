@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Button } from '@marketing/components/ui/button';
 import { ArrowRight, CalendarDays, UserCircle } from 'lucide-react';
 import { Link, useLocation, useParams } from 'react-router-dom';
@@ -38,12 +37,6 @@ const BlogPage = () => {
               .join(' ')
         : null;
 
-    const fadeInProps = (delay = 0) => ({
-        initial: { opacity: 0, y: 20 },
-        whileInView: { opacity: 1, y: 0 },
-        viewport: { once: true, amount: 0.2 },
-        transition: { duration: 0.6, delay },
-    });
     const buildPageUrl = (page) => {
         const params = new URLSearchParams();
 
@@ -68,7 +61,7 @@ const BlogPage = () => {
                 description={pageCopy.header_subtitle}
             />
             <header className="next-container next-section-padding text-center">
-                <motion.div {...fadeInProps()} className="mx-auto max-w-3xl">
+                <div className="mx-auto max-w-3xl">
                     <div className="mb-4 flex flex-wrap justify-center gap-3">
                         <span className="inline-flex items-center gap-2 rounded-full border border-border/60 px-3 py-1 text-xs font-semibold tracking-[0.2em] text-muted-foreground uppercase">
                             {pageCopy.header_label || 'Tech Insights'}
@@ -93,7 +86,7 @@ const BlogPage = () => {
                         {pageCopy.header_subtitle ||
                             'Fresh perspectives from the TechTower team on building, scaling, and operating modern products.'}
                     </p>
-                </motion.div>
+                </div>
             </header>
 
             <section className="next-section-padding pt-0">
@@ -145,7 +138,7 @@ const BlogPage = () => {
                                 return (
                                     <article
                                         key={post.slug}
-                                        className="reveal next-card card-hover group flex flex-col overflow-hidden"
+                                        className="next-card card-hover group flex flex-col overflow-hidden"
                                     >
                                         <Link
                                             to={`/news/${post.slug}`}

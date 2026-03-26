@@ -3,20 +3,15 @@ import { Button } from '@marketing/components/ui/button';
 import { ArrowRight, FileText, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useSiteSettings } from '@marketing/context/SiteSettingsContext';
-import { useReveal } from '@marketing/hooks/useReveal';
 
 const CtaSection = () => {
     const { settings } = useSiteSettings();
     const cta = settings?.home_cta || {};
-    const revealRef = useReveal();
 
     return (
         <section className="next-section-padding bg-background">
             <div className="next-container">
-                <div
-                    ref={revealRef}
-                    className="reveal card-hover next-card relative overflow-hidden p-10 text-center md:p-16 lg:p-20"
-                >
+                <div className="card-hover next-card relative overflow-hidden p-10 text-center md:p-16 lg:p-20">
                     <div className="relative z-10 mx-auto flex max-w-2xl flex-col items-center">
                         <div className="mb-6 inline-flex items-center justify-center rounded-full bg-white/10 p-3 transition-transform duration-300 hover:scale-110">
                             <Zap className="h-7 w-7 text-foreground" />

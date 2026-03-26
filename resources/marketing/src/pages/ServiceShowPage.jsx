@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { Button } from '@marketing/components/ui/button';
 import { ArrowRight, CheckCircle } from 'lucide-react';
 import { useApi } from '@marketing/hooks/useApi';
@@ -112,12 +111,7 @@ const ServiceShowPage = () => {
                     image={service.seo?.og_image_url}
                     keywords={service.seo?.keywords}
                 />
-                <motion.div
-                    initial={false}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6 }}
-                    className="mx-auto max-w-3xl text-center"
-                >
+                <div className="mx-auto max-w-3xl text-center">
                     <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-border/60 px-3 py-1 text-xs font-semibold tracking-[0.2em] text-muted-foreground uppercase">
                         Service details
                     </span>
@@ -145,7 +139,7 @@ const ServiceShowPage = () => {
                             <Link to="/services">View All Services</Link>
                         </Button>
                     </div>
-                </motion.div>
+                </div>
 
                 <div className="mt-12 grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
                     <div className="next-card">
