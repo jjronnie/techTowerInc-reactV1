@@ -21,8 +21,8 @@ const HeroSection = () => {
     const hero = settings?.home_hero || {};
     const headlineText =
         hero.headline ||
-        'Build standout digital products with meaningful experiences that scale.';
-    const emphasisText = hero.headline_emphasis || 'meaningful';
+        'Website design, SEO, and software that outshine competitors and drive revenue.';
+    const emphasisText = hero.headline_emphasis || 'outshine competitors';
     const headlineParts = headlineText.split(emphasisText);
     const techIcons = [
         {
@@ -144,7 +144,7 @@ const HeroSection = () => {
 
                 <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
                     {hero.subheadline ||
-                        'TechTower Inc delivers premium software, product strategy, and automation to help teams launch faster, engage users, and stay ahead of change.'}
+                        'TechTower Inc delivers premium website design, SEO services, product strategy, and automation to help businesses in Uganda launch faster, engage users, and stay ahead of change.'}
                 </p>
 
                 <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">

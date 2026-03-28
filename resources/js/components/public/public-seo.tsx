@@ -11,7 +11,7 @@ export default function PublicSeo({ seo, siteSettings }: PublicSeoProps) {
     const description =
         seo.description ||
         siteSettings.default_seo_description ||
-        'TechTower builds websites, software platforms, and digital systems for ambitious teams.';
+        'TechTower Inc delivers premium website design, SEO services, product strategy, and automation to help businesses in Uganda launch faster and grow.';
     const image = seo.image || siteSettings.default_og_image_url || undefined;
     const robots = seo.robots || 'index, follow, max-image-preview:large';
     const title =

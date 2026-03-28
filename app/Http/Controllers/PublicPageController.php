@@ -70,7 +70,7 @@ class PublicPageController extends Controller
                 'description' => data_get(
                     $settings,
                     'default_seo_description',
-                    'TechTower builds websites, software platforms, and digital systems for businesses in Uganda.',
+                    'TechTower Inc delivers premium software, website design, SEO services, product strategy, and automation to help businesses in Uganda launch faster and grow.',
                 ),
                 'canonical' => url('/'),
                 'keywords' => 'software development company Uganda, tech company Kampala, digital solutions Uganda',

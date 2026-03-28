@@ -94,11 +94,11 @@ const TestimonialsSection = () => {
                     </span>
                     <h2 className="mt-3 mb-4 text-3xl font-semibold text-foreground md:text-4xl">
                         {testimonialConfig.heading ||
-                            'Trusted by product leaders and innovators.'}
+                            'Recognised as the best website designers in Uganda.'}
                     </h2>
                     <p className="text-lg text-balance text-muted-foreground">
                         {testimonialConfig.subheading ||
-                            'Hear how teams are growing faster with TechTower on their side.'}
+                            'See how businesses grow faster with TechTower website design and SEO on their side.'}
                     </p>
                 </div>
 

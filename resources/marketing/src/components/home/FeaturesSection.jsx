@@ -78,11 +78,11 @@ const FeaturesSection = () => {
                     </span>
                     <h2 className="mt-3 mb-4 text-3xl font-semibold text-foreground md:text-4xl">
                         {featuresConfig.heading ||
-                            'Modern product delivery with a relentless focus on outcomes.'}
+                            'Rank higher on Google and attract customers actively searching for your services.'}
                     </h2>
                     <p className="text-lg text-balance text-muted-foreground">
                         {featuresConfig.subheading ||
-                            'We blend engineering, design, and growth strategy to help teams build faster, iterate smarter, and ship with confidence.'}
+                            'From search engine optimization to modern web development, we help your business get found, get clicks, and get customers.'}
                     </p>
                 </div>
 

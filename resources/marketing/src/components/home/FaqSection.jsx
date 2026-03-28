@@ -16,6 +16,10 @@ const FaqSection = () => {
                         <span className="text-xs font-semibold tracking-[0.3em] text-muted-foreground uppercase">
                             {faqConfig.label || 'Frequently Asked Questions'}
                         </span>
+                        <h2 className="mt-3 mb-4 text-3xl font-semibold text-foreground md:text-4xl">
+                            {faqConfig.heading ||
+                                'Common questions about website design, SEO, and our services.'}
+                        </h2>
                         <p className="mt-3 max-w-2xl text-lg text-muted-foreground">
                             {faqConfig.subheading ||
                                 'Everything teams ask before starting a new build with TechTower.'}

@@ -46,6 +46,7 @@ const StatsSection = () => {
             className="next-section-padding bg-black"
         >
             <div className="next-container">
+                <h2 className="sr-only">Our Track Record</h2>
                 <div className="grid grid-cols-2 gap-8 text-center md:grid-cols-4">
                     {stats.map((stat, index) => (
                         <div key={stat.label}>

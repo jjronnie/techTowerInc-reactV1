@@ -18,11 +18,11 @@ const CtaSection = () => {
                         </div>
                         <h2 className="mb-6 text-3xl font-semibold text-foreground md:text-4xl">
                             {cta.heading ||
-                                "Let's build your next flagship product."}
+                                'Ready to grow your business with website design and SEO?'}
                         </h2>
                         <p className="mb-10 text-lg text-balance text-muted-foreground">
                             {cta.body ||
-                                'Book a discovery call and get a tailored roadmap, timeline, and delivery plan from our product team.'}
+                                'Share your goals with us and get a tailored plan for website design, development, and search engine optimization that drives real results.'}
                         </p>
                         <div className="flex flex-wrap justify-center gap-4">
                             <Button

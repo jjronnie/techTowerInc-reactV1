@@ -60,7 +60,7 @@ const PortfolioPreviewSection = () => {
                     </span>
                     <h2 className="mt-3 mb-4 text-3xl font-semibold text-foreground md:text-4xl">
                         {intro.heading ||
-                            'A closer look at the products and platforms we have shipped.'}
+                            'Explore our recent website design and development projects.'}
                     </h2>
                 </div>
 

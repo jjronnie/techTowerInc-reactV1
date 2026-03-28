@@ -50,11 +50,12 @@ const ServicesPreviewSection = () => {
                         {intro.label || 'Services'}
                     </span>
                     <h2 className="mt-3 mb-4 text-3xl font-semibold text-foreground md:text-4xl">
-                        {intro.heading || 'Built to accelerate your roadmap.'}
+                        {intro.heading ||
+                            'We build websites that outperform in your industry and drive conversions.'}
                     </h2>
                     <p className="text-lg text-balance text-muted-foreground">
                         {intro.subheading ||
-                            'We design, engineer, and launch modern platforms across web, mobile, data, and security.'}
+                            'We work in website design, development, SEO, and e-commerce to help businesses rank higher on Google and turn visitors into customers.'}
                     </p>
                 </div>
 
