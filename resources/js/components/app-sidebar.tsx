@@ -37,6 +37,7 @@ import { index as postsIndex } from '@/routes/admin/posts';
 import { index as teamMembersIndex } from '@/routes/admin/team-members';
 import { index as technologiesIndex } from '@/routes/admin/technologies';
 import { index as contactSubmissionsIndex } from '@/routes/admin/contact-submissions';
+import { index as clientSubmissionsIndex } from '@/routes/admin/client-project-submissions';
 import { index as usersIndex } from '@/routes/admin/users';
 import { edit as siteSettingsEdit } from '@/routes/admin/site-settings';
 
@@ -100,6 +101,11 @@ export function AppSidebar() {
             title: 'Contact Submissions',
             href: contactSubmissionsIndex(),
             icon: Inbox,
+        },
+        {
+            title: 'Client Project Submissions',
+            href: clientSubmissionsIndex(),
+            icon: Folder,
         },
         {
             title: 'Users',

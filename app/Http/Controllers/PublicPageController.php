@@ -626,7 +626,13 @@ class PublicPageController extends Controller
 
     private function siteSettingsModel(): SiteSetting
     {
-        return $this->siteSettingsModel ??= SiteSetting::query()->firstOrFail();
+        if ($this->siteSettingsModel === null) {
+            $this->siteSettingsModel = SiteSetting::query()->first() ?? SiteSetting::create([
+                'site_name' => config('app.name', 'TechTower Inc'),
+            ]);
+        }
+
+        return $this->siteSettingsModel;
     }
 
     private function cleanText(?string $value, int $limit = 180): string

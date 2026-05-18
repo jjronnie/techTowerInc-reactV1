@@ -43,6 +43,11 @@ class Client extends Model
             ->orderBy('title');
     }
 
+    public function projectSubmissions(): HasMany
+    {
+        return $this->hasMany(ClientProjectSubmission::class);
+    }
+
     protected function getSlugSourceColumn(): string
     {
         return 'name';
