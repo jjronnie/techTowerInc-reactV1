@@ -42,7 +42,7 @@ class ServiceResource extends JsonResource
                 'description' => $this->seo_description,
                 'keywords' => $this->seo_keywords,
                 'og_image_path' => $this->og_image_path,
-                'og_image_url' => $this->og_image_path ? Storage::url($this->og_image_path) : null,
+                'og_image_url' => $this->og_image_path ? Storage::disk('public')->url($this->og_image_path) : null,
             ],
         ];
     }

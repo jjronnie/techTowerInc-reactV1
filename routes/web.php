@@ -15,23 +15,10 @@ use App\Http\Controllers\Admin\TechnologyController as AdminTechnologyController
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PublicClientSubmissionController;
-use App\Http\Controllers\PublicPageController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Middleware\EnsureAdmin;
 use App\Http\Middleware\PreventSearchIndexing;
-use App\Models\Portfolio;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
-Route::get('blog/{path?}', function (Request $request, ?string $path = null) {
-    $target = '/news'.($path ? "/{$path}" : '');
-
-    if ($request->getQueryString()) {
-        $target .= '?'.$request->getQueryString();
-    }
-
-    return redirect($target, 301);
-})->where('path', '.*');
 
 Route::get('llms.txt', function () {
     abort_unless(is_file(public_path('llms.txt')), 404);
@@ -42,45 +29,6 @@ Route::get('llms.txt', function () {
         ['Content-Type' => 'text/plain; charset=UTF-8'],
     );
 })->name('llms');
-
-Route::get('/', [PublicPageController::class, 'home'])->name('public.home');
-Route::get('about', [PublicPageController::class, 'about'])->name('public.about');
-Route::get('services', [PublicPageController::class, 'servicesIndex'])->name('public.services.index');
-Route::get('services/{service:slug}', [PublicPageController::class, 'serviceShow'])
-    ->name('public.services.show')
-    ->missing(fn (Request $request) => app(PublicPageController::class)->notFound($request));
-Route::get('portfolio', [PublicPageController::class, 'portfolioIndex'])->name('public.portfolio.index');
-Route::get('portfolio/category/{category:slug}', [PublicPageController::class, 'portfolioCategory'])
-    ->name('public.portfolio.category')
-    ->missing(fn (Request $request) => app(PublicPageController::class)->notFound($request));
-Route::get('project/{portfolio:slug}', [PublicPageController::class, 'projectShow'])
-    ->name('public.projects.show')
-    ->missing(fn (Request $request) => app(PublicPageController::class)->notFound($request));
-Route::get('portfolio/{portfolio:slug}', function (Request $request, Portfolio $portfolio) {
-    $target = route('public.projects.show', $portfolio, false);
-
-    if ($request->getQueryString()) {
-        $target .= '?'.$request->getQueryString();
-    }
-
-    return redirect($target, 301);
-})->missing(fn (Request $request) => app(PublicPageController::class)->notFound($request));
-Route::get('clients/{client:slug}', [PublicPageController::class, 'clientShow'])
-    ->name('public.clients.show')
-    ->missing(fn (Request $request) => app(PublicPageController::class)->notFound($request));
-Route::get('products', [PublicPageController::class, 'productsIndex'])->name('public.products.index');
-Route::get('products/{product:slug}', [PublicPageController::class, 'productShow'])
-    ->name('public.products.show')
-    ->missing(fn (Request $request) => app(PublicPageController::class)->notFound($request));
-Route::get('news', [PublicPageController::class, 'newsIndex'])->name('public.news.index');
-Route::get('news/category/{category:slug}', [PublicPageController::class, 'newsCategory'])
-    ->name('public.news.category')
-    ->missing(fn (Request $request) => app(PublicPageController::class)->notFound($request));
-Route::get('news/{post:slug}', [PublicPageController::class, 'newsShow'])
-    ->name('public.news.show')
-    ->missing(fn (Request $request) => app(PublicPageController::class)->notFound($request));
-Route::get('contact', [PublicPageController::class, 'contact'])->name('public.contact');
-Route::get('privacy-policy', [PublicPageController::class, 'privacy'])->name('public.privacy');
 
 Route::get('sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 Route::get('robots.txt', [SitemapController::class, 'robots'])->name('robots');
@@ -116,8 +64,6 @@ Route::get('dashboard', DashboardController::class)
 
 require __DIR__.'/settings.php';
 
-Route::fallback([PublicPageController::class, 'notFound']);
-
 // Public client project submission (signed URLs)
 Route::get('/client-submission/{token}', [PublicClientSubmissionController::class, 'show'])
     ->name('client.submission.show')
@@ -148,12 +94,18 @@ Route::middleware(['auth', 'verified', PreventSearchIndexing::class, EnsureAdmin
     ->group(function () {
         Route::resource('client-project-submissions', ClientProjectSubmissionController::class)
             ->parameters(['client-project-submissions' => 'submission']);
-    Route::post('client-project-submissions/{submission}/revoke', [ClientProjectSubmissionController::class, 'revoke'])
-        ->name('client-project-submissions.revoke');
-    Route::post('client-project-submissions/{submission}/regenerate', [ClientProjectSubmissionController::class, 'regenerate'])
-        ->name('client-project-submissions.regenerate');
-    Route::delete('client-project-submissions/logos/{logo}', [ClientProjectSubmissionController::class, 'deleteLogo'])
-        ->name('client-project-submissions.deleteLogo');
-    Route::delete('client-project-submissions/media/{media}', [ClientProjectSubmissionController::class, 'deleteMedia'])
-        ->name('client-project-submissions.deleteMedia');
+        Route::post('client-project-submissions/{submission}/revoke', [ClientProjectSubmissionController::class, 'revoke'])
+            ->name('client-project-submissions.revoke');
+        Route::post('client-project-submissions/{submission}/regenerate', [ClientProjectSubmissionController::class, 'regenerate'])
+            ->name('client-project-submissions.regenerate');
+        Route::delete('client-project-submissions/logos/{logo}', [ClientProjectSubmissionController::class, 'deleteLogo'])
+            ->name('client-project-submissions.deleteLogo');
+        Route::delete('client-project-submissions/media/{media}', [ClientProjectSubmissionController::class, 'deleteMedia'])
+            ->name('client-project-submissions.deleteMedia');
+    });
+
+Route::permanentRedirect('/register', '/login');
+
+Route::fallback(function () {
+    return response()->json(['message' => 'Not Found.'], 404);
 });

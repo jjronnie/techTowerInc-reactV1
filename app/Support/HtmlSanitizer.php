@@ -28,9 +28,7 @@ class HtmlSanitizer
         '<img>',
     ];
 
-    private function __construct()
-    {
-    }
+    private function __construct() {}
 
     public static function clean(?string $html): ?string
     {

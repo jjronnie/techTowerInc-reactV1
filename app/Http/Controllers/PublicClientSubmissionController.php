@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ClientProjectSubmission;
+use App\Models\SiteSetting;
 use App\Models\SubmissionShortcode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -25,7 +26,7 @@ class PublicClientSubmissionController extends Controller
 
         $submission->load('client', 'logos', 'media');
 
-        $siteSetting = \App\Models\SiteSetting::first();
+        $siteSetting = SiteSetting::first();
 
         return Inertia::render('Public/ClientSubmission/Form', [
             'submission' => $submission,
@@ -49,7 +50,7 @@ class PublicClientSubmissionController extends Controller
 
     public function success(Request $request, string $token)
     {
-        $siteSetting = \App\Models\SiteSetting::first();
+        $siteSetting = SiteSetting::first();
 
         return Inertia::render('Public/ClientSubmission/Success', [
             'siteName' => $siteSetting?->site_name ?? config('app.name'),
@@ -59,7 +60,7 @@ class PublicClientSubmissionController extends Controller
 
     public function shortcodeRedirect(string $code)
     {
-        $shortcode = \App\Models\SubmissionShortcode::where('code', $code)->first();
+        $shortcode = SubmissionShortcode::where('code', $code)->first();
 
         if (! $shortcode) {
             return Inertia::render('Public/ClientSubmission/NotFound');

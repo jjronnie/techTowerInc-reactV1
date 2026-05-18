@@ -15,6 +15,7 @@ class SitemapController extends Controller
 {
     public function index(): Response
     {
+        $frontendUrl = rtrim(env('FRONTEND_URL', 'https://techtowerinc.com'), '/');
         $indexableProducts = Product::query()
             ->where('is_active', true)
             ->orderBy('updated_at', 'desc')
@@ -22,17 +23,17 @@ class SitemapController extends Controller
             ->filter(fn (Product $product): bool => PublicIndexability::product($product));
 
         $staticPages = [
-            ['loc' => url('/'), 'lastmod' => null, 'priority' => '1.0', 'changefreq' => 'weekly'],
-            ['loc' => url('/services'), 'lastmod' => null, 'priority' => '0.8', 'changefreq' => 'monthly'],
-            ['loc' => url('/portfolio'), 'lastmod' => null, 'priority' => '0.8', 'changefreq' => 'weekly'],
-            ['loc' => url('/news'), 'lastmod' => null, 'priority' => '0.7', 'changefreq' => 'weekly'],
-            ['loc' => url('/about'), 'lastmod' => null, 'priority' => '0.6', 'changefreq' => 'monthly'],
-            ['loc' => url('/contact'), 'lastmod' => null, 'priority' => '0.7', 'changefreq' => 'monthly'],
-            ['loc' => url('/privacy-policy'), 'lastmod' => null, 'priority' => '0.3', 'changefreq' => 'yearly'],
+            ['loc' => $frontendUrl.'/', 'lastmod' => null, 'priority' => '1.0', 'changefreq' => 'weekly'],
+            ['loc' => $frontendUrl.'/services', 'lastmod' => null, 'priority' => '0.8', 'changefreq' => 'monthly'],
+            ['loc' => $frontendUrl.'/portfolio', 'lastmod' => null, 'priority' => '0.8', 'changefreq' => 'weekly'],
+            ['loc' => $frontendUrl.'/news', 'lastmod' => null, 'priority' => '0.7', 'changefreq' => 'weekly'],
+            ['loc' => $frontendUrl.'/about', 'lastmod' => null, 'priority' => '0.6', 'changefreq' => 'monthly'],
+            ['loc' => $frontendUrl.'/contact', 'lastmod' => null, 'priority' => '0.7', 'changefreq' => 'monthly'],
+            ['loc' => $frontendUrl.'/privacy-policy', 'lastmod' => null, 'priority' => '0.3', 'changefreq' => 'yearly'],
         ];
 
         if ($indexableProducts->isNotEmpty()) {
-            $staticPages[] = ['loc' => url('/products'), 'lastmod' => null, 'priority' => '0.6', 'changefreq' => 'monthly'];
+            $staticPages[] = ['loc' => $frontendUrl.'/products', 'lastmod' => null, 'priority' => '0.6', 'changefreq' => 'monthly'];
         }
 
         $services = Service::query()
@@ -40,7 +41,7 @@ class SitemapController extends Controller
             ->orderBy('updated_at', 'desc')
             ->get()
             ->map(fn (Service $service) => [
-                'loc' => url("/services/{$service->slug}"),
+                'loc' => $frontendUrl.'/services/'.$service->slug,
                 'lastmod' => $service->updated_at?->toAtomString(),
                 'priority' => '0.7',
                 'changefreq' => 'monthly',
@@ -51,7 +52,7 @@ class SitemapController extends Controller
             ->orderBy('updated_at', 'desc')
             ->get()
             ->map(fn (Portfolio $portfolio) => [
-                'loc' => url("/project/{$portfolio->slug}"),
+                'loc' => $frontendUrl.'/project/'.$portfolio->slug,
                 'lastmod' => $portfolio->updated_at?->toAtomString(),
                 'priority' => '0.7',
                 'changefreq' => 'monthly',
@@ -59,7 +60,7 @@ class SitemapController extends Controller
 
         $products = $indexableProducts
             ->map(fn (Product $product) => [
-                'loc' => url("/products/{$product->slug}"),
+                'loc' => $frontendUrl.'/products/'.$product->slug,
                 'lastmod' => $product->updated_at?->toAtomString(),
                 'priority' => '0.6',
                 'changefreq' => 'monthly',
@@ -72,7 +73,7 @@ class SitemapController extends Controller
             ->orderByDesc('published_at')
             ->get()
             ->map(fn (Post $post) => [
-                'loc' => url("/news/{$post->slug}"),
+                'loc' => $frontendUrl.'/news/'.$post->slug,
                 'lastmod' => $post->updated_at?->toAtomString(),
                 'priority' => '0.6',
                 'changefreq' => 'monthly',
@@ -86,7 +87,7 @@ class SitemapController extends Controller
             ->get()
             ->filter(fn (Client $client): bool => PublicIndexability::client($client))
             ->map(fn (Client $client) => [
-                'loc' => url("/clients/{$client->slug}"),
+                'loc' => $frontendUrl.'/clients/'.$client->slug,
                 'lastmod' => $client->updated_at?->toAtomString(),
                 'priority' => '0.5',
                 'changefreq' => 'monthly',
@@ -97,7 +98,7 @@ class SitemapController extends Controller
             ->orderBy('updated_at', 'desc')
             ->get()
             ->map(fn (Category $category) => [
-                'loc' => url("/portfolio/category/{$category->slug}"),
+                'loc' => $frontendUrl.'/portfolio/category/'.$category->slug,
                 'lastmod' => $category->updated_at?->toAtomString(),
                 'priority' => '0.5',
                 'changefreq' => 'weekly',
@@ -113,7 +114,7 @@ class SitemapController extends Controller
             ->orderBy('updated_at', 'desc')
             ->get()
             ->map(fn (Category $category) => [
-                'loc' => url("/news/category/{$category->slug}"),
+                'loc' => $frontendUrl.'/news/category/'.$category->slug,
                 'lastmod' => $category->updated_at?->toAtomString(),
                 'priority' => '0.5',
                 'changefreq' => 'weekly',
@@ -153,6 +154,8 @@ class SitemapController extends Controller
 
     public function robots(): Response
     {
+        $backendUrl = rtrim(config('app.url', 'https://api.techtowerinc.com'), '/');
+
         $lines = [
             'User-agent: *',
             'Allow: /',
@@ -165,7 +168,7 @@ class SitemapController extends Controller
             'Disallow: /two-factor-challenge',
             'Disallow: /user/confirm-password',
             'Disallow: /email/verification',
-            'Sitemap: '.url('/sitemap.xml'),
+            'Sitemap: '.$backendUrl.'/sitemap.xml',
         ];
 
         return response(implode("\n", $lines), 200)->header('Content-Type', 'text/plain');

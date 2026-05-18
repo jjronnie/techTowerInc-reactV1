@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Client;
 use App\Models\ClientProjectSubmission;
+use App\Models\SubmissionShortcode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
@@ -46,7 +47,7 @@ class ClientProjectSubmissionController extends Controller
         ]);
 
         // Create shortcode
-        $shortcode = \App\Models\SubmissionShortcode::create([
+        $shortcode = SubmissionShortcode::create([
             'client_project_submission_id' => $submission->id,
             'code' => strtoupper(Str::random(6)),
         ]);

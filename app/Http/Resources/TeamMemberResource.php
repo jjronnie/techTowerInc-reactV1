@@ -22,7 +22,7 @@ class TeamMemberResource extends JsonResource
             'bio' => $this->bio,
             'sort_order' => $this->sort_order,
             'is_published' => $this->is_published,
-            'photo_url' => $this->photo_path ? Storage::url($this->photo_path) : null,
+            'photo_url' => $this->photo_path ? Storage::disk('public')->url($this->photo_path) : null,
         ];
     }
 }

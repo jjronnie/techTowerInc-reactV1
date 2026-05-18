@@ -21,7 +21,7 @@ class ClientResource extends JsonResource
             'slug' => $this->slug,
             'website_url' => $this->website_url,
             'description' => $this->description,
-            'logo_url' => $this->logo_path ? Storage::url($this->logo_path) : null,
+            'logo_url' => $this->logo_path ? Storage::disk('public')->url($this->logo_path) : null,
             'projects_count' => $this->whenCounted('portfolios'),
             'portfolios_count' => $this->whenCounted('portfolios'),
             'projects' => $this->whenLoaded(

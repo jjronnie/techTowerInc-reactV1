@@ -24,13 +24,13 @@ class ProductResource extends JsonResource
             'description' => $this->description,
             'price' => $this->price,
             'purchase_url' => $this->purchase_url,
-            'image_url' => $this->image_path ? Storage::url($this->image_path) : null,
+            'image_url' => $this->image_path ? Storage::disk('public')->url($this->image_path) : null,
             'seo' => [
                 'title' => $this->seo_title,
                 'description' => $this->seo_description,
                 'keywords' => $this->seo_keywords,
                 'og_image_path' => $this->og_image_path,
-                'og_image_url' => $this->og_image_path ? Storage::url($this->og_image_path) : null,
+                'og_image_url' => $this->og_image_path ? Storage::disk('public')->url($this->og_image_path) : null,
             ],
         ];
     }

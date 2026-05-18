@@ -18,7 +18,7 @@ class SiteSettingResource extends JsonResource
         return [
             'site_name' => $this->site_name,
             'tagline' => $this->tagline,
-            'logo_url' => $this->logo_path ? Storage::url($this->logo_path) : null,
+            'logo_url' => $this->logo_path ? Storage::disk('public')->url($this->logo_path) : null,
             'favicon_url' => $this->favicon_path ? Storage::url($this->favicon_path) : null,
             'company_email' => $this->company_email,
             'company_phone' => $this->company_phone,
